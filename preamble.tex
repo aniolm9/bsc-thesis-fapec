@@ -3,6 +3,7 @@
 \usepackage{graphicx}
 \usepackage{parskip}
 \usepackage{hyperref}
+
 % Use biblatex to manage bibliography.
 \usepackage[
 	backend=biber,
@@ -25,3 +26,9 @@
 \fancyhead[LE]{\leftmark}
 \fancyhead[RO]{\rightmark}
 \fancyfoot[RO, LE]{\thepage}
+
+% Change space before, between and after chapter title.
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{0pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-20pt}{15pt}
