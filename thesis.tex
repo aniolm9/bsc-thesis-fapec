@@ -1,0 +1,24 @@
+% !TeX TS-program = lualatex
+% !BIB TS-program = biber
+
+\documentclass[a4paper,12pt,openany]{book}
+\input{preamble.tex}
+
+\begin{document}
+
+% Cover.
+\frontmatter
+\input{cover.tex}
+\newpage
+
+% Load abstract, acknowledgments, etc.
+\input{chapters/abstract.tex}
+
+\tableofcontents
+\newpage
+
+\mainmatter
+\input{chapters/introduction.tex}
+\input{chapters/bibliography.tex}
+
+\end{document}          
