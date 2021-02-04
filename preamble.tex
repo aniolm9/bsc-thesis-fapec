@@ -3,13 +3,19 @@
 \usepackage{graphicx}
 \usepackage{parskip}
 \usepackage{hyperref}
+% "toc" posa "Appendices" a l'índex.
+% "page" posa la pàgina "Appendices" abans del primer annex.
+\usepackage[toc,page]{appendix}
 
 % Use biblatex to manage bibliography.
 \usepackage[
 	backend=biber,
 	style=alphabetic,
+	sorting=nyt,
 ]{biblatex}
 \addbibresource{bibliography.bib}
+% Increase space between bibliography items.
+\setlength\bibitemsep{0.3\baselineskip}
 
 % Set custom headers and footers.
 \usepackage{fancyhdr}

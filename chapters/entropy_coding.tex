@@ -1,0 +1,16 @@
+\chapter{Entropy Coding}
+Comentaré alguns algoritmes típics de compressió com el Huffman, Rice-Golomb, codis aritmètics i Asymmetric numeral systems (Zstandard)
+
+
+\section{Huffman Coding}
+Òptim, prefix, FLAC, etc. Es compararà amb l'algoritme WAVE de FAPEC a través del rendiment de FLAC per àudio lossless.
+
+\section{Golomb Coding}
+Els codis de Rice (subconjunt dels codis de Golomb) van donar origen a FAPEC, així que és important comentar-los.
+També són codis de prefix com el Huffman però poden no ser òptims.
+
+\section{Arithmetic Coding}
+Aquesta secció la faré servir per donar pas a l'Asymmetric numeral systems. Bàsicament els codis aritmètics són molt bons però són molt lents. Això ho compensa els ANS.
+
+\section{Asymmetric Numeral Systems}
+Em centraré especialment en el Zstandard (Facebook). Tenen nivells de compressió similars als aritmètics però van MOLT ràpid (una mica més que FAPEC i tot).

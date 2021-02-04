@@ -1,0 +1,16 @@
+\chapter{Wave Stage}
+Aquesta etapa decorreladora està enfocada a dades amb 2 canals (àudio stereo, I/Q). El desenvolupament dins de l'empresa està especialment enfocat per un client, però per motius de confidencialitat inclouré una versió genèrica que es podrà comparar amb el FLAC. L'etapa fa servir LPC i posteriorment envia els errors de predicció al codificador entròpic.
+
+L'algoritme és el "típic" per LPC i la resolució del sistema lineal resultant del predictor lineal \parencite{PSAVC} es fa amb Levinson-Durbin \parencite{LevinsonDurbin}, que aprofitant l'estructura Toeplitz redueix la complexitat de $O(n^3)$ a $O(n^2)$.
+
+\section{Introduction}
+Etapa per Spire però per motius de confidencialitat se n'han eliminat algunes parts i es presenta un algoritme genèric.
+
+\section{Design}
+Disseny del predictor i l'estructura de l'etapa. Justificació de per què s'utilitzen els LPC i no una altra cosa. La resolució de les equacions de Yule-Walker anirà aquí, però segurament en posaré la deducció en un annex.
+
+\section{Implementation}
+Implementació amb C de l'algoritme. El codi anirà als annexes (a poder ser confidencials).
+
+\section{Results}
+D'això ja tinc alguna cosa provada i amb la versió d'ara, amb la cançó Money de Pink Floyd quasi iguala el FLAC. Acceptant unes miques de pèrdues (jo no les distingeixo) el supera molt.

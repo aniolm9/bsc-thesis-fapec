@@ -1,0 +1,18 @@
+\chapter{KMALL Stage}
+Aquesta etapa decorreladora està enfocada a dades provinents de sondes submarines de l'empresa KONGSBERG.
+
+La informació més interessant dels fitxers .kmall (ordre dels 100 MB) és la de les columnes d'aigua (ocupa el 99\% de la mida total del fitxer). El format d'aquests fitxers està basat en datagrames, la documentació dels quals és pública a la web de KONGSBERG (com que és un dOxygen potser ho pugem al servidor de DAPCOM, ho he de parlar amb en Jordi).
+
+Com que FAPEC comprimeix per chunks s'ha de parar especial atenció a no partir un datagrama per la meitat o F al xat.
+
+\section{Introduction}
+Explicar les estructures de dades del KMALL basant-me en el dOxygen de Kongsberg.
+
+\section{Design}
+On it. Les idees són: no trencar datagrames, comprimir només MWC i potser MRZ (amb Python he analitzat que és worth de comprimir i què no). L'algoritme de compressió es basarà en l'anterior fet pels fitxer .wcd de KONGSBERG.
+
+\section{Implementation}
+Implementació amb C de l'algoritme. El codi anirà als annexes (a poder ser confidencials).
+
+\section{Results}
+No ens precipitem.
