@@ -6,6 +6,7 @@
 % "toc" posa "Appendices" a l'índex.
 % "page" posa la pàgina "Appendices" abans del primer annex.
 \usepackage[toc,page]{appendix}
+\usepackage{xcolor}
 
 % Use biblatex to manage bibliography.
 \usepackage[
@@ -38,3 +39,11 @@
 \titleformat{\chapter}[display]
 {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{0pt}{\Huge}
 \titlespacing*{\chapter}{0pt}{-20pt}{15pt}
+
+% Enable or disable my comments
+\usepackage{ifthen}
+\usepackage{comment}
+\specialcomment{comment}{\begingroup \color{blue}}{\endgroup}
+\newboolean{showcomment}
+%\setboolean{showcomment}{true} % Comment to disable block comments
+\ifthenelse{\boolean{showcomment}}{}{\excludecomment{comment}}
