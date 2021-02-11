@@ -8,6 +8,10 @@
 \usepackage[toc,page]{appendix}
 \usepackage{xcolor}
 
+% Enable comic sans
+\usepackage{fontspec}
+%\setmainfont{Comic Sans MS}
+
 % Use biblatex to manage bibliography.
 \usepackage[
 	backend=biber,
@@ -45,5 +49,5 @@
 \usepackage{comment}
 \specialcomment{comment}{\begingroup \color{blue}}{\endgroup}
 \newboolean{showcomment}
-%\setboolean{showcomment}{true} % Comment to disable block comments
+\setboolean{showcomment}{true} % Comment to disable block comments
 \ifthenelse{\boolean{showcomment}}{}{\excludecomment{comment}}

@@ -7,15 +7,47 @@ La informació més interessant dels fitxers .kmall (ordre dels 100 MB) és la d
 Com que FAPEC comprimeix per chunks s'ha de parar especial atenció a no partir un datagrama per la meitat o F al xat.
 \end{comment}
 
+Recent advances in sonar technology and computing power have led to an improvement in ocean monitoring. For instance, Multibeam Echosounders (MBES) are now capable of collecting data from the water columns, besides some usual metrics as seafloor reflectivity. This new information allows geoscientists to identify sunken structures, schools of fish, gas seeps, etc.
+
+We clearly see that water column metrics have a big interest. However, their storage requirements are quite demanding (in the order of some GB/h), hence it is not possible to continuously record water column data. In this scenario, efficient compression algorithms will be essential.
+
+At the present moment, one of the biggest echosounder manufacturers is Kongsberg Maritime. In this chapter we will focus on the development of a preprocessing stage specially designed for the KMALL files from Kongsberg. First, a general overview of the data structures will be given. Then, with this format in mind, a design criterion will be proposed and implemented. Finally, we will analyze its performance and compare it with other compression algorithms.
 
 \section{Introduction}
-Explicar les estructures de dades del KMALL basant-me en el dOxygen de Kongsberg.
+\begin{comment}
+Explicar les estructures de dades del KMALL i KMWCD basant-me en el dOxygen de Kongsberg. Cal incloure informació física de la sonda? Què és un datagrama?
+\end{comment}
+
+
+The .kmall format is the successor of the Kongsberg .all format. Analyzing the latter is out of the scope of this project, yet we can state some of the improvements that KMALL brings. 
+
+On the first hand, KMALL is a generic format with high resolution data and with a datagram structure designed to avoid breaking existing decoders when updating the data structure.
+
+On the other hand, .all format used to have a datagram size constraint of 64 kB due to the maximum size of UDP packets, but .kmall files are designed to be stored "as is" and then fragmented if needed.
+
+Taking into account the features stated above, we are interested in knowing how datagrams are placed inside a .kmall file and how to identify them. From Kongsberg KMALL documentation we know that all datagrams start with a general header that contains datagram size in bytes and a 4-character datagram identifier. In the current version (410224 Revision H) there exist the following types:
+
+\begin{comment}
+Incloure taula com la del dOxygen.
+\end{comment}
+
+It is important to notice that although .kmall files can contain all the above datagrams, usually water column data is logged in a separate file with extension .kmwcd. In other words, MWC datagrams will be placed in .kmwcd files instead of .kmall files, but the decoding process is the same for both extensions.
+
+\begin{comment}
+Incloure figura amb el datagrama MWC de la revisió actual.
+\end{comment}
 
 \section{Design}
+\begin{comment}
 On it. Les idees són: no trencar datagrames, comprimir només MWC i potser MRZ (amb Python he analitzat que és worth de comprimir i què no). L'algoritme de compressió es basarà en l'anterior fet pels fitxer .wcd de KONGSBERG.
+\end{comment}
 
 \section{Implementation}
+\begin{comment}
 Implementació amb C de l'algoritme. El codi anirà als annexes (a poder ser confidencials).
+\end{comment}
 
 \section{Results}
+\begin{comment}
 No ens precipitem.
+\end{comment}
