@@ -9,11 +9,15 @@ Com que FAPEC comprimeix per chunks s'ha de parar especial atenció a no partir 
 
 Recent advances in sonar technology and computing power have led to an improvement in ocean monitoring. For instance, Multibeam Echosounders (MBES) are now capable of collecting data from the water columns, besides some usual metrics as seafloor reflectivity. This new information allows geoscientists to identify sunken structures, schools of fish, gas seeps, etc.
 
-\begin{figure}[hb]
+\begin{figure}[h!]
 	\begin{center}
-		\includegraphics[scale=0.45]{images/mbes_ship.jpg}
+		  \begin{tabular}{ @{} r @{} }
+			\includegraphics[scale=0.45]{images/mbes_ship.jpg}\\
+			\imagesource{NOAA Photo Library, CC BY 2.0, via Wikimedia Commons.}
+		\end{tabular}
 	\end{center}
-	\caption{Conception of multibeam sonar on NOAA Ship NANCY FOSTER. Picture by NOAA Photo Library, CC BY 2.0, via Wikimedia Commons.}
+	\vspace*{-0.7em}
+	\caption{Conception of multibeam sonar on NOAA Ship NANCY FOSTER.}
 	\label{fig:mbes_ship}
 \end{figure}
 
@@ -22,10 +26,6 @@ We clearly see that water column metrics have a big interest. However, their sto
 At the present moment, one of the biggest echosounder manufacturers is Kongsberg Maritime. In this chapter we will focus on the development of a preprocessing stage specially designed for the KMALL files from Kongsberg. First, a general overview of the data structures will be given. Then, with this format in mind, a design criterion will be proposed and implemented. Finally, we will analyze its performance and compare it with other compression algorithms.
 
 \section{The KMALL data format}
-\begin{comment}
-Explicar les estructures de dades del KMALL i KMWCD basant-me en el dOxygen de Kongsberg.
-\end{comment}
-
 In this section we will describe the KMALL data structure and why there is a need to develop new compression algorithms for this format, but first some concepts related to echosounders must be defined:
 \begin{itemize}
 	\item \textbf{Ping:} A ping is defined as a number of pulses transmitted at approximately the same time.
@@ -47,13 +47,81 @@ On the other hand, .all format used to have a datagram size constraint of 64 kB 
 
 A .kmall file is usually between 100 and 400 MB, and inside it there are several datagrams. This mixture of data types in the same file makes it difficult for standard compressors like \textit{Zip} to identify data statistics, therefore they don't perform as good as one could expect. In order to improve the compression ratio, we are interested in knowing how are those datagrams placed inside the file and how to identify them. From Kongsberg KMALL documentation, we know that all datagrams start with a generic header that contains datagram size in bytes and a 4-character identifier. In the current version (410224 Revision H), there exist the following datagram types:
 
-\begin{comment}
-Incloure taula com la del dOxygen, però potser resumida i cito la resta.
-\end{comment}
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{|l|l|l|}
+	\hline
+	\rowcolor[HTML]{9698ED} 
+	\multicolumn{1}{|c|}{\cellcolor[HTML]{9698ED}Type code} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Struct name} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Description} \\ \hline
+	\#IIP                                                   & EMdgmIIP\_def                                            & Installation and sensor parameters.                      \\ \hline
+	\#IOP                                                   & EMdgmIOP\_def                                            & Runtime operator parameters.                             \\ \hline
+	\#IBE                                                   & EMdgmIB\_def                                             & Built in test (BIST) error report.                       \\ \hline
+	\#IBR                                                   & EMdgmIB\_def                                             & Built in test (BIST) reply.                              \\ \hline
+	\#IBS                                                   & EMdgmIB\_def                                             & Built in test (BIST) short reply.                        \\ \hline
+\end{tabular}
+\end{center}
+\caption{Installation and runtime datagrams of the KMALL format.}
+\end{table}
+
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{|l|l|l|}
+	\hline
+	\rowcolor[HTML]{9698ED} 
+	\multicolumn{1}{|c|}{\cellcolor[HTML]{9698ED}Type code} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Struct name} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Description}                                      \\ \hline
+	\#MRZ                                                   & EMdgmMRZ\_def                                            & \begin{tabular}[c]{@{}l@{}}Multibeam (M) raw range (R)\\ and depth (Z) datagram.\end{tabular} \\ \hline
+	\#MWC                                                   & EMdgmMWC\_def                                            & \begin{tabular}[c]{@{}l@{}}Multibeam (M) water (W)\\ column (C) datagram.\end{tabular}        \\ \hline
+\end{tabular}
+\end{center}
+\caption{Multibeam datagrams of the KMALL format.}
+\end{table}
+
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{|l|l|l|}
+	\hline
+	\rowcolor[HTML]{9698ED} 
+	\multicolumn{1}{|c|}{\cellcolor[HTML]{9698ED}Type code} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Struct name} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Description}                                              \\ \hline
+	\#SPO                                                   & EMdgmSPO\_def                                            & Sensor (S) data for position (PO).                                                                    \\ \hline
+	\#SKM                                                   & EMdgmSKM\_def                                            & Sensor (S) KM binary sensor format.                                                                   \\ \hline
+	\#SVP                                                   & EMdgmSVP\_def                                            & \begin{tabular}[c]{@{}l@{}}Sensor (S) data from sound velocity (V)\\ profile (P) or CTD.\end{tabular} \\ \hline
+	\#SVT                                                   & EMdgmSVT\_def                                            & \begin{tabular}[c]{@{}l@{}}Sensor (S) data for sound velocity (V)\\ at transducer (T).\end{tabular}   \\ \hline
+	\#SCL                                                   & EMdgmSCL\_def                                            & Sensor (S) data from clock (CL).                                                                      \\ \hline
+	\#SDE                                                   & EMdgmSDE\_def                                            & Sensor (S) data from depth (DE) sensor.                                                               \\ \hline
+	\#SHI                                                   & EMdgmSHI\_def                                            & Sensor (S) data for height (HI).                                                                      \\ \hline
+\end{tabular}
+\end{center}
+\caption{External sensor output datagrams of the KMALL format.}
+\end{table}
+
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{|l|l|l|}
+	\hline
+	\rowcolor[HTML]{9698ED} 
+	\multicolumn{1}{|c|}{\cellcolor[HTML]{9698ED}Type code} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Struct name} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Description} \\ \hline
+	\#CPO                                                   & EMdgmCPO\_def                                            & Compatibility (C) data for position (PO).                \\ \hline
+	\#CHE                                                   & EMdgmCHE\_def                                            & Compatibility (C) data for heave (HE).                   \\ \hline
+\end{tabular}
+\end{center}
+\caption{Compatibility datagrams of the KMALL format.}
+\end{table}
+
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{|l|l|l|}
+	\hline
+	\rowcolor[HTML]{9698ED} 
+	\multicolumn{1}{|c|}{\cellcolor[HTML]{9698ED}Type code} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Struct name} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Description} \\ \hline
+	\#FCF                                                   & EMdgmFCF\_def                                            & Backscatter calibration (C) file (F) datagram.           \\ \hline
+\end{tabular}
+\end{center}
+\caption{File datagrams of the KMALL format.}
+\end{table}
 
 As we will see in the next section, we are specially interested in MWC datagrams, which have the following structure:
 
-\begin{figure}[hb]
+\begin{figure}[ht]
 	\begin{center}
 		\scalebox{.565}{\input{images/mwc_datagram.tex}}
 	\end{center}
@@ -79,7 +147,7 @@ It is important to notice that even though .kmall files can contain all the abov
 Potser hauria de fer subseccions? "Datagrams to compress", "Criteria", etc.
 \end{comment}
 
-In the previous section we introduced the KMALL data format. Namely, we saw that the format is a mixture of different datagrams, so we have to decide which ones should be compressed and how.
+In the previous section we introduced the KMALL data format. Namely, we saw that it is a mixture of different data types, so we have to decide which ones should be compressed and which algorithm will be applied.
 
 In order to decide what to compress, we have first analyzed some .kmall and .kmwcd to determine the percentage of occupancy by datagram type. For the former files, we found that MRZ datagrams are a 92\% of the total size; and for the later, MWC datagrams are a 99\%. It is clear that these two data types are our objective; however, in this thesis we will ignore MRZ datagrams and we will just focus on MWC data. Actually, if we look at figure \ref{fig:mwc_datagram} we see that MWC headers are insignificant compared to its samples, therefore we will only compress payload information.
 
