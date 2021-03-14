@@ -27,6 +27,35 @@ Between the vast amount of remote sensing techniques we find Radio Occultation \
 Donar una base de les dades I/Q i justificar perquè són semblants a l'audio stereo.
 \end{comment}
 
+In the introduction of this chapter we stated that the present stage will be focused on IQ data, that is, the discrete time samples of a RF IQ signal.
+
+From Communication Theory we know that any pass-band signal $s(t)$ can be expressed as:
+\begin{equation}
+s(t) = i_s(t) \cdot cos(2\pi f_0 t) - q_s(t) \cdot sin(2\pi f_0 t)
+\end{equation}
+
+Where:
+\begin{description}
+	\item $i_s(t) \equiv$ In-phase component of the RF signal.
+	\item $q_s(t) \equiv$ Quadrature component of the RF signal.
+	\item $f_0 \equiv$ Carrier frequency of the RF signal.
+\end{description}
+
+For simplicity, we may work with the equivalent base-band signal $b_s(t)$:
+\begin{equation}
+	b_s(t) = i_s(t) + j q_s(t)
+\end{equation}
+
+
+Hence, the data to be compressed are the discrete time samples of the signals $i_s(t)$ and $q_s(t)$. In other words, our aim is to compress time series data separated in two channels.
+
+For further information on IQ signals the reader may check references \parencite{IQintro}, \parencite{carlson2010communication} and \parencite{ICOM}.
+
+Finally in this section, we shall provide a qualitative justification on why we can use audio files to test \textit{Wave} and why we can compare it with the FLAC standard.
+
+\begin{comment}
+Bàsicament les dades IQ i l'àudio hetero són sèries temporals de dos canals. El FLAC utilitza codis de Rice-Golomb que funcionen bé en sèrie temporals (veure article original de Golomb) i FAPEC està inspirat en ells (veure article d'en Jordi). També, com a justificació inversa, hi ha el paper dels japonesos que comprimeixen IQ amb FLAC.
+\end{comment}
 
 \section{Design}
 \begin{comment}
