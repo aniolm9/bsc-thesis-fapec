@@ -7,7 +7,7 @@ L'algoritme és el "típic" per LPC i la resolució del sistema lineal resultant
 
 Earth Observation techniques have been suffering a growth both in terms of quality and quantity, which means that the amount of data produced have also increased drastically. In addition, remote sensing is carried out by satellites with low storage capacity and bandwidth \parencite{SANDAU20101}, so clearly data compression is key in this situation.
 
-Between the vast amount of remote sensing techniques we find Radio Occultation \parencite{RO-GNSS}, which uses low orbit satellites to detect the changes produced by the atmosphere in a radio signal emitted by a GNSS satellite.
+Between the vast amount of remote sensing techniques we find Radio Occultation \parencite{RO-GNSS}, which uses low orbit satellites to detect the changes produced by the atmosphere in a radio signal emitted by a \acrshort{gnss} satellite.
 
 \begin{figure}[h!]
 	\begin{center}
@@ -27,7 +27,7 @@ Between the vast amount of remote sensing techniques we find Radio Occultation \
 Donar una base de les dades I/Q i justificar perquè són semblants a l'audio stereo.
 \end{comment}
 
-In the introduction of this chapter we stated that the present stage will be focused on IQ data, that is, the discrete time samples of a RF IQ signal.
+In the introduction of this chapter we stated that the present stage will be focused on \acrshort{iq} data, that is, the discrete time samples of a \acrshort{rf} \acrshort{iq} signal.
 
 From Communication Theory we know that any pass-band signal $s(t)$ can be expressed as:
 \begin{equation}
@@ -46,12 +46,11 @@ For simplicity, we may work with the equivalent base-band signal $b_s(t)$:
 	b_s(t) = i_s(t) + j q_s(t)
 \end{equation}
 
-
 Hence, the data to be compressed are the discrete time samples of the signals $i_s(t)$ and $q_s(t)$. In other words, our aim is to compress time series data separated in two channels.
 
-For further information on IQ signals the reader may check references \parencite{IQintro}, \parencite{carlson2010communication} and \parencite{ICOM}.
+For further information on \acrshort{iq} signals the reader may check references \parencite{IQintro}, \parencite{carlson2010communication} and \parencite{ICOM}.
 
-Finally in this section, we shall provide a qualitative justification on why we can use audio files to test \textit{Wave} and why we can compare it with the FLAC standard.
+Finally in this section, we shall provide a qualitative justification on why we can use audio files to test \textit{Wave} and why we can compare it with the \acrshort{flac} standard.
 
 \begin{comment}
 Bàsicament les dades IQ i l'àudio hetero són sèries temporals de dos canals. El FLAC utilitza codis de Rice-Golomb que funcionen bé en sèrie temporals (veure article original de Golomb) i FAPEC està inspirat en ells (veure article d'en Jordi). També, com a justificació inversa, hi ha el paper dels japonesos que comprimeixen IQ amb FLAC.

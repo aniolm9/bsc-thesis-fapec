@@ -2,14 +2,19 @@
 \usepackage{microtype}
 \usepackage{graphicx}
 \usepackage{parskip}
-\usepackage{hyperref}
 \usepackage[table,xcdraw]{xcolor}
 \usepackage{tikz}
 \usepackage[labelfont=bf]{caption}
 \newcommand{\imagesource}[1]{{\footnotesize Source: #1}}
 % "toc" posa "Appendices" a l'índex.
 % "page" posa la pàgina "Appendices" abans del primer annex.
-\usepackage[toc,page]{appendix}
+\usepackage[]{appendix}
+
+% Acronyms
+\usepackage[toc,acronym]{glossaries}
+\makeglossaries
+
+%\usepackage{hyperref}
 
 % Enable comic sans
 \usepackage{fontspec}
@@ -56,3 +61,7 @@
 \newboolean{showcomment}
 \setboolean{showcomment}{true} % Comment to disable block comments
 \ifthenelse{\boolean{showcomment}}{}{\excludecomment{comment}}
+
+
+
+

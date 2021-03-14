@@ -5,7 +5,7 @@
 \input{preamble.tex}
 
 \begin{document}
-
+\input{acronyms.tex}
 % Cover.
 \frontmatter
 \input{cover.tex}
@@ -13,6 +13,7 @@
 
 % Load abstract, acknowledgments, etc.
 \input{chapters/abstract.tex}
+\input{chapters/acknowledgments.tex}
 
 \tableofcontents
 \listoffigures
@@ -28,6 +29,8 @@
 \input{chapters/kmall_preproc.tex}
 \input{chapters/conclusions.tex}
 
+\printbibliography[heading=bibintoc]
+
 \begin{appendices}
 \input{appendices/linear_prediction.tex}
 \input{appendices/levinson_durbin.tex}
@@ -35,6 +38,6 @@
 \input{appendices/c_code.tex}
 \end{appendices}
 
-\printbibliography
+\printacronyms
 
 \end{document}          
