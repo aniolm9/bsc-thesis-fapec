@@ -1,11 +1,7 @@
 \chapter{Entropy Coding}
-\begin{comment}
-Comentaré alguns algoritmes típics de compressió com el Huffman, Rice-Golomb, codis aritmètics i Asymmetric numeral systems (Zstandard)
-\end{comment}
-
 Entropy coding is a lossless data compression scheme based on symbols probability. This field was first described by Claude E. Shannon in 1948 in his paper \textit{A Mathematical Theory of Communication} \parencite{Shannon1948}.
 
-Giving an extensive theoretical explanation of Entropy coding would require an entire thesis, therefore in this chapter we will define the most basic equations in Information Theory and also describe a few well-known coding algorithms that will be relevant later.
+Giving an extensive theoretical explanation of Entropy coding would require an entire thesis. Therefore, in this chapter we will define the most basic equations in Information Theory and we will also describe some well-known coding algorithms that will be relevant later. The interested reader should see reference \parencite{cover}.
 
 \begin{figure}[h!]
 	\begin{center}
@@ -18,6 +14,15 @@ Giving an extensive theoretical explanation of Entropy coding would require an e
 	\caption{Picture of Claude E. Shannon staring at a mouse.}
 	\label{fig:shannon}
 \end{figure}
+
+\section{Information theory basics}
+Given a discrete random variable $X$ with probability function $p(x)$, its \textbf{Shannon entropy} is defined as:
+
+\begin{equation}
+H(X) = - \sum_{i=1}^{n} p(x_i) \cdot \log_2 p(x_i) 
+\end{equation}
+
+This result represents the average level of information (or uncertainty) of the random variable $X$. It is expressed in \textit{bits}.
 
 \section{Huffman coding}
 \begin{comment}
