@@ -11,7 +11,7 @@ Between the vast amount of remote sensing techniques we find Radio Occultation \
 
 \begin{figure}[h!]
 	\begin{center}
-		\begin{tabular}{ @{} r @{} }
+		\begin{tabular}{ @{} c @{} }
 			\includegraphics[scale=0.42]{images/ro_schematic.jpg}\\
 			\imagesource{Wikipedia user MPRennie, CC BY-SA 3.0, via Wikimedia Commons.}
 		\end{tabular}
@@ -22,7 +22,7 @@ Between the vast amount of remote sensing techniques we find Radio Occultation \
 \end{figure}
 
 
-\section{Introduction to I/Q data}
+\section{Introduction to IQ data}
 \begin{comment}
 Donar una base de les dades I/Q i justificar perquè són semblants a l'audio stereo.
 \end{comment}
@@ -50,7 +50,7 @@ Hence, the data to be compressed are the discrete time samples of the signals $i
 
 For further information on \acrshort{iq} signals the reader may check references \parencite{IQintro}, \parencite{carlson2010communication} and \parencite{ICOM}.
 
-Finally in this section, we shall provide a qualitative justification on why we can use audio files to test \textit{Wave} and why we can compare it with the \acrshort{flac} standard.
+To conclude this section, we shall provide a qualitative justification on why we can use audio files to test \textit{Wave} and why we can compare it with the \acrshort{flac} standard.
 
 \begin{comment}
 Bàsicament les dades IQ i l'àudio hetero són sèries temporals de dos canals. El FLAC utilitza codis de Rice-Golomb que funcionen bé en sèrie temporals (veure article original de Golomb) i FAPEC està inspirat en ells (veure article d'en Jordi). També, com a justificació inversa, hi ha el paper dels japonesos que comprimeixen IQ amb FLAC.
@@ -60,6 +60,8 @@ Bàsicament les dades IQ i l'àudio hetero són sèries temporals de dos canals.
 \begin{comment}
 Disseny del predictor i l'estructura de l'etapa. Justificació de per què s'utilitzen els LPC i no una altra cosa. La resolució de les equacions de Yule-Walker anirà aquí, però segurament en posaré la deducció en un annex.
 \end{comment}
+
+In the previous section we justified why \acrshort{flac} should have a good performance with \acrshort{iq} data. Taking this into account, the proposed algorithm should have a structure similar to \acrshort{flac}'s but using \acrshort{fapec} as the entropy coder. This should translate into a compressor faster than \acrshort{flac} and with a similar compression ratio.
 
 \section{Implementation}
 \begin{comment}

@@ -3,6 +3,22 @@
 Comentaré alguns algoritmes típics de compressió com el Huffman, Rice-Golomb, codis aritmètics i Asymmetric numeral systems (Zstandard)
 \end{comment}
 
+Entropy coding is a lossless data compression scheme based on symbols probability. This field was first described by Claude E. Shannon in 1948 in his paper \textit{A Mathematical Theory of Communication} \parencite{Shannon1948}.
+
+Giving an extensive theoretical explanation of Entropy coding would require an entire thesis, therefore in this chapter we will define the most basic equations in Information Theory and also describe a few well-known coding algorithms that will be relevant later.
+
+\begin{figure}[h!]
+	\begin{center}
+		\begin{tabular}{ @{} c @{} }
+			\includegraphics[scale=0.3]{images/Claude_Shannon_1776.jpg}\\
+			\imagesource{DobriZheglov, CC BY-SA 4.0, via Wikimedia Commons.}
+		\end{tabular}
+	\end{center}
+	\vspace*{-0.7em}
+	\caption{Picture of Claude E. Shannon staring at a mouse.}
+	\label{fig:shannon}
+\end{figure}
+
 \section{Huffman coding}
 \begin{comment}
 Òptim, prefix, FLAC, etc. Es compararà amb l'algoritme WAVE de FAPEC a través del rendiment de FLAC per àudio lossless.
