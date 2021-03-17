@@ -16,13 +16,28 @@ Giving an extensive theoretical explanation of Entropy coding would require an e
 \end{figure}
 
 \section{Information theory basics}
-Given a discrete random variable $X$ with probability function $p(x)$, its \textbf{Shannon entropy} is defined as:
+\large\textbf{Shannon entropy}
+
+Given a discrete random variable $X$ with probability function $p(x)$, its Shannon entropy is defined as:
 
 \begin{equation}
 H(X) = - \sum_{i=1}^{n} p(x_i) \cdot \log_2 p(x_i) 
 \end{equation}
 
-This result represents the average level of information (or uncertainty) of the random variable $X$. It is expressed in \textit{bits}.
+This result represents the average level of information (or uncertainty) of the random variable $X$. It is expressed in \textit{bits}.\\
+
+
+\large\textbf{Shannon's source coding theorem}
+
+Shannon's source coding theorem establishes the theoretical limits to data compression, and a different meaning to Shannon entropy defined above. Formally, it states:
+
+\begin{comment}
+TEOREMA
+
+Poso la demo als annexes o no cal?
+\end{comment}
+
+This theorem reveals a new interpretation of Shannon entropy: it is the average number of bits per symbol required to encode it.
 
 \section{Huffman coding}
 \begin{comment}
