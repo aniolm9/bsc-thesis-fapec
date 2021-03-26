@@ -10,6 +10,4 @@ def extractSamples(file):
 if __name__ == "__main__":
     data = extractSamples("/home/aniol/Music/PinkFloyd_Money.wav")
     df = pd.DataFrame(data, columns=["samples"])
-    print(len(df))
-    df.plot.hist(bins=100)
-    plt.show()
+    df.to_csv("/home/aniol/Music/PinkFloyd_Money.wav.samples", index=False, header=False, sep="\n")

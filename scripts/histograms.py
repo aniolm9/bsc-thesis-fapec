@@ -65,10 +65,11 @@ if __name__ == "__main__":
         # Calculate prediction error probabilities.
         probs = df["PE"].value_counts()/len(df["PE"])
         # Find theoretical ratio from Shannon entropy.
-        ratio = 8/entropy(probs, base=2)
+        bitsPerSample = 16 if args.type == "wave" else 8
+        ratio = bitsPerSample/entropy(probs, base=2)
         print("Theoretical ratio \t %.3f" % (ratio))
         # Plot histogram.
-        ax = df[["PE", "samples"]].plot.hist(bins=10, log=False, alpha=0.5)
+        ax = df[["PE", "samples"]].plot.hist(bins=400, log=True, alpha=0.5)
         ax.set_title("Histogram of prediction errors")
         ax.set_xlabel("Sample prediction errors")
         ax.set_ylabel("Number of samples")
