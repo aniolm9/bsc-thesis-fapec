@@ -1,24 +1,51 @@
 #!/usr/bin/env python3
-
-import argparse
 from scipy.stats import entropy
-import matplotlib.pyplot as plt
 from matplotlib import rc
+import matplotlib.pyplot as plt
 import pandas as pd
+import argparse
 import os
 import sys
 
+
 def setupParser():
     parser = argparse.ArgumentParser(description='Plot histograms.')
-    #parser.add_argument('-t', '--type', type=str, help='Data structure type to process. Accepted types are: kmall, wave.', required=True)
+    parser.add_argument('-t', '--type', type=str, choices=['wave', 'kmall'], help='Data structure type to process.', required=True)
+    parser.add_argument('-a', '--auto', dest="auto", action='store_true', help='Automatically generate missing files, if possible.', required=False)
     parser.add_argument('files', metavar='FILES', type=str, nargs='+', help='List of files to plot a histogram of.')
     return parser
 
-def checkInputFiles(files):
-    for f in files:
-        if not os.path.exists(f):
-            print("File %s does not exist." % (f))
-            sys.exit(0)
+def checkInputFiles(origFile):
+    files = [origFile + ".samples", origFile + ".pe"]
+    for file in files:
+        if not os.path.exists(file) or not os.path.exists(file):
+            createFile = "y" if args.auto else input("File %s does not exist. Do you want to create it [y/N]? " % (file)).lower()
+            # If the original file does not exist or we don't want to generate .pe and .samples, we exit.
+            if not os.path.exists(os.path.splitext(file)[0]) or createFile != "y":
+                sys.exit(-1)
+            # Generate missing .pe or .samples files for the given file and type.
+            if args.type == "wave":
+                waveGenerator(file)
+            elif args.type == "kmall":
+                kmallGenerator(file)
+
+def waveGenerator(file):
+    extension = os.path.splitext(file)[1]
+    if extension == ".pe":
+        pass
+    elif extension == ".samples":
+        pass
+    else:
+        sys.exit(-1)
+
+def kmallGenerator(file):
+    extension = os.path.splitext(file)[1]
+    if extension == ".pe":
+        pass
+    elif extension == ".samples":
+        pass
+    else:
+        sys.exit(-1)
 
 
 if __name__ == "__main__":
@@ -26,12 +53,12 @@ if __name__ == "__main__":
     # Use Computer Modern for graphics.
     #rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
     #rc('text', usetex=True)
-    for f in args.files:
+    for file in args.files:
         # Create variables for prediction error and original samples files.
-        peFile = f + ".pe"
-        samplesFile = f + ".samples"
+        peFile = file + ".pe"
+        samplesFile = file + ".samples"
         # Check if both files exist.
-        checkInputFiles([peFile, samplesFile])
+        checkInputFiles(file)
         # Create dataframe with two columns: prediction errors and original samples.
         df = pd.read_csv(peFile, delimiter = "\n", header=None, names=["PE"])
         df["samples"] = pd.read_csv(samplesFile, delimiter = "\n", header=None, dtype=int)[0]
