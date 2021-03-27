@@ -3,14 +3,18 @@
 for FILE in "$@"
 do
     echo "Processing $FILE..."
-    FAPEC="/home/aniol/Devel/Dapcom/fapec/fapec"
     ORDER=4
     PERLEN=8192
     SIZE=$(stat --printf="%s" "$FILE")
+    let LINES=$SIZE/2-22
 
     let m=$PERLEN/2+$ORDER
-    let lastPer=$SIZE%$PERLEN/4+1
-    let line=$lastPer+$ORDER-1
+    let bool=$SIZE%$PERLEN
+    if [[ $bool -ne 0 ]]; then
+        bool=1
+    fi
+    let firstLPC="($LINES-$SIZE%$PERLEN/4+1)*$bool"
+    let lastLPC="$firstLPC+($ORDER-1)*$bool"
 
-    $FAPEC -dtype 16 -signed -wave $ORDER 2 0 0 -per $PERLEN -mt 1 -o /dev/null "$FILE" | grep PredErr | awk -v order="$ORDER" -v m="$m" '(NR-1)%m > order-1' | cut -d' ' -f2 | sed 1,22d | tac | sed ${lastPer},${line}d | tac > "$FILE.pe"
+    fapec -dtype 16 -signed -wave $ORDER 2 0 0 -per $PERLEN -mt 1 -o /dev/null -ow "$FILE" | grep PredErr | awk -v order="$ORDER" -v m="$m" '(NR-1)%m > order-1' | cut -d' ' -f2 | sed 1,22d | sed ${firstLPC},${lastLPC}d > "$FILE.pe"
 done
