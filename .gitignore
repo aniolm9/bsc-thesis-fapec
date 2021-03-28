@@ -19,3 +19,5 @@
 *.glsdefs
 *.ist
 *.cut
+*.nav
+*.snm
