@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 from scipy.stats import entropy
 from matplotlib import rc
+import wave.wave_samples as wave_samples
+import kmall.mwc_samples as mwc_samples
 import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
+import subprocess
 import os
 import sys
 
@@ -30,20 +33,24 @@ def checkInputFiles(origFile):
                 kmallGenerator(file)
 
 def waveGenerator(file):
-    extension = os.path.splitext(file)[1]
+    origFile, extension = os.path.splitext(file)
+    # Generate .pe from input .wav file using a bash pipeline (faster)
     if extension == ".pe":
-        pass
+        subprocess.run(["wave/wave_pe.sh", origFile], stdout=subprocess.DEVNULL)
+    # Extract data samples from the .wav file
     elif extension == ".samples":
-        pass
+        wave_samples.samplesToFile(origFile)
     else:
         sys.exit(-1)
 
 def kmallGenerator(file):
-    extension = os.path.splitext(file)[1]
+    origFile, extension = os.path.splitext(file)
+    # Generate .pe from .kmwcd using a bash pipeline
     if extension == ".pe":
-        pass
+        subprocess.run(["kmall/kmall_pe.sh", origFile], stdout=subprocess.DEVNULL)
+    # Make use of the kmall python API to find MWC samples
     elif extension == ".samples":
-        pass
+        mwc_samples.samplesToFile(origFile)
     else:
         sys.exit(-1)
 
@@ -51,9 +58,10 @@ def kmallGenerator(file):
 if __name__ == "__main__":
     args = setupParser().parse_args()
     # Use Computer Modern for graphics.
-    #rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
-    #rc('text', usetex=True)
+    rc('font', **{'family': 'sans-serif', 'sans-serif': ['Helvetica']})
+    rc('text', usetex=True)
     for file in args.files:
+        print("Processing " + file + "...")
         # Create variables for prediction error and original samples files.
         peFile = file + ".pe"
         samplesFile = file + ".samples"
@@ -73,5 +81,5 @@ if __name__ == "__main__":
         ax.set_title("Histogram of prediction errors")
         ax.set_xlabel("Sample prediction errors")
         ax.set_ylabel("Number of samples")
-        #plt.savefig("hist.pdf")
-        plt.show()
+        plt.savefig(file + "_hist.pdf")
+        #plt.show()
