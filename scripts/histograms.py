@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 from scipy.stats import entropy
 from matplotlib import rc
-import wave.wave_samples as wave_samples
-import kmall.mwc_samples as mwc_samples
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 import argparse
 import subprocess
 import os
 import sys
-
 
 def setupParser():
     parser = argparse.ArgumentParser(description='Plot histograms.')
@@ -18,58 +16,41 @@ def setupParser():
     parser.add_argument('files', metavar='FILES', type=str, nargs='+', help='List of files to plot a histogram of.')
     return parser
 
-def checkInputFiles(origFile):
-    files = [origFile + ".samples", origFile + ".pe"]
-    for file in files:
-        if not os.path.exists(file) or not os.path.exists(file):
-            createFile = "y" if args.auto else input("File %s does not exist. Do you want to create it [y/N]? " % (file)).lower()
-            # If the original file does not exist or we don't want to generate .pe and .samples, we exit.
-            if not os.path.exists(os.path.splitext(file)[0]) or createFile != "y":
-                sys.exit(-1)
-            # Generate missing .pe or .samples files for the given file and type.
-            if args.type == "wave":
-                waveGenerator(file)
-            elif args.type == "kmall":
-                kmallGenerator(file)
-
 def waveGenerator(file):
-    origFile, extension = os.path.splitext(file)
-    # Generate .pe from input .wav file using a bash pipeline (faster)
-    if extension == ".pe":
-        subprocess.run(["wave/wave_pe.sh", origFile], stdout=subprocess.DEVNULL)
-    # Extract data samples from the .wav file
-    elif extension == ".samples":
-        wave_samples.samplesToFile(origFile)
-    else:
-        sys.exit(-1)
+    # Find PE using a bash pipeline (faster)
+    wave_pe = subprocess.run(["wave/wave_pe.sh", file], capture_output=True)
+    df = pd.DataFrame([int(n) for n in wave_pe.stdout.decode("utf-8").split("\n") if n.strip('-').isnumeric()])
+    # Find original samples (16 bits/sample) using numpy
+    df = pd.concat([df, pd.DataFrame(np.fromfile(file, dtype="int16"))], axis=1)
+    # Set dataframe columns names
+    df.columns = ["PE", "samples"]
+    return df
 
 def kmallGenerator(file):
-    origFile, extension = os.path.splitext(file)
-    # Generate .pe from .kmwcd using a bash pipeline
-    if extension == ".pe":
-        subprocess.run(["kmall/kmall_pe.sh", origFile], stdout=subprocess.DEVNULL)
-    # Make use of the kmall python API to find MWC samples
-    elif extension == ".samples":
-        mwc_samples.samplesToFile(origFile)
-    else:
-        sys.exit(-1)
-
+    # Find PE using a bash pipeline (faster)
+    kmall_pe = subprocess.run(["kmall/kmall_pe.sh", file], capture_output=True)
+    df = pd.DataFrame([int(n) for n in kmall_pe.stdout.decode("utf-8").split("\n") if n.strip('-').isnumeric()])
+    # Find original samples using numpy
+    df = pd.concat([df, pd.DataFrame(np.fromfile(file, dtype="int8"))], axis=1)
+    # Set dataframe columns names
+    df.columns = ["PE", "samples"]
+    return df
 
 if __name__ == "__main__":
     args = setupParser().parse_args()
-    # Use Computer Modern for graphics.
+    # Use a Sans-Serif for figures
     rc('font', **{'family': 'sans-serif', 'sans-serif': ['Helvetica']})
     rc('text', usetex=True)
     for file in args.files:
         print("Processing " + file + "...")
-        # Create variables for prediction error and original samples files.
-        peFile = file + ".pe"
-        samplesFile = file + ".samples"
-        # Check if both files exist.
-        checkInputFiles(file)
-        # Create dataframe with two columns: prediction errors and original samples.
-        df = pd.read_csv(peFile, delimiter = "\n", header=None, names=["PE"])
-        df["samples"] = pd.read_csv(samplesFile, delimiter = "\n", header=None, dtype=int)[0]
+        # Get Pandas DataFrame
+        df = None
+        if args.type == "wave":
+            df = waveGenerator(file)
+        elif args.type == "kmall":
+            df = kmallGenerator(file)
+        else:
+            sys.exit(-1)
         # Calculate prediction error probabilities.
         probs = df["PE"].value_counts()/len(df["PE"])
         # Find theoretical ratio from Shannon entropy.
@@ -81,5 +62,5 @@ if __name__ == "__main__":
         ax.set_title("Histogram of prediction errors")
         ax.set_xlabel("Sample prediction errors")
         ax.set_ylabel("Number of samples")
-        plt.savefig(file + "_hist.pdf")
-        #plt.show()
+        #plt.savefig(file + "_hist.pdf")
+        plt.show()
