@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from scipy.stats import entropy
 from matplotlib import rc
+from io import StringIO
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -19,9 +20,15 @@ def setupParser():
 def waveGenerator(file):
     # Find PE using a bash pipeline (faster)
     wave_pe = subprocess.run(["wave/wave_pe.sh", file], capture_output=True)
-    df = pd.DataFrame([int(n) for n in wave_pe.stdout.decode("utf-8").split("\n") if n.strip('-').isnumeric()])
-    # Find original samples (16 bits/sample) using numpy
-    df = pd.concat([df, pd.DataFrame(np.fromfile(file, dtype="int16"))], axis=1)
+    # Dataframe for PE
+    df_pe = pd.read_csv(StringIO(wave_pe.stdout.decode('utf-8')), header=None, names=["PE"], dtype="int16")
+    # Dataframe for original samples
+    df_samples = pd.DataFrame(np.fromfile(file, dtype="int16"), columns=["samples"], dtype="int16")
+    # Free memory asap
+    l = [df_pe, df_samples]
+    del df_pe, df_samples
+    # Dataframe with PE and samples
+    df = pd.concat(l, axis=1)
     # Set dataframe columns names
     df.columns = ["PE", "samples"]
     return df
@@ -29,9 +36,15 @@ def waveGenerator(file):
 def kmallGenerator(file):
     # Find PE using a bash pipeline (faster)
     kmall_pe = subprocess.run(["kmall/kmall_pe.sh", file], capture_output=True)
-    df = pd.DataFrame([int(n) for n in kmall_pe.stdout.decode("utf-8").split("\n") if n.strip('-').isnumeric()])
-    # Find original samples using numpy
-    df = pd.concat([df, pd.DataFrame(np.fromfile(file, dtype="int8"))], axis=1)
+    # Dataframe for PE
+    df_pe = pd.read_csv(StringIO(kmall_pe.stdout.decode('utf-8')), header=None, names=["PE"], dtype="int8")
+    # Dataframe for original samples
+    df_samples = pd.DataFrame(np.fromfile(file, dtype="int8"), columns=["samples"], dtype="int8")
+    # Free memory asap
+    l = [df_pe, df_samples]
+    del df_pe, df_samples
+    # Dataframe with PE and samples
+    df = pd.concat(l, axis=1)
     # Set dataframe columns names
     df.columns = ["PE", "samples"]
     return df
@@ -39,7 +52,7 @@ def kmallGenerator(file):
 if __name__ == "__main__":
     args = setupParser().parse_args()
     # Use a Sans-Serif for figures
-    rc('font', **{'family': 'sans-serif', 'sans-serif': ['Helvetica']})
+    rc('font', **{'family': 'sans-serif', 'sans-serif': ['Libertinus Sans']})
     rc('text', usetex=True)
     for file in args.files:
         print("Processing " + file + "...")
@@ -64,3 +77,4 @@ if __name__ == "__main__":
         ax.set_ylabel("Number of samples")
         #plt.savefig(file + "_hist.pdf")
         plt.show()
+        del df

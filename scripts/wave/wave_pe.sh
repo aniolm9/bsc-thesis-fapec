@@ -2,7 +2,6 @@
 
 for FILE in "$@"
 do
-    echo "Processing $FILE..."
     ORDER=4
     PERLEN=8192
     : '
