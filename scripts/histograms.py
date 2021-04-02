@@ -66,6 +66,7 @@ if __name__ == "__main__":
         ax.set_title("Histogram of prediction errors")
         ax.set_xlabel("Sample prediction errors")
         ax.set_ylabel("Number of samples")
+        ax.legend(["Original samples", "Prediction Errors"])
+        plt.savefig(file + "_hist.pdf")
         plt.show()
-        #plt.savefig(file + "_hist.pdf")
         del df_samples, df_pe
