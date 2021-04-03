@@ -52,9 +52,9 @@ if __name__ == "__main__":
             df_samples, df_pe = kmallGenerator(file)
         else:
             sys.exit(-1)
-        # Calculate prediction error probabilities.
+        # Calculate prediction error probabilities
         probs = df_pe["PE"].value_counts() / len(df_pe["PE"])
-        # Find theoretical ratio from Shannon entropy.
+        # Find theoretical ratio from Shannon entropy
         bitsPerSample = 16 if args.type == "wave" else 8
         ratio = bitsPerSample/entropy(probs, base=2)
         print("Theoretical ratio \t %.3f" % (ratio))
