@@ -40,7 +40,8 @@ def kmallGenerator(file):
 if __name__ == "__main__":
     args = setupParser().parse_args()
     # Use a Sans-Serif for figures
-    rc('font', **{'family': 'sans-serif', 'sans-serif': ['Libertinus Sans']})
+    fontProperties = {'family': 'sans-serif', 'sans-serif': ['Latin Modern Sans']}
+    rc('font', **fontProperties)
     rc('text', usetex=True)
     for file in args.files:
         print("Processing " + file + "...")
@@ -60,13 +61,14 @@ if __name__ == "__main__":
         print("Theoretical ratio \t %.3f" % (ratio))
         # Plot histogram
         n_bins = 400 if args.type == "wave" else 255
-        ax = plt.axes()
+        fig, ax = plt.subplots()
+        fig.suptitle("Comparison of original and prediction error samples distributions")
         ax.hist(df_samples, bins=n_bins, log=True, alpha=0.5)
         ax.hist(df_pe, bins=n_bins, log=True, alpha=0.5)
-        ax.set_title("Comparison of original and prediction errors samples distribution")
+        ax.set_title("File: %s" % (os.path.basename(file)), fontsize=9)
         ax.set_xlabel("Sample value")
         ax.set_ylabel("Number of samples")
-        ax.legend(["Original samples", "Prediction Errors"])
+        ax.legend(["Original samples", "Prediction errors"])
         plt.savefig(file + "_hist.pdf")
         plt.show()
         del df_samples, df_pe
