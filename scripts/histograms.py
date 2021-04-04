@@ -38,34 +38,11 @@ def kmallGenerator(file):
     # Return both dataframes
     return df_samples, df_pe
 
-def tex_escape(text):
-    """
-        :param text: a plain text message
-        :return: the message escaped to appear correctly in LaTeX
-    """
-    conv = {
-        '&': r'\&',
-        '%': r'\%',
-        '$': r'\$',
-        '#': r'\#',
-        '_': r'\_',
-        '{': r'\{',
-        '}': r'\}',
-        '~': r'\textasciitilde{}',
-        '^': r'\^{}',
-        '\\': r'\textbackslash{}',
-        '<': r'\textless{}',
-        '>': r'\textgreater{}',
-    }
-    regex = re.compile('|'.join(re.escape(str(key)) for key in sorted(conv.keys(), key = lambda item: - len(item))))
-    return regex.sub(lambda match: conv[match.group()], text)
-
 if __name__ == "__main__":
     args = setupParser().parse_args()
     # Use a Sans-Serif for figures
     fontProperties = {'family': 'sans-serif', 'sans-serif': ['Latin Modern Sans']}
     rc('font', **fontProperties)
-    rc('text', usetex=True)
     for file in args.files:
         print("Processing " + file + "...")
         # Get Pandas DataFrame
@@ -88,7 +65,7 @@ if __name__ == "__main__":
         fig.suptitle("Comparison of original and prediction error samples distributions")
         ax.hist(df_samples, bins=n_bins, log=True, alpha=0.5)
         ax.hist(df_pe, bins=n_bins, log=True, alpha=0.5)
-        ax.set_title("File: %s" % (tex_escape(os.path.basename(file))), fontsize=9)
+        ax.set_title("File: %s" % (os.path.basename(file)), fontsize=9)
         ax.set_xlabel("Sample value")
         ax.set_ylabel("Number of samples")
         ax.legend(["Original samples", "Prediction errors"])
