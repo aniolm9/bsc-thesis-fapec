@@ -59,15 +59,25 @@ if __name__ == "__main__":
         bitsPerSample = 16 if args.type == "wave" else 8
         ratio = bitsPerSample/entropy(probs, base=2)
         print("Theoretical ratio \t %.3f" % (ratio))
+        # Find 0.05, 0.5 and 0.95 quantiles
+        df_quantiles = df_pe.quantile([0.05, 0.5, 0.95])
         # Plot histogram
         n_bins = 400 if args.type == "wave" else 255
         fig, ax = plt.subplots()
         fig.suptitle("Comparison of original and prediction error samples distributions")
-        ax.hist(df_samples, bins=n_bins, log=True, alpha=0.5)
-        ax.hist(df_pe, bins=n_bins, log=True, alpha=0.5)
+        ax.hist(df_samples, bins=n_bins, log=True, alpha=0.5, label="Original samples")
+        ax.hist(df_pe, bins=n_bins, log=True, alpha=0.5, label="Prediction errors")
+        # Plot quantiles
+        colors = ["r", "g", "b"]
+        for i, rows in enumerate(df_quantiles.iterrows()):
+            index, row = rows
+            ax.axvline(row["PE"], color=colors[i], linewidth=1, label="$P_{" + str(int(index*100)) + "}$")
+        # Set figure title and axis labels
         ax.set_title("File: %s" % (os.path.basename(file)), fontsize=9)
         ax.set_xlabel("Sample value")
         ax.set_ylabel("Number of samples")
-        ax.legend(["Original samples", "Prediction errors"])
+        ax.legend()
+        # Save figure to vectorial graphics pdf
         plt.savefig(file + "_hist.pdf")
+        # Free memory
         del df_samples, df_pe
