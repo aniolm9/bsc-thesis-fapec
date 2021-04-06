@@ -20,7 +20,8 @@ def setupParser():
 
 def waveGenerator(file):
     # Find PE using a bash pipeline (faster)
-    wave_pe = subprocess.run(["wave/wave_pe.sh", file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "wave/wave_pe.sh")
+    wave_pe = subprocess.run([script_path, file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # Dataframe for PE
     df_pe = pd.read_csv(StringIO(wave_pe.stdout.decode('utf-8')), header=None, names=["PE"], dtype="int32")
     # Dataframe for original samples
@@ -30,7 +31,8 @@ def waveGenerator(file):
 
 def kmallGenerator(file):
     # Find PE using a bash pipeline (faster)
-    kmall_pe = subprocess.run(["kmall/kmall_pe.sh", file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "kmall/kmall_pe.sh")
+    kmall_pe = subprocess.run([script_path, file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # Dataframe for PE
     df_pe = pd.read_csv(StringIO(kmall_pe.stdout.decode('utf-8')), header=None, names=["PE"], dtype="int16")
     # Dataframe for original samples
