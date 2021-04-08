@@ -58,19 +58,23 @@ if __name__ == "__main__":
         else:
             sys.exit(-1)
         # Calculate prediction error probabilities
-        probs = df_pe["PE"].value_counts() / len(df_pe["PE"])
+        samples_value_counts = df_samples["samples"].value_counts()
+        pe_value_counts = df_pe["PE"].value_counts()
+        probs = pe_value_counts / len(df_pe["PE"])
         # Find theoretical ratio from Shannon entropy
         bitsPerSample = 16 if args.type == "wave" else 8
         ratio = round(bitsPerSample/entropy(probs, base=2), 3)
-        df_ratios.loc[0 if pd.isnull(df_ratios.index.max()) else df_ratios.index.max() + 1] = [file, ratio]
+        df_ratios.loc[0 if pd.isnull(df_ratios.index.max()) else df_ratios.index.max() + 1] = [os.path.basename(file), ratio]
         # Find 0.05, 0.5 and 0.95 quantiles
         df_quantiles = df_pe.quantile([0.05, 0.5, 0.95])
         # Plot histogram
         n_bins = 400 if args.type == "wave" else 255
+        bins_samples = min(len(samples_value_counts), n_bins)
+        bins_pe = min(len(pe_value_counts), n_bins)
         fig, ax = plt.subplots()
         fig.suptitle("Comparison of original and prediction error samples distributions")
-        ax.hist(df_samples, bins=n_bins, log=True, alpha=0.5, label="Original samples")
-        ax.hist(df_pe, bins=n_bins, log=True, alpha=0.5, label="Prediction errors")
+        ax.hist(df_samples, bins=bins_samples, log=True, alpha=0.5, label="Original samples")
+        ax.hist(df_pe, bins=bins_pe, log=True, alpha=0.5, label="Prediction errors")
         # Plot quantiles
         colors = ["r", "g", "b"]
         for i, rows in enumerate(df_quantiles.iterrows()):
