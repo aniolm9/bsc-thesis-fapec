@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from scipy.stats import entropy
 from matplotlib import rc
+from datetime import datetime
 from io import StringIO
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -14,7 +15,6 @@ import re
 def setupParser():
     parser = argparse.ArgumentParser(description='Plot histograms.')
     parser.add_argument('-t', '--type', type=str, choices=['wave', 'kmall'], help='Data structure type to process.', required=True)
-    parser.add_argument('-a', '--auto', dest="auto", action='store_true', help='Automatically generate missing files, if possible.', required=False)
     parser.add_argument('files', metavar='FILES', type=str, nargs='+', help='List of files to plot a histogram of.')
     return parser
 
@@ -45,6 +45,8 @@ if __name__ == "__main__":
     # Use a Sans-Serif for figures
     fontProperties = {'family': 'sans-serif', 'sans-serif': ['Latin Modern Sans']}
     rc('font', **fontProperties)
+    # Dataframe for theoretical ratios
+    df_ratios = pd.DataFrame(columns=["file", "ratio_fapec_theo"])
     for file in args.files:
         print("Processing " + file + "...")
         # Get Pandas DataFrame
@@ -59,8 +61,8 @@ if __name__ == "__main__":
         probs = df_pe["PE"].value_counts() / len(df_pe["PE"])
         # Find theoretical ratio from Shannon entropy
         bitsPerSample = 16 if args.type == "wave" else 8
-        ratio = bitsPerSample/entropy(probs, base=2)
-        print("Theoretical ratio \t %.3f" % (ratio))
+        ratio = round(bitsPerSample/entropy(probs, base=2), 3)
+        df_ratios.loc[0 if pd.isnull(df_ratios.index.max()) else df_ratios.index.max() + 1] = [file, ratio]
         # Find 0.05, 0.5 and 0.95 quantiles
         df_quantiles = df_pe.quantile([0.05, 0.5, 0.95])
         # Plot histogram
@@ -82,4 +84,7 @@ if __name__ == "__main__":
         # Save figure to vectorial graphics pdf
         plt.savefig(file + "_hist.pdf")
         # Free memory
+        plt.close()
         del df_samples, df_pe
+    # Save ratios dataframe to a CSV file
+    df_ratios.to_csv(datetime.now().isoformat() + "-" + "ratios_" + args.type  + ".csv", index=False)
