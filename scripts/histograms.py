@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 from scipy.stats import entropy
-from matplotlib import rc
 from datetime import datetime
 from io import StringIO
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import pandas as pd
 import numpy as np
 import argparse
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     args = setupParser().parse_args()
     # Use a Sans-Serif for figures
     fontProperties = {'family': 'sans-serif', 'sans-serif': ['Latin Modern Sans']}
-    rc('font', **fontProperties)
+    mpl.rc('font', **fontProperties)
     # Dataframe for theoretical ratios
     df_ratios = pd.DataFrame(columns=["file", "ratio_fapec_theo"])
     for file in args.files:
@@ -68,9 +68,9 @@ if __name__ == "__main__":
         # Find 0.05, 0.5 and 0.95 quantiles
         df_quantiles = df_pe.quantile([0.05, 0.5, 0.95])
         # Plot histogram
-        n_bins = 400 if args.type == "wave" else 255
-        bins_samples = min(len(samples_value_counts), n_bins)
-        bins_pe = min(len(pe_value_counts), n_bins)
+        binwidth = max(int(len(samples_value_counts)/500), 30 if args.type == "wave" else 3)
+        bins_samples = np.arange(min(df_samples["samples"]), max(df_samples["samples"]) + binwidth, binwidth)
+        bins_pe = np.arange(min(df_pe["PE"]), max(df_pe["PE"]) + binwidth, binwidth)
         fig, ax = plt.subplots()
         fig.suptitle("Comparison of original and prediction error samples distributions")
         ax.hist(df_samples, bins=bins_samples, log=True, alpha=0.5, label="Original samples")
@@ -87,8 +87,32 @@ if __name__ == "__main__":
         ax.legend()
         # Save figure to vectorial graphics pdf
         plt.savefig(file + "_hist.pdf")
-        # Free memory
+        # Free hist memory
         plt.close()
+        # Cumulative hists
+        fig, ax = plt.subplots()
+        fig.suptitle("Cumulative distributions of original and prediction error samples")
+        xmax = max(df_samples["samples"].max(), df_pe["PE"].max())
+        xmin = min(df_samples["samples"].min(), df_pe["PE"].min())
+        # Samples cumulative hist
+        count, division = np.histogram(df_samples, bins=bins_samples)
+        cumulative = np.cumsum(count)
+        cumulative = np.append(cumulative, cumulative[len(cumulative)-1])
+        ax.plot(np.append(bins_samples[:-1], xmax), cumulative, label="Original samples")
+        # PE cumulative hist
+        count, division = np.histogram(df_pe, bins=bins_pe)
+        cumulative = np.cumsum(count)
+        cumulative = np.insert(np.append(cumulative, cumulative[len(cumulative)-1]), 0, cumulative[0])
+        ax.plot(np.insert(np.append(bins_pe[:-1], xmax), 0, xmin), cumulative, label="Prediction errors")
+        # Title and axis labels
+        ax.set_title("File: %s" % (os.path.basename(file)), fontsize=9)
+        ax.set_xlabel("Sample value")
+        ax.set_ylabel("Number of samples")
+        ax.grid()
+        ax.legend()
+        # Save figure to vectorial graphics pdf
+        plt.savefig(file + "_hist_cum.pdf")
+        # Free dataframes memory
         del df_samples, df_pe
     # Save ratios dataframe to a CSV file
     df_ratios.to_csv(datetime.now().isoformat() + "-" + "ratios_" + args.type  + ".csv", index=False)
