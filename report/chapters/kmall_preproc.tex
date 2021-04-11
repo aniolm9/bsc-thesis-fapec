@@ -119,9 +119,15 @@ The mixture of data types in the same file makes it difficult for standard compr
 \caption{Multibeam datagrams of the KMALL format.}
 \end{table}
 
-As we will see in the next section, we are specially interested in MWC datagrams, which have the following structure:
+It is important to notice that even though .kmall files can contain all the above datagrams, usually water column data is logged in a separate file with extension .kmwcd, as this kind of echosounders are not used to analyze the water column but for bathymetry. In other words, MWC datagrams will be placed in .kmwcd files instead of .kmall files, but the decoding process is the same for both extensions.
 
-\begin{figure}[H]
+As we will see in the next section, we are specially interested in \acrshort{mwc} datagrams. Therefore, before continuing, we will describe them properly.
+
+\subsection{\acrshort{mwc} datagrams}
+
+\acrshort{mwc} datagrams are structured as follows:
+
+\begin{figure}[h!]
 	\begin{center}
 		\scalebox{.565}{\input{images/mwc_datagram.tex}}
 	\end{center}
@@ -140,11 +146,9 @@ Where:
 Caldria comentar més els camps del datagrama o així està bé?
 \end{comment}
 
-It is important to notice that even though .kmall files can contain all the above datagrams, usually water column data is logged in a separate file with extension .kmwcd, as usually this kind of echosounders are not used to analyze the water column but for bathymetry. In other words, MWC datagrams will be placed in .kmwcd files instead of .kmall files, but the decoding process is the same for both extensions.
-
 \section{Design}
 \begin{comment}
-Potser hauria de fer subseccions? "Datagrams to compress", "Criteria", etc.
+Potser hauria de fer subseccions? "Requirements", "Datagrams to compress", "Criteria", etc.
 \end{comment}
 
 In the previous section we introduced the KMALL data format. Namely, we saw that it is a mixture of different data types, so we have to decide which ones should be compressed and which algorithm will be applied.
