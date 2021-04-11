@@ -95,15 +95,15 @@ if __name__ == "__main__":
         xmax = max(df_samples["samples"].max(), df_pe["PE"].max())
         xmin = min(df_samples["samples"].min(), df_pe["PE"].min())
         # Samples cumulative hist
-        count, division = np.histogram(df_samples, bins=bins_samples)
+        count, division = np.histogram(df_samples, bins=len(samples_value_counts))
         cumulative = np.cumsum(count)
-        cumulative = np.append(cumulative, cumulative[len(cumulative)-1])
-        ax.plot(np.append(bins_samples[:-1], xmax), cumulative, label="Original samples")
+        cumulative = np.insert(np.append(cumulative, cumulative[len(cumulative)-1]), 0, 0)
+        ax.step(np.insert(np.append(division[:-1], xmax), 0, xmin), cumulative, label="Original samples", where="post")
         # PE cumulative hist
-        count, division = np.histogram(df_pe, bins=bins_pe)
+        count, division = np.histogram(df_pe, bins=len(pe_value_counts))
         cumulative = np.cumsum(count)
-        cumulative = np.insert(np.append(cumulative, cumulative[len(cumulative)-1]), 0, cumulative[0])
-        ax.plot(np.insert(np.append(bins_pe[:-1], xmax), 0, xmin), cumulative, label="Prediction errors")
+        cumulative = np.insert(np.append(cumulative, cumulative[len(cumulative)-1]), 0, 0)
+        ax.step(np.insert(np.append(division[:-1], xmax), 0, xmin), cumulative, label="Prediction errors", where="post")
         # Title and axis labels
         ax.set_title("File: %s" % (os.path.basename(file)), fontsize=9)
         ax.set_xlabel("Sample value")
@@ -112,7 +112,8 @@ if __name__ == "__main__":
         ax.legend()
         # Save figure to vectorial graphics pdf
         plt.savefig(file + "_hist_cum.pdf")
-        # Free dataframes memory
+        # Free memory
+        plt.close()
         del df_samples, df_pe
     # Save ratios dataframe to a CSV file
     df_ratios.to_csv(datetime.now().isoformat() + "-" + "ratios_" + args.type  + ".csv", index=False)
