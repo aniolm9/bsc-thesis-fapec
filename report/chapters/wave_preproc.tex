@@ -21,7 +21,7 @@ Between the vast amount of remote sensing techniques we find Radio Occultation \
 	\label{fig:ro_schematic}
 \end{figure}
 
-This chapter is part of a DAPCOM Data Services strategic project focused on developing a new \acrshort*{fapec} stage intended to compress space RF data collected by nanosatellites. The algorithm will be tested over \acrshort{iq} sample files and other data structured in two channels, for instance, stereo audio.
+This chapter is part of a DAPCOM Data Services strategic project focused on developing a new \acrshort{fapec} stage intended to compress \acrshort{ro} data collected by nanosatellites. The algorithm will be tested over \acrshort{iq} sample files and other formats structured in two channels, for instance, stereo audio. The proposed solution will be compared with the well-known \acrshort{flac} coding technique.
 
 \section{Introduction to IQ data}
 \begin{comment}
@@ -51,7 +51,7 @@ Hence, the data to be compressed are the discrete time samples of the signals $i
 
 For further information on \acrshort{iq} signals the reader may check references \parencite{IQintro}, \parencite{carlson2010communication} and \parencite{ICOM}.
 
-To conclude this section, we shall provide a qualitative justification on why we can use audio files to test \textit{Wave} and why we can compare it with the \acrshort{flac} standard.
+To conclude this section, we shall provide a justification on why we can use both \acrshort{iq} and audio files to test \textit{Wave} and why we can compare it with the \acrshort{flac} standard.
 
 \begin{comment}
 Bàsicament les dades IQ i l'àudio stereo són sèries temporals de dos canals. El FLAC utilitza codis de Rice-Golomb que funcionen bé en sèrie temporals (veure article original de Golomb) i FAPEC està inspirat en ells (veure article d'en Jordi). També, com a justificació inversa, hi ha el paper dels japonesos que comprimeixen IQ amb FLAC.
