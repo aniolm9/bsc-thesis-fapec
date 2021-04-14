@@ -4,15 +4,15 @@ Entropy coding is a lossless data compression scheme based on symbols probabilit
 Giving an extensive theoretical explanation of Entropy coding would require an entire thesis. Therefore, in this chapter we will define the most basic equations in Information Theory and we will also describe some well-known coding algorithms that will be relevant later. The interested reader should see reference \parencite{cover}.
 
 \begin{figure}[h!]
-	\begin{center}
-		\begin{tabular}{ @{} c @{} }
-			\includegraphics[scale=0.27]{images/Claude_Shannon_1776.jpg}\\
-			\imagesource{DobriZheglov, CC BY-SA 4.0, via Wikimedia Commons.}
-		\end{tabular}
-	\end{center}
-	\vspace*{-0.7em}
-	\caption{Picture of Claude E. Shannon staring at a mouse.}
-	\label{fig:shannon}
+\begin{center}
+	\begin{tabular}{ @{} c @{} }
+		\includegraphics[scale=0.27]{images/Claude_Shannon_1776.jpg}\\
+		\imagesource{DobriZheglov, CC BY-SA 4.0, via Wikimedia Commons.}
+	\end{tabular}
+\end{center}
+\vspace*{-0.7em}
+\caption{Picture of Claude E. Shannon staring at a mouse.}
+\label{fig:shannon}
 \end{figure}
 
 \section{Information theory basics}
@@ -32,18 +32,16 @@ This result represents the average level of information (or uncertainty) of the 
 Shannon's source coding theorem establishes the theoretical limits to data compression, and a different meaning to Shannon entropy defined above. Formally, it states:
 
 \begin{theorem}
-Let $L_n^*$ be the expected codeword length per symbol of an optimal n-th order lossless data compression code (in bits/symbol). Then
+Let $L_n^*$ be the expected codeword length per symbol of an optimal n-th order lossless data compression code (in bits/symbol). Let $(X_1, X_2, \dots, X_n )$ be a sequence of symbols from a stochastic process $X$. Then,
 
 \begin{equation}
-	H(X) \leq L_n^* < H(X) + \frac{1}{n}
+	\frac{H(X_1, X_2, \dots, X_n )}{n} \leq L_n^* < \frac{H(X_1, X_2, \dots, X_n )}{n} + \frac{1}{n}
 \end{equation}
 
-If we took the limit when $n \to \infty$:
+If $X$ is a stationary stochastic process,
 \begin{equation}
 	\lim_{n \to \infty} L_n^* = H(X)
 \end{equation}
-
-Notice that the previous limit only exists if the source is stationary.
 \end{theorem}
 
 This theorem reveals a new interpretation of Shannon entropy: it is the average number of bits per symbol required to encode it.
