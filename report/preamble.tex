@@ -11,8 +11,6 @@
 % "page" posa la pàgina "Appendices" abans del primer annex.
 \usepackage[]{appendix}
 
-\newtheorem{theorem}{Theorem}
-
 % Acronyms
 \usepackage[toc,acronym]{glossaries}
 \makeglossaries
@@ -24,6 +22,9 @@
 \usepackage{unicode-math}
 %\setmainfont{Libertinus Serif}
 %\setmathfont{Libertinus Math}
+
+\newtheorem{theorem}{Theorem}
+\numberwithin{theorem}{chapter}
 
 % Use biblatex to manage bibliography.
 \usepackage[

@@ -37,6 +37,21 @@ The size of a .kmall file is not fixed. Actually, the echosounder operator decid
 
 The mixture of data types in the same file makes it difficult for standard compressors like \textit{Zip} to identify data statistics, therefore they don't perform as good as one could expect. In order to improve the compression ratio, we are interested in knowing how are those datagrams placed inside the file and how to identify them. From Kongsberg KMALL documentation, we know that all datagrams start with a generic header that contains datagram size in bytes and a 4-character identifier. In the current version (410224 Revision H), there exist the following datagram types:
 
+\begin{table}[H]
+\footnotesize
+\begin{center}
+\resizebox{\textwidth}{!}{
+	\begin{tabular}{|l|l|l|}
+		\hline
+		\rowcolor[HTML]{9698ED} 
+		\multicolumn{1}{|c|}{\cellcolor[HTML]{9698ED}Type code} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Struct name} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Description} \\ \hline
+		\#CPO                                                   & EMdgmCPO\_def                                            & Compatibility (C) data for position (PO).                \\ \hline
+		\#CHE                                                   & EMdgmCHE\_def                                            & Compatibility (C) data for heave (HE).                   \\ \hline
+\end{tabular}}
+\end{center}
+\caption{Compatibility datagrams of the KMALL format.}
+\end{table}
+
 \begin{table}[h!]
 \footnotesize
 \begin{center}
@@ -75,22 +90,7 @@ The mixture of data types in the same file makes it difficult for standard compr
 \caption{External sensor output datagrams of the KMALL format.}
 \end{table}
 
-\begin{table}[H]
-\footnotesize
-\begin{center}
-\resizebox{\textwidth}{!}{
-\begin{tabular}{|l|l|l|}
-	\hline
-	\rowcolor[HTML]{9698ED} 
-	\multicolumn{1}{|c|}{\cellcolor[HTML]{9698ED}Type code} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Struct name} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Description} \\ \hline
-	\#CPO                                                   & EMdgmCPO\_def                                            & Compatibility (C) data for position (PO).                \\ \hline
-	\#CHE                                                   & EMdgmCHE\_def                                            & Compatibility (C) data for heave (HE).                   \\ \hline
-\end{tabular}}
-\end{center}
-\caption{Compatibility datagrams of the KMALL format.}
-\end{table}
-
-\begin{table}[H]
+\begin{table}[h!]
 \footnotesize
 \begin{center}
 \resizebox{\textwidth}{!}{
