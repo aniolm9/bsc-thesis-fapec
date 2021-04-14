@@ -31,9 +31,20 @@ This result represents the average level of information (or uncertainty) of the 
 
 Shannon's source coding theorem establishes the theoretical limits to data compression, and a different meaning to Shannon entropy defined above. Formally, it states:
 
-\begin{comment}
-TEOREMA (sense demo)
-\end{comment}
+\begin{theorem}
+Let $L_n^*$ be the expected codeword length per symbol of an optimal n-th order lossless data compression code (in bits/symbol). Then
+
+\begin{equation}
+	H(X) \leq L_n^* < H(X) + \frac{1}{n}
+\end{equation}
+
+If we took the limit when $n \to \infty$:
+\begin{equation}
+	\lim_{n \to \infty} L_n^* = H(X)
+\end{equation}
+
+Notice that the previous limit only exists if the source is stationary.
+\end{theorem}
 
 This theorem reveals a new interpretation of Shannon entropy: it is the average number of bits per symbol required to encode it.
 
