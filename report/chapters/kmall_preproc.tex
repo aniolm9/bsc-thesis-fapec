@@ -38,25 +38,22 @@ The size of a .kmall file is not fixed. Actually, the echosounder operator decid
 The mixture of data types in the same file makes it difficult for standard compressors like \textit{Zip} to identify data statistics, therefore they don't perform as good as one could expect. In order to improve the compression ratio, we are interested in knowing how are those datagrams placed inside the file and how to identify them. From Kongsberg KMALL documentation, we know that all datagrams start with a generic header that contains datagram size in bytes and a 4-character identifier. In the current version (410224 Revision H), there exist the following datagram types:
 
 \begin{table}[H]
-\footnotesize
-\begin{center}
-\resizebox{\textwidth}{!}{
-	\begin{tabular}{|l|l|l|}
+\normalsize
+\centering
+\begin{tabular}{|p{2cm}|p{3.5cm}|p{7.22cm}|}
 		\hline
 		\rowcolor[HTML]{9698ED} 
 		\multicolumn{1}{|c|}{\cellcolor[HTML]{9698ED}Type code} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Struct name} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Description} \\ \hline
 		\#CPO                                                   & EMdgmCPO\_def                                            & Compatibility (C) data for position (PO).                \\ \hline
 		\#CHE                                                   & EMdgmCHE\_def                                            & Compatibility (C) data for heave (HE).                   \\ \hline
-\end{tabular}}
-\end{center}
+\end{tabular}
 \caption{Compatibility datagrams of the KMALL format.}
 \end{table}
 
 \begin{table}[h!]
-\footnotesize
-\begin{center}
-\resizebox{\textwidth}{!}{
-\begin{tabular}{|l|l|l|}
+\normalsize
+\centering
+\begin{tabular}{|p{2cm}|p{3.5cm}|p{7.22cm}|}
 	\hline
 	\rowcolor[HTML]{9698ED} 
 	\multicolumn{1}{|c|}{\cellcolor[HTML]{9698ED}Type code} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Struct name} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Description} \\ \hline
@@ -65,16 +62,14 @@ The mixture of data types in the same file makes it difficult for standard compr
 	\#IBE                                                   & EMdgmIB\_def                                             & Built in test (BIST) error report.                       \\ \hline
 	\#IBR                                                   & EMdgmIB\_def                                             & Built in test (BIST) reply.                              \\ \hline
 	\#IBS                                                   & EMdgmIB\_def                                             & Built in test (BIST) short reply.                        \\ \hline
-\end{tabular}}
-\end{center}
+\end{tabular}
 \caption{Installation and runtime datagrams of the KMALL format.}
 \end{table}
 
 \begin{table}[h!]
-\footnotesize
-\begin{center}
-\resizebox{\textwidth}{!}{
-\begin{tabular}{|l|l|l|}
+\normalsize
+\centering
+\begin{tabular}{|p{2cm}|p{3.5cm}|p{7.22cm}|}
 	\hline
 	\rowcolor[HTML]{9698ED} 
 	\multicolumn{1}{|c|}{\cellcolor[HTML]{9698ED}Type code} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Struct name} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Description}                                              \\ \hline
@@ -85,43 +80,38 @@ The mixture of data types in the same file makes it difficult for standard compr
 	\#SCL                                                   & EMdgmSCL\_def                                            & Sensor (S) data from clock (CL).                                                                      \\ \hline
 	\#SDE                                                   & EMdgmSDE\_def                                            & Sensor (S) data from depth (DE) sensor.                                                               \\ \hline
 	\#SHI                                                   & EMdgmSHI\_def                                            & Sensor (S) data for height (HI).                                                                      \\ \hline
-\end{tabular}}
-\end{center}
+\end{tabular}
 \caption{External sensor output datagrams of the KMALL format.}
 \end{table}
 
 \begin{table}[h!]
-\footnotesize
-\begin{center}
-\resizebox{\textwidth}{!}{
-\begin{tabular}{|l|l|l|}
+\normalsize
+\centering
+\begin{tabular}{|p{2cm}|p{3.5cm}|p{7.22cm}|}
 	\hline
 	\rowcolor[HTML]{9698ED}
 	\multicolumn{1}{|c|}{\cellcolor[HTML]{9698ED}Type code} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Struct name} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Description} \\ \hline
-	\#FCF                                                   & EMdgmFCF\_def                                            & Backscatter calibration (C) file (F) datagram.           \\ \hline
-\end{tabular}}
-\end{center}
+	\#FCF                                                   & EMdgmFCF\_def                                            & \begin{tabular}[c]{@{}l@{}}Backscatter calibration (C) file (F) \\ datagram.\end{tabular}   \\ \hline
+\end{tabular}
 \caption{File datagrams of the KMALL format.}
 \end{table}
 
 \begin{table}[h!]
-\footnotesize
-\begin{center}
-\resizebox{\textwidth}{!}{
-	\begin{tabular}{|l|l|l|}
+\normalsize
+\centering
+\begin{tabular}{|p{2cm}|p{3.5cm}|p{7.22cm}|}
 		\hline
 		\rowcolor[HTML]{9698ED} 
 		\multicolumn{1}{|c|}{\cellcolor[HTML]{9698ED}Type code} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Struct name} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}Description}                                      \\ \hline
 		\#MRZ                                                   & EMdgmMRZ\_def                                            & \begin{tabular}[c]{@{}l@{}}Multibeam (M) raw range (R)\\ and depth (Z) datagram.\end{tabular} \\ \hline
 		\#MWC                                                   & EMdgmMWC\_def                                            & \begin{tabular}[c]{@{}l@{}}Multibeam (M) water (W)\\ column (C) datagram.\end{tabular}        \\ \hline
-\end{tabular}}
-\end{center}
+\end{tabular}
 \caption{Multibeam datagrams of the KMALL format.}
 \end{table}
 
-It is important to notice that even though .kmall files can contain all the above datagrams, usually water column data is logged in a separate file with extension .kmwcd, as this kind of echosounders are not used to analyze the water column but for bathymetry. In other words, MWC datagrams will be placed in .kmwcd files instead of .kmall files, but the decoding process is the same for both extensions.
+It is important to notice that .kmall files can contain all the above datagrams. However, we may usually find that water column data is logged in a separate file with extension .kmwcd. In other words, MWC datagrams will be stored in .kmwcd files instead of .kmall files, but the decoding process is the same for both extensions as the data format is exactly the same.
 
-As we will see in the next section, we are specially interested in \acrshort{mwc} datagrams. Therefore, before continuing, we will describe them properly.
+As we will see in the next section, our main interest in this chapter will lie in \acrshort{mwc} datagrams. Therefore, before continuing, an appropriate description of them shall be given.
 
 \subsection{\acrshort{mwc} datagrams}
 
@@ -139,12 +129,10 @@ Where:
 \begin{description}
 	\item $N_B \equiv$ Number of beams in ping. It is stored as a 16-bit integer in \textit{RxInfo}.
 	\item $N_S \equiv$ Number of samples in beam. It is stored as a 16-bit integer in \textit{BeamData}.
-	\item $phaseFlag \equiv$ Flag that indicates if there is phase information after amplitude samples. It may be 0 (no phase information), 1 (low resolution) or 2 (high resolution). It is stored as an 8-bit integer in \textit{RxInfo}.
+	\item $phaseFlag \equiv$ Flag that indicates if there is phase information after amplitude samples. It may be 0 (no phase information), 1 (8-bit resolution) or 2 (16-bit resolution). It is stored as an 8-bit integer in \textit{RxInfo}.
 \end{description}
 
-\begin{comment}
-Caldria comentar més els camps del datagrama o així està bé?
-\end{comment}
+In the present work we will only use information contained in \textit{Header} such as the datagram size, in \textit{RxInfo} and in \textit{BeamData}. For further details, the interested reader may check reference \parencite{KMALL}.
 
 \section{Design}
 \begin{comment}
