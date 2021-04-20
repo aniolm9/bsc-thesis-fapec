@@ -1,18 +1,13 @@
 \chapter{Wave Stage}
-\begin{comment}
-Aquesta etapa decorreladora està enfocada a dades amb 2 canals (àudio stereo, I/Q). El desenvolupament dins de l'empresa està especialment enfocat per un client, però per motius de confidencialitat inclouré una versió genèrica que es podrà comparar amb el FLAC. L'etapa fa servir LPC i posteriorment envia els errors de predicció al codificador entròpic.
 
-L'algoritme és el "típic" per LPC i la resolució del sistema lineal resultant del predictor lineal \parencite{PSAVC} es fa amb Levinson-Durbin \parencite{LevinsonDurbin}, que aprofitant l'estructura Toeplitz redueix la complexitat de $O(n^3)$ a $O(n^2)$.
-\end{comment}
+Earth Observation techniques have been suffering a growth both in terms of quality and quantity, which means that the amount of data produced have also increased drastically. In addition, remote sensing is usually carried out by satellites with low storage capacity and limited bandwidth \parencite{SANDAU20101}, so clearly data compression is key in this situation.
 
-Earth Observation techniques have been suffering a growth both in terms of quality and quantity, which means that the amount of data produced have also increased drastically. In addition, remote sensing is carried out by satellites with low storage capacity and bandwidth \parencite{SANDAU20101}, so clearly data compression is key in this situation.
-
-Between the vast amount of remote sensing techniques we find Radio Occultation \parencite{RO-GNSS}, which uses low orbit satellites to detect the changes produced by the atmosphere in a radio signal emitted by a \acrshort{gnss} satellite.
+Between the vast amount of remote sensing techniques we find Radio Occultation \parencite{RO-GNSS}, which uses low orbit satellites to detect the changes produced by the atmosphere in a radio signal emitted by a \acrshort{gnss} satellite. \acrshort{ro} data is mainly used as a weather forecasting tool.
 
 \begin{figure}[h!]
 	\begin{center}
 		\begin{tabular}{ @{} c @{} }
-			\includegraphics[scale=0.42]{images/ro_schematic.jpg}\\
+			\includegraphics[scale=0.44]{images/ro_schematic.jpg}\\
 			\imagesource{Wikipedia user MPRennie, CC BY-SA 3.0, via Wikimedia Commons.}
 		\end{tabular}
 	\end{center}
@@ -24,9 +19,6 @@ Between the vast amount of remote sensing techniques we find Radio Occultation \
 This chapter is part of a DAPCOM Data Services strategic project focused on developing a new \acrshort{fapec} stage intended to compress \acrshort{ro} data collected by nanosatellites. The algorithm will be tested over \acrshort{iq} sample files and other formats structured in two channels, for instance, stereo audio. The proposed solution will be compared with the well-known \acrshort{flac} coding technique.
 
 \section{Introduction to IQ data}
-\begin{comment}
-Donar una base de les dades I/Q i justificar perquè són semblants a l'audio stereo.
-\end{comment}
 
 In the introduction of this chapter we stated that the present stage will be focused on \acrshort{iq} data, that is, the discrete time samples of a \acrshort{rf} \acrshort{iq} signal.
 
@@ -51,14 +43,23 @@ Hence, the data to be compressed are the discrete time samples of the signals $i
 
 For further information on \acrshort{iq} signals the reader may check references \parencite{IQintro}, \parencite{carlson2010communication} and \parencite{ICOM}.
 
-To conclude this section, we shall provide a justification on why we can use both \acrshort{iq} and audio files to test \textit{Wave} and why we can compare it with the \acrshort{flac} standard.
+To conclude this section, we shall provide a justification on why we can use both \acrshort{iq} and audio files to test Wave and why we can compare it with the \acrshort{flac} standard.
 
-\begin{comment}
-Bàsicament les dades IQ i l'àudio stereo són sèries temporals de dos canals. El FLAC utilitza codis de Rice-Golomb que funcionen bé en sèrie temporals (veure article original de Golomb) i FAPEC està inspirat en ells (veure article d'en Jordi). També, com a justificació inversa, hi ha el paper dels japonesos que comprimeixen IQ amb FLAC.
-\end{comment}
+\subsection{Justification of Wave's applications}
+On the first hand, as we will see shortly, both \acrshort{flac} and Wave implement the same preprocessing stage: a classical linear predictor. This decorrelation stage is followed by a Rice-Golomb entropy coder (see section \ref{golomb-coding}) in \acrshort{flac} and by the \acrshort{fapec} entropy coder in Wave.
+
+On the other hand, \acrshort{iq} data and stereo audio have the same structure: time series separated in two channels (notice that samples distribution may not be the same). In fact, most \acrshort{sdr} records are stored as \acrshort{wav} files, a well known audio format.
+
+Additionally, in literature we may find papers about \acrshort{iq} data compression that make use of the \acrshort{flac} algorithm, for instance \parencite{IQFlac}.
+
+To conclude, there are clear similarities between the two proposed algorithms and also between the proposed data formats. Hence, from a qualitative point of view, comparing Wave and \acrshort{flac} with a dataset of \acrshort{iq} data and stereo audio files is a logical choice.
 
 \section{Design}
 \begin{comment}
+Aquesta etapa decorreladora està enfocada a dades amb 2 canals (àudio stereo, I/Q). El desenvolupament dins de l'empresa està especialment enfocat per un client, però per motius de confidencialitat inclouré una versió genèrica que es podrà comparar amb el FLAC. L'etapa fa servir LPC i posteriorment envia els errors de predicció al codificador entròpic.
+
+L'algoritme és el "típic" per LPC i la resolució del sistema lineal resultant del predictor lineal \parencite{PSAVC} es fa amb Levinson-Durbin \parencite{LevinsonDurbin}, que aprofitant l'estructura Toeplitz redueix la complexitat de $O(n^3)$ a $O(n^2)$.
+
 Disseny del predictor i l'estructura de l'etapa. Justificació de per què s'utilitzen els LPC i no una altra cosa. La resolució de les equacions de Yule-Walker anirà aquí, però segurament en posaré la deducció en un annex.
 \end{comment}
 
