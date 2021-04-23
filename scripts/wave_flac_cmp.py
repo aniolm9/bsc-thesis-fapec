@@ -3,6 +3,7 @@ from matplotlib.ticker import FormatStrFormatter
 from scipy.io import wavfile
 from pydub import AudioSegment
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import pandas as pd
 import numpy as np
 import subprocess
@@ -63,6 +64,9 @@ def getFlacRatio(file):
     return pd.Series([ratio_fapec, ratio_flac, ratio_gzip, fapec_time, flac_time, gzip_time], index=["ratio_fapec", "ratio_flac", "ratio_gzip", "time_fapec", "time_flac", "time_gzip"])
 
 def plotCompare(row):
+    # Use a Sans-Serif for figures
+    fontProperties = {'family': 'sans-serif', 'sans-serif': ['Latin Modern Sans']}
+    mpl.rc('font', **fontProperties)
     # Find axis limits
     xmax = 1.1 * max(row["time_fapec"], row["time_flac"], row["time_gzip"])
     xmin = 0.9 * min(row["time_fapec"], row["time_flac"], row["time_gzip"])
