@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
+from matplotlib.ticker import FormatStrFormatter
 from scipy.io import wavfile
 from pydub import AudioSegment
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import subprocess
 import argparse
+import time
 import io
 import os
 
@@ -36,19 +39,51 @@ def getFlacRatio(file):
     wavBuffer = io.BytesIO()
     wavfile.write(wavBuffer, samplerate, data_array)
     # Compress using FLAC and check ratio
+    start = time.time()
     flacBuffer = io.BytesIO()
     song = AudioSegment.from_wav(wavBuffer)
     song.export(flacBuffer, format = "flac")
+    end = time.time()
+    flac_time = round(end - start, 4)
     ratio_flac = round(orig_size / flacBuffer.getbuffer().nbytes, 3)
     # FAPEC ratio
-    result = subprocess.check_output('fapec -qq -dtype 16 -signed -wave 4 2 0 ' + str(lossy) + ' -ow -o /dev/stdout ' + '"' + file + '"', shell=True)
+    start = time.time()
+    result = subprocess.check_output('fapec -qq -mt 1 -bl 1024 -chunk 8M -dtype 16 -signed -wave 10 2 0 ' + str(lossy) + ' -per 65536 -trn 65536 -ow -o /dev/stdout ' + '"' + file + '"', shell=True)
+    end = time.time()
+    fapec_time = round(end - start, 4)
     fapec_size = len(result)
     ratio_fapec = round(orig_size / fapec_size, 3)
-    return pd.Series([ratio_fapec, ratio_flac], index=["ratio_fapec", "ratio_flac"])
+    return pd.Series([ratio_fapec, ratio_flac, fapec_time, flac_time], index=["ratio_fapec", "ratio_flac", "time_fapec", "time_flac"])
+
+def plotCompare(row):
+    # Find axis limits
+    xmax = 1.1 * max(row["time_fapec"], row["time_flac"])
+    xmin = 0.9 * min(row["time_fapec"], row["time_flac"])
+    ymax = 1.1 * max(1/row["ratio_fapec"], 1/row["ratio_flac"])
+    ymin = 0.9 * min(1/row["ratio_fapec"], 1/row["ratio_flac"])
+    fig, ax = plt.subplots()
+    fig.suptitle("Comparison of FAPEC and FLAC")
+    ax.plot(row["time_fapec"], 1/row["ratio_fapec"], "x", label="FAPEC")
+    ax.plot(row["time_flac"], 1/row["ratio_flac"], "x", label="FLAC")
+    ax.legend()
+    ax.grid()
+    ax.set_xlabel("Process time [s]")
+    ax.set_ylabel("Compression ratio")
+    ax.set_xticks(np.arange(xmin, xmax, step=(xmax-xmin)/10))
+    ax.set_yticks(np.arange(ymin, ymax, step=(ymax-ymin)/10))
+    ax.xaxis.set_major_formatter(FormatStrFormatter('%.3f'))
+    ax.yaxis.set_major_formatter(FormatStrFormatter('%.3f'))
+    ax.set_title("File: %s" % (row["file"]), fontsize=9)
+    # Save figure to vectorial graphics pdf
+    plt.savefig(os.path.join(args.directory, row["file"] + "_comparison.pdf"))
+    plt.close()
 
 if __name__ == "__main__":
     args = setupParser().parse_args()
     df = pd.read_csv(args.csv)
     df = pd.concat([df, df.file.apply(getFlacRatio)], axis=1)
+    for index, row in df.iterrows():
+        plotCompare(row)
+        df.at[index, "distance_fapec"] = round(np.linalg.norm([row["time_fapec"], 1/row["ratio_fapec"]]), 4)
+        df.at[index, "distance_flac"] = round(np.linalg.norm([row["time_flac"], 1/row["ratio_flac"]]), 4)
     df.to_csv(args.csv, index=False)
-    
