@@ -56,7 +56,7 @@ def getFlacRatio(file):
     ratio_fapec = round(orig_size / fapec_size, 3)
     # Gzip ratio
     start = time.time()
-    result = subprocess.check_output('tar -czf - --absolute-names ' + file, shell=True)
+    result = subprocess.check_output('gzip -q -c ' + file, shell=True)
     end = time.time()
     gzip_time = round(end - start, 4)
     gzip_size = len(result)
