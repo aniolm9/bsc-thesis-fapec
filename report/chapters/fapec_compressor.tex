@@ -1,4 +1,50 @@
 \chapter{The FAPEC Data Compressor}
-\begin{comment}
-En aquest capítol faré una explicació teòrica del FAPEC. Tota la informació que donaré ja està publicada en papers \parencite{PaperFAPEC} o a la patent americana de FAPEC \parencite{PatentFAPEC}. D'aquesta manera no hi ha problemes de confidencialitat i el TFG podrà ser públic.
-\end{comment}
+
+\acrfull{fapec} is a versatile and efficient data compressor originally designed for space missions \parencite{PaperFAPEC}. \acrshort{fapec}'s main advantages are its high computing performance and its resistance in front of noise or data outliers.
+
+In this chapter we will explore \acrshort{fapec}'s structure and its integration with several decorrelation stages such as the two presented in this work. In order to do that, we will first see the origin of \acrshort{fapec} and its need in space industry.
+
+\section{Background}
+Space missions are continuously evolving, hence the amount of data generated is growing. However, onboard computing power and downlink bandwidth are not evolving so fast and they are still quite narrowed. The usual technique to deal with the second limitation is data compression, but it has to be implemented efficiently as we are still limited by the first constraint. Moreover, the chosen algorithm must be reliable, as losing data in this harsh environment could be fatal.
+
+The \acrfull{ccsds} already provides some standards for space data compression. For instance, \acrshort{ccsds} 121.0 \parencite{ccsds121} for generic lossless data compression, \acrshort{ccsds} 122.0 \parencite{ccsds122} for image data compression, etc. Although they achieve good compression ratios and their overall performance is remarkable, they can be too complex and demanding for some missions with limited hardware, such as cubesats. Besides, having a unique solution for data compression would be better than having different standards for different data types.
+
+In order to work out the previous limitations, \acrshort{fapec} was proposed, featuring:
+\begin{itemize}
+	\item High computing performance.
+	\item Optimization for very low and very high entropy levels.
+	\item Several preprocessing stages to suit different types of data.
+\end{itemize}
+
+\section{General overview}
+The \acrshort{fapec} data compressor is based on two stages: a preprocessing stage followed by the entropy coder. In fact, \acrshort{fapec}'s name comes from this architecture as usually the first stage is some type of predictor which tries to estimate the true samples and generates a prediction error. Then, the error is sent to the entropy coder instead of the original samples (Prediction Error Coder).
+
+Formally, given an input sample $x_i$ and an estimator $\hat{x}_i$, the value sent to the entropy coder is:
+\begin{equation}
+e_i = x_i - \hat{x}_i
+\end{equation}
+
+Restoring the original value in decompression is straightforward:
+\begin{equation}
+x_i = \hat{x}_i + e_i
+\end{equation}
+
+Notice that in a few stages some flags are also sent to the entropy coder.
+
+\begin{figure}[h!]
+	\begin{center}
+		\scalebox{.565}{\input{images/fapec_structure.tex}}
+	\end{center}
+	\caption{The \acrshort{fapec} data compressor structure.}
+	\label{fig:fapec_structure}
+\end{figure}
+
+Where $T()$ is a generic transformation applied to the input sequence.
+
+The main purpose of decorrelation stages in data compressors is to reduce the entropy at the coder input to allow a better performance of the latter. For instance, Rice codes are optimal for data following a Laplacian distribution \parencite{OptimalRice}. In other words, the preprocessing stage performance is critical in the overall compressor efficiency.
+
+\acrshort{fapec} features several preprocessing algorithms (Fully Adaptive) such as a basic differential, multi-band prediction, etc. In this work we introduce two new stages that also follow the former approach.
+
+
+
+\section{Entropy coder}
