@@ -41,10 +41,9 @@ Notice that in a few stages some flags are also sent to the entropy coder.
 
 Where $T()$ is a generic transformation applied to the input sequence.
 
-The main purpose of decorrelation stages in data compressors is to reduce the entropy at the coder input to allow a better performance of the latter. For instance, Rice codes are optimal for data following a Laplacian distribution \parencite{OptimalRice}. In other words, the preprocessing stage performance is critical in the overall compressor efficiency.
+The main purpose of decorrelation stages in data compressors is to reduce the entropy at the coder input to allow a better performance of the latter. For instance, Rice codes are optimal for data following a Laplacian or a geometric distribution \parencite{OptimalRice} \parencite{OptimalGeometric}. In other words, the preprocessing stage performance is critical in the overall compressor efficiency.
 
 \acrshort{fapec} features several preprocessing algorithms (Fully Adaptive) such as a basic differential, multi-band prediction, etc. In this work we introduce two new stages that also follow the former approach.
 
-
-
 \section{Entropy coder}
+\acrshort{fapec}'s entropy coder is strongly inspired by the Golomb-Rice coder used in the \acrshort{ccsds} 121.0 standard for lossless data compression.
