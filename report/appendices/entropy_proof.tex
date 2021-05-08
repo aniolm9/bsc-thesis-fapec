@@ -1,0 +1,40 @@
+\chapter{Proof of Equation \ref{eq:differential_entropy_q}}\label{entropy_proof}
+
+In this appendix we will prove equation \ref{eq:differential_entropy_q} parting from equation \ref{eq:differential_entropy} (see page \pageref{eq:differential_entropy}).
+
+Les $X$ be a continuous random variable with cumulative distribution function $F(x)$. Then, its quantile function is defined as:
+\begin{equation}
+Q(p) = F^{-1}(p) = \inf\{x \in \mathbb{R} : p \leq F(x)\}
+\end{equation}
+for a probability $0 \leq p \leq 1$.
+
+From the previous definition we obtain:
+\begin{align} 
+F(x) = F(Q(p)) = p \label{eq:quantile_cdf} \\ 
+Q(p) = Q(F(x)) = x \label{eq:cdf_quant}
+\end{align}
+
+Applying the chain rule to equation \ref{eq:quantile_cdf}:
+\begin{equation}\label{eq:cdf_identity}
+\frac{dF(Q(p))}{dp} = \frac{dF(Q)}{dQ} \cdot \frac{dQ(p)}{dp} = f(Q(p)) \cdot Q'(p) = 1
+\end{equation}
+
+Now, take the differential entropy as defined in \ref{eq:differential_entropy} and, for simplicity, rewrite it as:
+\begin{equation}
+h(x) = - \int_{-\infty}^{+\infty} u(x) dx
+\end{equation}
+
+Applying the change of variables from \ref{eq:cdf_quant} we obtain the following integration limits:
+\begin{align}
+a = \lim_{x \to -\infty} F(x) = 0\\
+b = \lim_{x \to +\infty} F(x) = 1
+\end{align}
+
+And the following integrand:
+\begin{equation}
+h(p) = - \int_{0}^{1} u(Q(p)) \cdot Q'(p) dp = - \int_{0}^{1} f(Q(p)) \cdot \ln(f(Q(p))) \cdot Q'(p) dp
+\end{equation}
+which, making use of equation \ref{eq:cdf_identity}, can be simplified to equation \ref{eq:differential_entropy_q}:
+\begin{equation}
+h(p) = -  \int_{0}^{1} \ln\left(f(Q(p))\right) dp = - \int_{0}^{1} \ln\left(\frac{1}{Q'(p)}\right) dp = \int_{0}^{1} \ln\left(Q'(p)\right) dp
+\end{equation}
