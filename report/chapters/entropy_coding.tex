@@ -3,18 +3,6 @@ Entropy coding is a lossless data compression scheme based on symbols probabilit
 
 Giving an extensive theoretical explanation of Entropy coding would require an entire thesis. Therefore, in this chapter we will define the most basic equations in Information Theory and we will also describe some well-known coding algorithms that will be relevant later. The interested reader should see reference \parencite{cover}.
 
-\begin{figure}[h!]
-\begin{center}
-	\begin{tabular}{ @{} c @{} }
-		\includegraphics[scale=0.25]{images/Claude_Shannon_1776.jpg}\\
-		\imagesource{DobriZheglov, CC BY-SA 4.0, via Wikimedia Commons.}
-	\end{tabular}
-\end{center}
-\vspace*{-0.7em}
-\caption{Picture of Claude E. Shannon staring at a mouse.}
-\label{fig:shannon}
-\end{figure}
-
 \section{Information theory basics}
 \subsection{Shannon entropy}
 Given a discrete random variable $X$ with probability function $p(x)$, its Shannon entropy is defined as:
@@ -25,9 +13,8 @@ H(X) = - \sum_{i=1}^{n} p(x_i) \cdot \log_2 p(x_i)
 
 This result represents the average level of information (or uncertainty) of the random variable $X$. It is expressed in \textit{bits}. Sometimes entropy is defined using the natural logarithm. In those situations the result is in \textit{nats}.
 
-
 \subsubsection{Shannon's source coding theorem}
-Shannon's source coding theorem establishes the theoretical limits to data compression, and a different meaning to Shannon entropy defined above. Formally, it states:
+Shannon's source coding theorem establishes the theoretical limits to data compression, and a different meaning to Shannon entropy defined above. Formally:
 
 \begin{theorem}
 Let $L_n^*$ be the expected codeword length per symbol of an optimal n-th order lossless data compression code (in bits/symbol). Let $(X_1, X_2, \dots, X_n )$ be a sequence of symbols from a stochastic process $X$. Then,
@@ -42,10 +29,10 @@ If $X$ is a stationary stochastic process,
 \end{equation}
 \end{theorem}
 
-This theorem reveals a new interpretation of Shannon entropy: it is the average number of bits per symbol required to encode it.
+The previous theorem reveals a new interpretation of Shannon entropy: it is the average number of bits per symbol required to encode it.
 
 \subsection{Differential entropy}
-Given a continuous random variable X with a density $f(x)$ supported in $S$, its differential entropy is defined as:
+Given a continuous random variable $X$ with a density $f(x)$ supported in $S$, its differential entropy is defined as:
 \begin{equation} \label{eq:differential_entropy}
 h(x) = - \int_{S}^{} f(x) \ln f(x) dx
 \end{equation}
@@ -58,6 +45,9 @@ h(p) = \int_{0}^{1} \ln Q'(p) dp
 \end{equation}
 
 This equation is specially useful in some entropy estimation techniques \parencite{Vasicek}.
+
+\subsubsection{Entropy estimation}
+Estimating differential entropy is useful in many fields such as image analysis, manifold learning or speech recognition. In this work we will use plug-in methods \parencite{EntropyEstimation} to estimate differential entropy. The result will be compared with the maximum entropy (see below) to analyze the effectiveness of the designed stages.
 
 \subsubsection{Maximum entropy}
 Among all the real-valued distributions supported on $(-\infty, +\infty)$ with a specified variance $\sigma^2$, the normal distribution $N(\mu, \sigma^2)$ has maximum entropy:
@@ -94,5 +84,15 @@ Let $N$ be the number to encode. Then, its Golomb code is:
 	\textbf{Output:} Golomb code for $N$.
 \end{algorithm}
 
-For the particular case $M=2^k,\hspace{0.5em} k \geq 1$ the codes are called Rice codes.
+For the particular case $M=2^b,\hspace{0.5em} b \in \mathbb{N}^*$ the codes are called Rice codes and the algorithm is much simpler:
 
+\begin{algorithm}[H]
+	\caption{Rice encoding procedure}
+	\SetAlgoLined
+	\textbf{Input:} $N$\\
+	\textbf{Define:} $q \in \mathbb{N}, \quad M = 2^b, \quad b \in \mathbb{N}^*$\\
+	$q \gets \left\lfloor \frac{N}{M} \right\rfloor$\\
+	\QuotientCode{write a $q$-length string of 1 (or 0) bits.\\write a 0 (or 1) bit.\\}
+	write the $b$ \acrshort{lsb} of $N$ in binary.\\
+	\textbf{Output:} Rice code for $N$.
+\end{algorithm}
