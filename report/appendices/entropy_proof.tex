@@ -21,7 +21,7 @@ Applying the chain rule to equation \ref{eq:quantile_cdf}:
 
 Now, take the differential entropy as defined in \ref{eq:differential_entropy} and, for simplicity, rewrite it as:
 \begin{equation}
-h(x) = - \int_{-\infty}^{+\infty} u(x) dx
+h(X) = - \int_{-\infty}^{+\infty} u(x) dx
 \end{equation}
 
 Applying the change of variables from \ref{eq:cdf_quant} we obtain the following integration limits:
@@ -32,9 +32,9 @@ b = \lim_{x \to +\infty} F(x) = 1
 
 And the following integrand:
 \begin{equation}
-h(p) = - \int_{0}^{1} u(Q(p)) \cdot Q'(p) dp = - \int_{0}^{1} f(Q(p)) \cdot \ln(f(Q(p))) \cdot Q'(p) dp
+h(X) = - \int_{0}^{1} u(Q(p)) \cdot Q'(p) dp = - \int_{0}^{1} f(Q(p)) \cdot \ln(f(Q(p))) \cdot Q'(p) dp
 \end{equation}
 which, making use of equation \ref{eq:cdf_identity}, can be simplified to equation \ref{eq:differential_entropy_q}:
 \begin{equation}
-h(p) = -  \int_{0}^{1} \ln\left(f(Q(p))\right) dp = - \int_{0}^{1} \ln\left(\frac{1}{Q'(p)}\right) dp = \int_{0}^{1} \ln\left(Q'(p)\right) dp
+h(X) = -  \int_{0}^{1} \ln\left(f(Q(p))\right) dp = - \int_{0}^{1} \ln\left(\frac{1}{Q'(p)}\right) dp = \int_{0}^{1} \ln\left(Q'(p)\right) dp
 \end{equation}

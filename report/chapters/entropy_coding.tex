@@ -32,27 +32,29 @@ If $X$ is a stationary stochastic process,
 The previous theorem reveals a new interpretation of Shannon entropy: it is the average number of bits per symbol required to encode it.
 
 \subsection{Differential entropy}
-Given a continuous random variable $X$ with a density $f(x)$ supported in $S$, its differential entropy is defined as:
+Given a continuous random variable $X$ with a density $f(x)$ supported in $S$, its differential entropy (in \textit{nats}) is defined as:
 \begin{equation} \label{eq:differential_entropy}
-h(x) = - \int_{S}^{} f(x) \ln f(x) dx
+h(X) = - \int_{S}^{} f(x) \ln f(x) dx
 \end{equation}
-
-Notice that we have defined differential entropy using the natural logarithm, hence the result shall be expressed in \textit{nats}.
 
 In some cases computing an explicit probability density function is too hard or even impossible. In these cases, an equivalent definition in terms of the quantile function $Q(p)$ can be used (see appendix \ref{entropy_proof}):
 \begin{equation} \label{eq:differential_entropy_q}
-h(p) = \int_{0}^{1} \ln Q'(p) dp
+h(X) = \int_{0}^{1} \ln Q'(p) dp
 \end{equation}
 
-This equation is specially useful in some entropy estimation techniques \parencite{Vasicek}.
+This equation is specially useful in some entropy estimation techniques \parencite{Vasicek}. In this work we will use plugin-methods \parencite{EntropyEstimation} to estimate differential entropy to later compute the negentropy.
 
-\subsubsection{Entropy estimation}
-Estimating differential entropy is useful in many fields such as image analysis, manifold learning or speech recognition. In this work we will use plug-in methods \parencite{EntropyEstimation} to estimate differential entropy. The result will be compared with the maximum entropy (see below) to analyze the effectiveness of the designed stages.
+\subsubsection{Negentropy}
+Negentropy measures the difference in entropy between a given distribution and the normal distribution with same mean and variance. Thus, negentropy is invariant by any linear invertible change of coordinates \parencite{negentropy}. 
 
-\subsubsection{Maximum entropy}
-Among all the real-valued distributions supported on $(-\infty, +\infty)$ with a specified variance $\sigma^2$, the normal distribution $N(\mu, \sigma^2)$ has maximum entropy:
+Let $G \sim N(\mu, \sigma^2)$. Let $X$ be a continuous random variable with variance $\sigma^2$. Then, negentropy is defined as:
 \begin{equation}
-h(x) = \frac{1}{2} \ln \left(2\sigma^2\pi\right) + \frac{1}{2} = \ln\left(\sqrt{2\pi e \sigma^2}\right)
+J(X) = h(G) - h(X) \geq 0
+\end{equation}
+
+A normal distribution is used because, among all the real-valued distributions supported on $\mathbb{R}$ with a given variance $\sigma^2$, $N(\mu, \sigma^2)$ has maximum entropy:
+\begin{equation}
+h(G) = \frac{1}{2} \ln \left(2\sigma^2\pi\right) + \frac{1}{2} = \ln\left(\sqrt{2\pi e \sigma^2}\right)
 \end{equation}
 
 \section{Coding techniques}
