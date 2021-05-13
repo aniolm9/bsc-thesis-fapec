@@ -136,7 +136,9 @@ In the present work we will only use information contained in \textit{Header} su
 
 \section{Design}
 \begin{comment}
-Potser hauria de fer subseccions? "Requirements", "Datagrams to compress", "Criteria", etc.
+Faré tres subseccions: Requirements, Data analysis, Algorithm design.
+
+A la primera posaré els requeriments que vam posar al project plan, a la segona justificaré per què només comprimim el MWC i a la 3a descriuré l'algoritme escollit.
 \end{comment}
 
 In the previous section we introduced the KMALL data format. Namely, we saw that it is a mixture of different data types, so we have to decide which ones should be compressed and which algorithm will be applied.
@@ -151,31 +153,20 @@ In order to decide what to compress, we have first analyzed some .kmall and .kmw
 	\label{fig:wc_data}
 \end{figure}
 
-
 Once we have decided that we will restrict to water column data, a design criteria must be properly defined. This design has to take into account multiple aspects, namely: speed, implementation easiness and compression performance.
 
 In previous chapters we explained that FAPEC compresses files by breaking them into chunks and processing each of them individually. This feature may be dangerous in our datagram scenario, so our first criterion will be to avoid FAPEC from splitting datagrams into different chunks. This way, the implementation will be much easier at the cost of reducing the process performance.
 
 \begin{comment}
-Estic anant massa per feina i sent poc curós, així que afegeixo la resta de criteris com a comentari i ja ho redactaré un altre dia.
-
 \parencite{Portell2019}
-
-Degut a l'estructura "parabòlica" de les mostres (pendent generar figura), cal vigilar en com les processem. La proposta és: per la secció quadrada restem respecte beam anterior (molt semblants). Per la secció parabòlica comprovem la diferència de mostres amb l'anterior i amb el simètric. Les opcions d'això són:
-
-difAnt = 0, difSim = 0 => Ant\\
-difAnt != 0, difSim != 0 => Ant\\
-difAnt != 0, difSim = 0 => Sim
-
-El motiu d'això és que està més correlat amb l'anterior i també cal més padding (el nombre de mostres entre beams decreix quadràticament), cosa bona per FAPEC (millor afegir 10 zeros que 2).
 \end{comment}
 
 \section{Implementation}
 \begin{comment}
-Implementació amb C de l'algoritme. El codi anirà als annexes (a poder ser confidencials).
+Same que wave. Explicació + flowchart, sense codi.
 \end{comment}
 
 \section{Results}
 \begin{comment}
-No ens precipitem.
+Same que al wave. Histogrames, negentropy i diagrama.
 \end{comment}

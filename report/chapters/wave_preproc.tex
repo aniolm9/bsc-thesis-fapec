@@ -61,16 +61,20 @@ Aquesta etapa decorreladora està enfocada a dades amb 2 canals (àudio stereo, 
 L'algoritme és el "típic" per LPC i la resolució del sistema lineal resultant del predictor lineal \parencite{PSAVC} es fa amb Levinson-Durbin \parencite{LevinsonDurbin}, que aprofitant l'estructura Toeplitz redueix la complexitat de $O(n^3)$ a $O(n^2)$.
 
 Disseny del predictor i l'estructura de l'etapa. Justificació de per què s'utilitzen els LPC i no una altra cosa. La resolució de les equacions de Yule-Walker anirà aquí, però segurament en posaré la deducció en un annex.
+
+Subseccions: Requirements, Algorithm design.
+
+En aquesta crec que no cal cap justificació heavy, ja l'he donada a la secció anterior. Segurament posaré el paràgraf que ja hi ha escrit com a inici de la segona subsecció.
 \end{comment}
 
 In the previous section we justified why \acrshort{flac} should have a good performance with \acrshort{iq} data. Taking this into account, the proposed algorithm should have a structure similar to \acrshort{flac}'s but using \acrshort{fapec} as the entropy coder. This should translate into a compressor faster than \acrshort{flac} and with a similar compression ratio.
 
 \section{Implementation}
 \begin{comment}
-Implementació amb C de l'algoritme. El codi anirà als annexes (a poder ser confidencials).
+Això serà una breu explicació més un flowchart. La part del rectify i tal la ignoraré.
 \end{comment}
 
 \section{Results}
 \begin{comment}
-D'això ja tinc alguna cosa provada i amb la versió d'ara, amb la cançó Money de Pink Floyd quasi iguala el FLAC. Acceptant unes miques de pèrdues (jo no les distingeixo) el supera molt.
+He de pensar si faig subseccions o no. La idea és posar els dos tipus d'histogrames, la negentropy i el diagrama de distàncies euclidianes.
 \end{comment}
