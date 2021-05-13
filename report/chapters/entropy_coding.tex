@@ -3,7 +3,7 @@ Entropy coding is a lossless data compression scheme based on symbols probabilit
 
 Giving an extensive theoretical explanation of Entropy coding would require an entire thesis. Therefore, in this chapter we will define the most basic equations in Information Theory and we will also describe some well-known coding algorithms that will be relevant later. The interested reader should see reference \parencite{cover}.
 
-\section{Information theory basics}
+\section{Basic concepts on Information Theory}
 \subsection{Shannon entropy}
 Given a discrete random variable $X$ with probability function $p(x)$, its Shannon entropy is defined as:
 
@@ -44,7 +44,7 @@ h(X) = \int_{0}^{1} \ln Q'(p) dp
 
 This equation is specially useful in some entropy estimation techniques \parencite{Vasicek}. In this work we will use plugin-methods \parencite{EntropyEstimation} to estimate differential entropy to later compute the negentropy.
 
-\subsubsection{Negentropy}
+\subsection{Negentropy}
 Negentropy measures the difference in entropy between a given distribution and the normal distribution with same mean and variance. Thus, negentropy is invariant by any linear invertible change of coordinates \parencite{negentropy}. 
 
 Let $G \sim N(\mu, \sigma^2)$. Let $X$ be a continuous random variable with variance $\sigma^2$. Then, negentropy is defined as:
@@ -60,7 +60,7 @@ h(G) = \frac{1}{2} \ln \left(2\sigma^2\pi\right) + \frac{1}{2} = \ln\left(\sqrt{
 \section{Coding techniques}
 There exist several techniques to assign bits to symbols. In general, one would be interested in a coding scheme which gives codewords with a mean length as close as possible to the Shannon limit. However, sometimes achieving the optimality might be too demanding, so other faster but suboptimal techniques have been developed.
 
-In this section we will describe Golomb coding, a known technique used by several standards such as \acrshort{flac} or \acrshort{ccsds} 121.0. Besides, the \acrshort{fapec} entropy coder is highly inspired in Rice codes, a subset of the Golomb codes.
+In this section we will describe Golomb coding, a known technique used by several standards such as \acrshort{flac} \parencite{FLAC} or \acrshort{ccsds} 121.0 \parencite{ccsds121}. Besides, the \acrshort{fapec} entropy coder is highly inspired in Rice codes, a subset of the Golomb codes.
 
 Before continuing, it is important to observe that there exist other entropy coding techniques which are more common than Golomb, for instance Huffman coding \parencite{cover}, arithmetic coding \parencite{MacKay} or, more recently, the Asymmetric Numeral System \parencite{ans}.
 
@@ -74,27 +74,36 @@ Let $N$ be the number to encode. Then, its Golomb code is:
 	\caption{Golomb encoding procedure}
 	\SetAlgoLined
 	\textbf{Input:} $N$\\
-	\textbf{Define:} $M,q,r \in \mathbb{N}$, \quad $b = \left\lceil \log_2(M) \right\rceil$\\
+	\textbf{Define:} $M,q,r \in \mathbb{N}$, \quad $k = \left\lceil \log_2(M) \right\rceil$\\
 	$q \gets \left\lfloor \frac{N}{M} \right\rfloor$\\
 	$r \gets N - M \cdot q$\\
 	\QuotientCode{write a $q$-length string of 1 (or 0) bits.\\write a 0 (or 1) bit.\\}
 	\RemainderCode{
-		\eIf{$r < 2^b -M$}
-		{binary code $r$ using $b$ bits.}
-		{binary code $r + 2^b - M$ using $b+1$ bits.}
+		\eIf{$r < 2^k -M$}
+		{binary code $r$ using $k-1$ bits.}
+		{binary code $r + 2^b - M$ using $k$ bits.}
 	}
 	\textbf{Output:} Golomb code for $N$.
 \end{algorithm}
 
-For the particular case $M=2^b,\hspace{0.5em} b \in \mathbb{N}^*$ the codes are called Rice codes and the algorithm is much simpler:
+For the particular case $M=2^k,\hspace{0.5em} k \in \mathbb{N}$ the codes are called Rice codes.
 
-\begin{algorithm}[H]
-	\caption{Rice encoding procedure}
-	\SetAlgoLined
-	\textbf{Input:} $N$\\
-	\textbf{Define:} $q \in \mathbb{N}, \quad M = 2^b, \quad b \in \mathbb{N}^*$\\
-	$q \gets \left\lfloor \frac{N}{M} \right\rfloor$\\
-	\QuotientCode{write a $q$-length string of 1 (or 0) bits.\\write a 0 (or 1) bit.\\}
-	write the $b$ \acrshort{lsb} of $N$ in binary.\\
-	\textbf{Output:} Rice code for $N$.
-\end{algorithm}
+\subsubsection{Example}
+Finally, we provide an example of some Rice codes calculated following the previous algorithm. Notice that the suffix of Rice codes always has length $k$.
+
+\begin{table}[h!]
+\normalsize
+\centering
+\begin{tabular}{|wc{1.5cm}|wr{1.5cm}|wr{1.5cm}|wr{1.5cm}|wr{1.5cm}|}
+	\hline
+	\rowcolor[HTML]{9698ED} 
+	\multicolumn{1}{|c|}{\cellcolor[HTML]{9698ED}$N$} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}$k=1$} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}$k=2$} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}$k=3$} & \multicolumn{1}{c|}{\cellcolor[HTML]{9698ED}$k=4$} \\ \hline
+	$0$                                               & $1\boldsymbol{\cdot}0$                                               & $1\boldsymbol{\cdot}00$                                              & $1\boldsymbol{\cdot}000$                                             & $1\boldsymbol{\cdot}0000$                                            \\ \hline
+	$1$                                               & $1\boldsymbol{\cdot}1$                                               & $1\boldsymbol{\cdot}01$                                              & $1\boldsymbol{\cdot}001$                                             & $1\boldsymbol{\cdot}0001$                                            \\ \hline
+	$2$                                               & $01\boldsymbol{\cdot}0$                                              & $1\boldsymbol{\cdot}10$                                              & $1\boldsymbol{\cdot}010$                                             & $1\boldsymbol{\cdot}0010$                                            \\ \hline
+	$3$                                               & $01\boldsymbol{\cdot}1$                                              & $1\boldsymbol{\cdot}11$                                              & $1\boldsymbol{\cdot}011$                                             & $1\boldsymbol{\cdot}0011$                                            \\ \hline
+	$4$                                               & $001\boldsymbol{\cdot}0$                                             & $01\boldsymbol{\cdot}00$                                             & $1\boldsymbol{\cdot}100$                                             & $1\boldsymbol{\cdot}0100$                                            \\ \hline
+	$5$                                               & $001\boldsymbol{\cdot}1$                                             & $01\boldsymbol{\cdot}01$                                             & $1\boldsymbol{\cdot}101$                                             & $1\boldsymbol{\cdot}0101$                                            \\ \hline
+\end{tabular}
+\caption{Rice codes of integers between 0 and 5 and suffix from 1 to 4 bits.}
+\end{table}
