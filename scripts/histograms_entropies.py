@@ -98,8 +98,14 @@ def cumHist(df_samples, df_pe):
     plt.close()
 
 def entropies(df_samples, df_pe):
-    N = min(2000000, len(df_samples), len(df_pe))
-    chunksize = min(N, 20000)
+    # Subset to sample
+    N = min(6000000, len(df_samples), len(df_pe))
+    chunksize = min(N, 30000)
+    # Prepare figure to plot PDF
+    fig, ax = plt.subplots()
+    fig.suptitle("Estimated probability density function of original and prediction error samples")
+    xmax = max(df_samples["samples"].max(), df_pe["PE"].max())
+    xmin = min(df_samples["samples"].min(), df_pe["PE"].min())
     # Estimate original samples entropy
     smp = df_samples["samples"].to_numpy()
     smp = np.reshape(smp, (-1, 1))
@@ -108,6 +114,7 @@ def entropies(df_samples, df_pe):
     var_smp = np.var(smp)
     x = np.linspace(-3*var_smp, 3*var_smp, len(smp))
     pdf = estimate_pdf(x, smp, chunksize)
+    ax.plot(x, pdf, label="Original samples")
     h_smp = estimate_entropy(x, smp, pdf)
     h_g_smp = 0.5*np.log(2*np.pi*var_smp) + 0.5
     # Estimate PE entropy
@@ -118,6 +125,16 @@ def entropies(df_samples, df_pe):
     var_pe = np.var(pe)
     x = np.linspace(-3*var_pe, 3*var_pe, len(pe))
     pdf = estimate_pdf(x, pe, chunksize)
+    ax.plot(x, pdf, label="Prediction errors")
+    # Title and axis labels
+    ax.set_title("File: %s" % (os.path.basename(file)), fontsize=9)
+    ax.set_xlabel("Sample value")
+    ax.set_ylabel("Probability")
+    ax.set_xlim([xmin, xmax])
+    ax.grid()
+    ax.legend()
+    plt.savefig(file + "_pdf.pdf")
+    plt.close()
     h_pe = estimate_entropy(x, pe, pdf)
     h_g_pe = 0.5*np.log(2*np.pi*var_pe) + 0.5
     return pd.Series([h_g_smp, h_g_pe, h_smp, h_pe, h_g_smp - h_smp, h_g_pe - h_pe], index=["h_g_smp", "h_g_pe", "h_smp", "h_pe", "J_smp", "J_pe"])
