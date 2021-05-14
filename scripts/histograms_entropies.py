@@ -11,7 +11,6 @@ import argparse
 import subprocess
 import os
 import sys
-import re
 
 def setupParser():
     parser = argparse.ArgumentParser(description='Plot histograms.')
