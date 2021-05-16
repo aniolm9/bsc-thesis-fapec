@@ -98,8 +98,8 @@ def cumHist(df_samples, df_pe):
 
 def entropies(df_samples, df_pe):
     # Subset to sample
-    N = min(6000000, len(df_samples), len(df_pe))
-    chunksize = min(N, 30000)
+    N = min(2000000, len(df_samples), len(df_pe))
+    chunksize = min(N, 20000)
     # Prepare figure to plot PDF
     fig, ax = plt.subplots()
     fig.suptitle("Estimated probability density function of original and prediction error samples")
