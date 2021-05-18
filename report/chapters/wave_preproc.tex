@@ -16,7 +16,7 @@ Some satellites collect \acrshort{rf} data, either from ground or air sources (e
 	\label{fig:ro_schematic}
 \end{figure}
 
-This chapter is part of a DAPCOM Data Services strategic project focused on developing a new \acrshort{fapec} stage intended to compress \acrshort{ro} data collected by satellites. The algorithm will be tested over \acrshort{iq} sample files and other formats structured in two channels, for instance, stereo audio. The proposed solution will be compared with the well-known \acrshort{flac} coding technique.
+This chapter is part of a DAPCOM Data Services strategic project focused on developing a new \acrshort{fapec} stage intended to compress data collected by satellites. The algorithm will be tested over \acrshort{iq} sample files and other formats structured in two channels, for instance, stereo audio. The proposed solution will be compared with the well-known \acrshort{flac} coding technique.
 
 \section{Introduction to IQ data}
 
@@ -43,9 +43,9 @@ Hence, the data to be compressed are the discrete time samples of the signals $i
 
 For further information on \acrshort{iq} signals the reader may check references \parencite{IQintro}, \parencite{carlson2010communication} and \parencite{ICOM}.
 
-To conclude this section, we shall provide a justification on why we can use both \acrshort{iq} and audio files to test Wave and why we can compare it with the \acrshort{flac} standard.
+\section{Motivation and applications of Wave}
+We shall provide a justification on why we can use both \acrshort{iq} and audio files to test Wave and why we can compare it with the \acrshort{flac} standard.
 
-\subsection{Motivation and applications of Wave}
 On the first hand, as we will see shortly, both \acrshort{flac} and Wave implement the same preprocessing stage: a classical linear predictor. This decorrelation stage is followed by a Rice-Golomb entropy coder (see section \ref{golomb-coding}) in \acrshort{flac} and by the \acrshort{fapec} entropy coder in Wave.
 
 On the other hand, \acrshort{iq} data and stereo audio have the same structure: time series separated in two channels (notice that samples distribution may not be the same). In fact, most \acrshort{sdr} records are stored as \acrshort{wav} files, a well known audio format.
@@ -66,6 +66,9 @@ Subseccions: Requirements, Algorithm design.
 
 En aquesta crec que no cal cap justificació heavy, ja l'he donada a la secció anterior. Segurament posaré el paràgraf que ja hi ha escrit com a inici de la segona subsecció.
 \end{comment}
+
+\subsection{Requirements}
+\subsection{Algorithm design}
 
 In the previous section we justified why \acrshort{flac} should have a good performance with \acrshort{iq} data. Taking this into account, the proposed algorithm should have a structure similar to \acrshort{flac}'s but using \acrshort{fapec} as the entropy coder. This should translate into a compressor faster than \acrshort{flac} and with a similar compression ratio.
 

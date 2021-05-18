@@ -139,6 +139,10 @@ Faré tres subseccions: Requirements, Data analysis, Algorithm design.
 A la primera posaré els requeriments que vam posar al project plan, a la segona justificaré per què només comprimim el MWC i a la 3a descriuré l'algoritme escollit.
 \end{comment}
 
+\subsection{Requirements}
+\subsection{Data analysis}
+\subsection{Algorithm design}
+
 In the previous section we introduced the KMALL data format. Namely, we saw that it is a mixture of different data types, so we have to decide which ones should be compressed and which algorithm will be applied.
 
 In order to decide what to compress, we have first analyzed some .kmall and .kmwcd to determine the percentage of occupancy by datagram type. For the former files, we found that MRZ datagrams are a 92\% of the total size; and for the later, MWC datagrams are a 99\%. It is clear that these two data types are our objective; however, in this thesis we will ignore MRZ datagrams and we will just focus on MWC data. Actually, if we look at figure \ref{fig:mwc_datagram} we see that MWC headers are insignificant compared to its samples, therefore we will only compress payload information.
