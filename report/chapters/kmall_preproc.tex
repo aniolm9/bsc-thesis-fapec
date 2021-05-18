@@ -18,7 +18,7 @@ We clearly see that water column metrics have a big interest. However, their sto
 
 At the present moment, one of the biggest echosounder manufacturers is Kongsberg Maritime, a company with more than 7000 employees over 25 countries. In this chapter we will focus on the development of a preprocessing stage specially designed for the KMALL files from Kongsberg. First, a general overview of the data structures will be given. Then, with this format in mind, a design criterion will be proposed and implemented. Finally, we will analyze its performance and compare it with other compression algorithms.
 
-\section{The KMALL data format}
+\section{The KMALL data format} \label{sec:kmall_format}
 In this section we will describe the KMALL data structure and why there is a need to develop new compression algorithms for this format, but first some concepts related to echosounders must be defined:
 \begin{itemize}
 	\item \textbf{Ping:} A ping is defined as a number of pulses transmitted at approximately the same time.

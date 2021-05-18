@@ -1,8 +1,8 @@
 \chapter{The FAPEC Data Compressor}
 
-\acrfull{fapec} is a versatile and efficient data compressor originally designed for space missions \parencite{PaperFAPEC}. \acrshort{fapec}'s main advantages are its high computing performance and its resistance in front of noise or data outliers.
+\acrfull{fapec} is a versatile and efficient data compressor originally designed for space missions \parencite{PaperFAPEC}. The main advantages of \acrshort{fapec} are its high computing performance and its resistance in front of noise or data outliers.
 
-In this chapter we will explore \acrshort{fapec}'s structure and its integration with several decorrelation stages such as the two presented in this work. In order to do that, we will first see the origin of \acrshort{fapec} and its need in space industry.
+In this chapter we will explore the structure of \acrshort{fapec} and also its integration with several decorrelation stages such as the two presented in this work. In order to do that, we will first see the origin of \acrshort{fapec} and its need in space industry.
 
 \section{Background}
 Space missions are continuously evolving, hence the amount of data generated is growing. However, onboard computing power and downlink bandwidth are not evolving so fast and they are still quite narrowed. The usual technique to deal with the second limitation is data compression, but it has to be implemented efficiently as we are still limited by the first constraint. Moreover, the chosen algorithm must be reliable, as losing data in this harsh environment could be fatal.
@@ -12,7 +12,7 @@ The \acrfull{ccsds} already provides some standards for space data compression. 
 In order to work out the previous limitations, \acrshort{fapec} was proposed, featuring:
 \begin{itemize}
 	\item High computing performance.
-	\item Optimization for very low and very high entropy levels.
+	\item Good coding efficiency for all entropy levels regardless the statistical outliers.
 	\item Several preprocessing stages to suit different types of data.
 \end{itemize}
 
@@ -43,11 +43,35 @@ Where $T()$ is a generic transformation applied to the input sequence.
 
 The main purpose of decorrelation stages in data compressors is to reduce the entropy at the coder input to allow a better performance of the latter. In other words, the preprocessing stage performance is critical in the overall compressor efficiency.
 
-\acrshort{fapec} features several preprocessing algorithms (Fully Adaptive) such as a basic differential, multi-band prediction, etc. In this work we introduce two new stages that also follow the former approach.
+\acrshort{fapec} features several preprocessing algorithms such as a basic differential, multi-band prediction, etc. In this work we introduce two new stages that also follow the former approach.
 
-\section{Entropy coder}
+\section{Entropy coder} \label{sec:entropy_coder}
 \acrshort{fapec}'s entropy coder is inspired by the Golomb-Rice coder used in the \acrshort{ccsds} 121.0 standard for lossless data compression. \acrshort{fapec} aims to perform similarly to Rice codes but also fix some of the problems related with them.
 
 In order to achieve a good adaptation in front of outliers, \acrshort{fapec} works on data blocks of, typically, 128 samples. The core analyzes every block of prediction samples and determines the optimum coding tables. Finally, it calls the coding kernel, which generates a variable-length code for every given prediction error. Although \acrshort{fapec} needs larger data blocks compared with \acrshort{ccsds} 121.0, it has the advantage that the maximum code length is limited to less than twice the bit length of the input values.
 
-Previously we have said that \acrshort{fapec}'s core performs a statistical analysis of the prediction errors. If this analysis determines a very high entropy \acrshort{fapec} does not try to encode the values and they are sent to the output as is. On the other hand, the analysis might reveal very low entropy levels (about 90\% of the values being -1, 0 or 1). Assuming a probability of $\frac{1}{3}$ for all of them and sequences of 6 values, there are $3^6$ which can be encoded using 10 bits ($2^9 < 3^6 < 2^{10}$). The average is 1.66 bits per sample, a 95\% of the Shannon limit. Finally, sequences of 5 zeroes are also detected and a run length encoding is performed.
+Previously we have said that \acrshort{fapec}'s core performs a statistical analysis of the prediction errors. If this analysis determines a very high entropy \acrshort{fapec} does not try to encode the values and they are sent to the output as is. On the other hand, the analysis might reveal very low entropy levels (about 90\% of the values being -1, 0 or 1). Assuming a probability of $\frac{1}{3}$ for all of them and sequences of 6 values, there are $3^6$ which can be encoded using 10 bits ($2^9 < 3^6 < 2^{10}$). The average is 1.66 bits per sample, a 95\% of the Shannon limit. Finally, sequences of 5 zeroes or more are also detected and a run length encoding is performed.
+
+\section{Current FAPEC implementation}
+The last version of \acrshort{fapec} is 19.0, which is currently running in a cubesat constellation. In order to ensure portability between all platforms and a high efficiency, all \acrshort{fapec} versions are written in \acrshort{ansi} C. It also offers some features which we shall describe:
+
+\begin{itemize}
+	\item Stand-alone binary with multithreading support.
+	\item Dynamic library that provides a simple \acrshort{api}.
+	\item Data chunking.
+	\item Encryption.
+	\item Several preprocessing stages.
+\end{itemize}
+
+\subsubsection{Data chunking}
+\acrshort{fapec} compresses data in chunks. Chunks are usually between 64 kB and 4 MB, yet the user may set a different value. After every chunk all algorithms are reset, ensuring that every chunk can be decompressed independently. This feature is compulsory in harsh environments where transmission errors may often occur. Notice that data chunks are not the data blocks mentioned earlier (see \ref{sec:entropy_coder}), as the former are treated completely independently both in the preprocessing and the entropy coder, and the latter are the length of the adaptive block in the entropy coder.
+
+\subsubsection{Encryption}
+\acrshort{aes} with 256-bit keys encryption may be enabled. With this option, every chunk will be encrypted. This feature is only available if the target C compiler and system have the OpenSSL libraries.
+
+\subsubsection{Preprocessing stages}
+\acrshort{fapec} 19.0 provides several preprocessing stages, specifically: basic delta, prediction-based multi-band images, text, \acrshort{lzw} for text and generic binary files, tabular text, genomics, Kongsberg water column and \acrshort{dwt} for images.
+
+At this point the reader may not understand why this thesis proposes a new preprocessing stage for water column data if the current version of \acrshort{fapec} already provides one. The reason is that a new file format containing water column information was released and the current stage does not support it. More details about this format are available in section \ref{sec:kmall_format}.
+
+On the other hand, after looking at all the available stages one notices that audio files do not have a specific stage. This fact motivates the development of a preprocessing algorithm that will be both useful for audio and \acrshort{iq} files, as we will shortly.
