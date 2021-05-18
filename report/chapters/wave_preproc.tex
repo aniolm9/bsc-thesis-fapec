@@ -1,8 +1,8 @@
 \chapter{Wave Stage}
 
-Earth Observation techniques have been suffering a growth both in terms of quality and quantity, which means that the amount of data produced have also increased drastically. In addition, remote sensing is usually carried out by satellites with low storage capacity and limited bandwidth \parencite{SANDAU20101}, so clearly data compression is key in this situation.
+Earth Observation techniques have been experiencing a growth both in terms of quality and quantity, which means that the amount of data produced have also increased drastically. In addition, remote sensing is usually carried out by satellites with low storage capacity and limited bandwidth \parencite{SANDAU20101}, so clearly data compression is key in this situation.
 
-Between the vast amount of remote sensing techniques we find Radio Occultation \parencite{RO-GNSS}, which uses low orbit satellites to detect the changes produced by the atmosphere in a radio signal emitted by a \acrshort{gnss} satellite. \acrshort{ro} data is mainly used as a weather forecasting tool.
+Some satellites collect \acrshort{rf} data, either from ground or air sources (e.g. vessels, airplanes or industrial activity in general), as well as from other satellites. Between the vast amount of remote sensing techniques we find Radio Occultation \parencite{RO-GNSS}, which uses low orbit satellites to detect the changes produced by the atmosphere in a radio signal emitted by a \acrshort{gnss} satellite. \acrshort{ro} data is mainly used as a weather forecasting tool.
 
 \begin{figure}[h!]
 	\begin{center}
@@ -16,7 +16,7 @@ Between the vast amount of remote sensing techniques we find Radio Occultation \
 	\label{fig:ro_schematic}
 \end{figure}
 
-This chapter is part of a DAPCOM Data Services strategic project focused on developing a new \acrshort{fapec} stage intended to compress \acrshort{ro} data collected by nanosatellites. The algorithm will be tested over \acrshort{iq} sample files and other formats structured in two channels, for instance, stereo audio. The proposed solution will be compared with the well-known \acrshort{flac} coding technique.
+This chapter is part of a DAPCOM Data Services strategic project focused on developing a new \acrshort{fapec} stage intended to compress \acrshort{ro} data collected by satellites. The algorithm will be tested over \acrshort{iq} sample files and other formats structured in two channels, for instance, stereo audio. The proposed solution will be compared with the well-known \acrshort{flac} coding technique.
 
 \section{Introduction to IQ data}
 
@@ -45,7 +45,7 @@ For further information on \acrshort{iq} signals the reader may check references
 
 To conclude this section, we shall provide a justification on why we can use both \acrshort{iq} and audio files to test Wave and why we can compare it with the \acrshort{flac} standard.
 
-\subsection{Justification of Wave's applications}
+\subsection{Motivation and applications of Wave}
 On the first hand, as we will see shortly, both \acrshort{flac} and Wave implement the same preprocessing stage: a classical linear predictor. This decorrelation stage is followed by a Rice-Golomb entropy coder (see section \ref{golomb-coding}) in \acrshort{flac} and by the \acrshort{fapec} entropy coder in Wave.
 
 On the other hand, \acrshort{iq} data and stereo audio have the same structure: time series separated in two channels (notice that samples distribution may not be the same). In fact, most \acrshort{sdr} records are stored as \acrshort{wav} files, a well known audio format.
