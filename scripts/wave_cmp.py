@@ -62,47 +62,30 @@ def getRatios(file):
     ratio_gzip = round(orig_size / gzip_size, 3)
     return pd.Series([ratio_fapec, ratio_flac, ratio_gzip, fapec_time, flac_time, gzip_time], index=["ratio_fapec", "ratio_flac", "ratio_gzip", "time_fapec", "time_flac", "time_gzip"])
 
-'''
-def plotCompare(row):
-    # Use a Sans-Serif for figures
-    fontProperties = {'family': 'sans-serif', 'sans-serif': ['Latin Modern Sans']}
-    mpl.rc('font', **fontProperties)
-    # Find axis limits
-    xmax = 1.1 * max(row["time_fapec"], row["time_flac"], row["time_gzip"])
-    xmin = 0.9 * min(row["time_fapec"], row["time_flac"], row["time_gzip"])
-    ymax = 1.1 * max(1/row["ratio_fapec"], 1/row["ratio_flac"], 1/row["ratio_gzip"])
-    ymin = 0.9 * min(1/row["ratio_fapec"], 1/row["ratio_flac"], 1/row["ratio_gzip"])
-    fig, ax = plt.subplots()
-    fig.suptitle("Comparison of FAPEC, FLAC and GZIP")
-    ax.plot(row["time_fapec"], 1/row["ratio_fapec"], "x", label="FAPEC")
-    ax.plot(row["time_flac"], 1/row["ratio_flac"], "x", label="FLAC")
-    ax.plot(row["time_gzip"], 1/row["ratio_gzip"], "x", label="GZIP")
-    ax.legend()
-    ax.grid()
-    ax.set_xlabel("Process time [s]")
-    ax.set_ylabel("Compression ratio")
-    ax.set_xticks(np.arange(xmin, xmax, step=(xmax-xmin)/10))
-    ax.set_yticks(np.arange(ymin, ymax, step=(ymax-ymin)/10))
-    ax.xaxis.set_major_formatter(FormatStrFormatter('%.3f'))
-    ax.yaxis.set_major_formatter(FormatStrFormatter('%.3f'))
-    ax.set_title("File: %s" % (row["file"]), fontsize=9)
-    # Save figure to vectorial graphics pdf
-    plt.savefig(os.path.join(args.directory, row["file"] + "_comparison.pdf"))
-    plt.close()
-'''
-
 def plotCompare(df):
     # Use a Sans-Serif for figures
-    fontProperties = {'family': 'sans-serif', 'sans-serif': ['Latin Modern Sans']}
-    mpl.rc('font', **fontProperties)
-    # Find axis limits
-    xmax = 1.1 * max(df["time_fapec"], df["time_flac"], df["time_gzip"])
-    xmin = 0.9 * min(df["time_fapec"], df["time_flac"], df["time_gzip"])
-    ymax = 1.1 * max(1/df["ratio_fapec"], 1/df["ratio_flac"], 1/df["ratio_gzip"])
-    ymin = 0.9 * min(1/df["ratio_fapec"], 1/df["ratio_flac"], 1/df["ratio_gzip"])
-    fig, ax = plt.subplots()
+    #fontProperties = {'family': 'sans-serif', 'sans-serif': ['Latin Modern Sans']}
+    #mpl.rc('font', **fontProperties)
+    fig, ax = plt.subplots(constrained_layout=True)
     fig.suptitle("Comparison of FAPEC, FLAC and GZIP")
-    # TODO
+    markers = ["x", "o", "v", "^"]
+    unicode_markers = [u"✕", u"•", u"▼", u"▲"]
+    title = ""
+    for i, row in df.iterrows():
+        ax.plot(row["time_fapec"], 1/row["ratio_fapec"], "b" + markers[i], label="FAPEC")
+        ax.plot(row["time_flac"], 1/row["ratio_flac"], "g" + markers[i], label="FLAC")
+        ax.plot(row["time_gzip"], 1/row["ratio_gzip"], "r" + markers[i], label="GZIP")
+        title += "File: %s (%s)\n" % (row["file"], unicode_markers[i])
+    ax.legend(["FAPEC", "FLAC", "GZIP"])
+    ax.grid()
+    ax.set_title(title, fontsize=9)
+    ax.set_xlabel("Process time [s]")
+    ax.set_ylabel("Compression ratio")
+    ax.xaxis.set_major_formatter(FormatStrFormatter('%.3f'))
+    ax.yaxis.set_major_formatter(FormatStrFormatter('%.3f'))
+    # Save figure to vectorial graphics pdf
+    plt.savefig(os.path.join(args.directory, args.csv + "_comparison.pdf"))
+    plt.close()
 
 if __name__ == "__main__":
     args = setupParser().parse_args()
