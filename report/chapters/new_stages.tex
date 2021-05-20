@@ -1,0 +1,31 @@
+\chapter{New stages and metrics}
+New \acrshort{fapec} stages must be well documented, efficient and easy to maintain. In order to achieve this, all stages are subject to some general requirements and are evaluated using some specific metrics. In this chapter we will focus on the requirements and metrics that will be the basis of the stages proposed in the following chapters.
+
+\section{Requirements for \acrshort{fapec} stages} \label{sec:fapec_reqs}
+In this section we will list the general requirements that all \acrshort{fapec} stages developed by DAPCOM must fulfill. Besides these, other specific requirements for each stage may be defined.
+
+\subsubsection{Requirements}
+\begin{enumerate}
+	\item The stage must be implemented in C. \label{req:c}
+	\item The software shall be provided as a library and as a stand-alone binary. \label{req:lib_bin}
+	\item The stage must be able to work with data chunks. \label{req:chunks}
+	\item The stage must support lossless and lossy compression.
+	\item Data must not be lost even if the input is corrupted (i.e. delta fallback).
+	\item Compression ratio shall be better than Gzip's.
+	\item Compression speed shall be better than Gzip's.
+	\item The software shall be tested with a representative dataset.
+	\item The design and implementation must be documented.
+\end{enumerate}
+
+\subsubsection{Specifications}
+The following specifications shall be fulfilled with an Intel(R) Xeon(R) E5-2630 v3 processor.
+
+\begin{enumerate}
+	\item The occupied memory with one thread shall not exceed 64 MB.
+	\item \acrshort{fapec} data chunks shall have a size between 128 kB and 4 MB.
+	\item At least a 10 \% of the source code lines must be comments.
+	\item McCabe complexity \parencite{mccabe} shall be below 50.
+\end{enumerate}
+
+\section{Evaluation metrics}
+The aim of this section is to propose universal metrics to evaluate \acrshort{fapec} preprocessing stages and also compare them with other compression algorithms.
