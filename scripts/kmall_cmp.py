@@ -41,8 +41,8 @@ def plotCompare(df):
     #mpl.rc('font', **fontProperties)
     fig, ax = plt.subplots(constrained_layout=True)
     fig.suptitle("Comparison of FAPEC, FLAC and GZIP")
-    markers = ["x", "o", "v", "^"]
-    unicode_markers = [u"✕", u"•", u"▼", u"▲"]
+    markers = ["x", "o", "v", "^", "s"]
+    unicode_markers = [u"✕", u"•", u"▼", u"▲", u"◼️"]
     title = ""
     for i, row in df.iterrows():
         ax.plot(row["time_fapec"], 1/row["ratio_fapec"], "b" + markers[i], label="FAPEC")
