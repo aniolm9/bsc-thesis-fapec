@@ -1,5 +1,5 @@
-\chapter{New stages and metrics}
-New \acrshort{fapec} stages must be well documented, efficient and easy to maintain. In order to achieve this, all stages are subject to some general requirements and are evaluated using some specific metrics. In this chapter we will focus on the requirements and metrics that will be the basis of the stages proposed in the following chapters.
+\chapter{Development of new stages}
+New \acrshort{fapec} stages must be well documented, efficient and easy to maintain. In order to achieve this, all stages are subject to some general requirements and must be evaluated. In this chapter we will first list the general requirements for new stages. Then, we will present four metrics to evaluate each stage.
 
 \section{Requirements for \acrshort{fapec} stages} \label{sec:fapec_reqs}
 In this section we will list the general requirements that all \acrshort{fapec} stages developed by DAPCOM must fulfill. Besides these, other specific requirements for each stage may be defined.
@@ -23,9 +23,35 @@ The following specifications shall be fulfilled with an Intel(R) Xeon(R) E5-2630
 \begin{enumerate}
 	\item The occupied memory with one thread shall not exceed 64 MB.
 	\item \acrshort{fapec} data chunks shall have a size between 128 kB and 4 MB.
-	\item At least a 10 \% of the source code lines must be comments.
+	\item At least a 10\% of the source code lines must be comments.
 	\item McCabe complexity \parencite{mccabe} shall be below 50.
 \end{enumerate}
 
-\section{Evaluation metrics}
-The aim of this section is to propose universal metrics to evaluate \acrshort{fapec} preprocessing stages and also compare them with other compression algorithms.
+\section{Evaluation of stages}
+The aim of this section is to present the metrics used in the following chapters to evaluate the developed preprocessing stages. The proposed indexes may be classified in two groups: information metrics and performance metrics.
+
+\subsection{Information metrics}
+This subset of metrics is purely focused on evaluating how better data are after the decorrelation stage. Our first approach is to plot a \textbf{histogram} of the original samples together with a histogram of the prediction errors (i.e. the values that will be sent to the \acrshort{fapec} entropy coder). For a better visualization, the bin width is calculated from the number of samples and it is the same for both histograms. Besides, the prediction errors histogram is also doted with three vertical lines at percentiles 5, 50 and 95 in order to clearly show the range where 90\% of data is contained.
+
+\begin{comment}
+Figura mostrant un histograma.
+\end{comment}
+
+Making use of the histograms, the \textbf{cumulative histograms} of the original samples and the prediction errors are calculated and plotted together. Although this graphics are just the integral of the histograms described above, they provide a clear way to see samples concentration in intervals.
+
+\begin{comment}
+Figura mostrant una CDF.
+\end{comment}
+
+At the beginning of this thesis no more information metrics were planned, but we realized that these two are subject to data scaling. That is, with a simple division the metric can be adulterated. In order to deal with it, we also propose to use \textbf{negentropy} (see section \ref{sec:negentropy}) to measure how compressible the prediction errors are compared with the original samples. There are two main reasons behind choosing negentropy: the first is that it is invariant no linear maps, and the second is that it is a measure of non-Gaussianity. The first property solves the problem of data scaling, and the second one offers a way of knowing if the stage has improved data distribution (i.e. negentropy is higher).
+
+Although negentropy is a highly suitable metric for our purposes, it has an important drawback: its calculation is computationally very complex. Moreover, estimating it from data requires estimating the probability density function of the samples to later plug it into the definition of differential entropy and finally subtracting it to the Gaussian entropy for the same variance. However, negentropy can be approximated with the following expression:
+\begin{equation}
+J(X) \propto \left[\EX(G(X)) - \EX(G(V))\right]^2
+\end{equation}
+where $X$ is a random variable with $\mu = 0$ and $\sigma = 1$, $V \sim N(0,1)$ and $G(u)$ is a non-quadratic function. In our case, $X$ and $V$ will be data arrays and
+\begin{equation}
+G(u) = \ln \cosh u
+\end{equation}
+
+\subsection{Performance metrics}
