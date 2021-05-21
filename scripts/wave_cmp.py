@@ -63,9 +63,6 @@ def getRatios(file):
     return pd.Series([ratio_fapec, ratio_flac, ratio_gzip, fapec_time, flac_time, gzip_time], index=["ratio_fapec", "ratio_flac", "ratio_gzip", "time_fapec", "time_flac", "time_gzip"])
 
 def plotCompare(df):
-    # Use a Sans-Serif for figures
-    #fontProperties = {'family': 'sans-serif', 'sans-serif': ['Latin Modern Sans']}
-    #mpl.rc('font', **fontProperties)
     fig, ax = plt.subplots(constrained_layout=True)
     fig.suptitle("Comparison of FAPEC, FLAC and GZIP")
     markers = ["x", "o", "v", "^"]
