@@ -23,6 +23,7 @@ The following specifications shall be fulfilled with an Intel(R) Xeon(R) E5-2630
 \begin{enumerate}
 	\item The occupied memory with one thread shall not exceed 64 MB.
 	\item \acrshort{fapec} data chunks shall have a size between 128 kB and 4 MB.
+	\item Decompression time can't be higher than a 110\% of the compression time.
 	\item At least a 10\% of the source code lines must be comments.
 	\item McCabe complexity \parencite{mccabe} shall be below 50.
 \end{enumerate}
@@ -39,13 +40,13 @@ Making use of the histograms, the \textbf{cumulative histograms} of the original
 	\centering
 	\begin{subfigure}{0.5\textwidth}
 		\centering
-		\includegraphics[scale=0.5]{images/Rick Astley - Never Gonna Give You Up.wav_hist.pdf}
+		\includegraphics[width=\linewidth]{images/Rick Astley - Never Gonna Give You Up.wav_hist.pdf}
 		\caption{Histogram of an audio file.}
 		\label{fig:hist_example}
 	\end{subfigure}%
 	\begin{subfigure}{0.5\textwidth}
 		\centering
-		\includegraphics[scale=0.5]{images/Rick Astley - Never Gonna Give You Up.wav_hist_cum.pdf}
+		\includegraphics[width=\linewidth]{images/Rick Astley - Never Gonna Give You Up.wav_hist_cum.pdf}
 		\caption{Cumulative histogram of an audio file.}
 		\label{fig:sub2}
 	\end{subfigure}
