@@ -74,17 +74,54 @@ Besides the general requirements and specifications for \acrshort{fapec} stages 
 \begin{enumerate}
 	\item Compression ratio must be at least an 80\% of \acrshort{flac}'s.
 	\item Compression speed must be better than \acrshort{flac}'s.
-	\item The stage shall work for an arbitrary number of channels.
-	\item The stage shall work both with 8 bits and 16 bits samples.
+	\item It shall work for an arbitrary number of channels.
+	\item It shall work for 8-bit and 16-bit samples.
 \end{enumerate}
 
 \subsection{Algorithm design}
 In section \ref{sec:wave_motivation} we justified why \acrshort{flac} should have a good performance with \acrshort{iq} data. Taking this into account, the proposed algorithm should have a structure similar to \acrshort{flac}'s but using \acrshort{fapec} as the entropy coder. This should translate into a compressor faster than \acrshort{flac} and with a similar compression ratio.
 
+From the \acrshort{flac} format specifications we know that its preprocessing stage is based in a linear predictor \parencite{FLAC}. Therefore, our goal is to implement a predictor which, given an input sequence $x(n)$, predicts future samples following the model
+\begin{equation}
+\hat{x}(n) = \sum_{i=1}^{Q} h_i x(n-i)
+\end{equation}
+where $\hat{x}(n)$ is the predicted sequence, $x(n-i)$ the previous observed samples, $h_i$ the filter coefficients and $Q$ the filter order.
+
+From filter theory \parencite{PSAVC} we know that the coefficients $h_i$ are given by
+\begin{equation} \label{eq_normal_eqs_matrix}
+\mathbf{R}_x \mathbf{h} = \mathbf{r}_x
+\end{equation}
+where $\mathbf{R}_x$ is a $Q \times Q$ Toeplitz matrix with elements $r_{ij} = r_x(|i-j|),\hspace{0.5em} 0 \leq i,j < Q$, $\mathbf{r}_x$ the correlation vector with $r_j = r_x(j),\hspace{0.5em} 0 < j \leq Q$ and $\mathbf{h}$ the filter coefficients.
+
+Equation \ref{eq_normal_eqs_matrix} can also be expressed with scalar notation as:
+\begin{equation} \label{eq:normal_equations}
+r_x(j) = \sum_{i=1}^{Q} h_i r_x(|i-j|) ,\hspace{0.5em} 0 < j \leq Q
+\end{equation}
+where $r_x(j)$ is the lag $j$ of the autocorrelation of $x(n)$.
+
+In order to obtain the filter coefficients $h_i$ we need to solve the previous system. In this case, using Gauss-Jordan elimination is not desirable as it has a complexity of $O(n^3)$. However, there exist algorithms such as the Levinson-Durbin recursion (see appendix \ref{ch:l-d}) which, taking advantage of the Toeplitz structure of $\mathbf{R}_x$, reduce the computational complexity to $O(n^2)$.
+
+Now we shall particularize for our case where $x(n)$ is a deterministic finite sequence from an unknown origin. For this reason, we will calculate autocorrelation over intervals of length $N$. Then, $r_x(i)$ is given by:
+\begin{equation}
+r_x(i) = \sum_{m=0}^{N-1-i} x(m) x(m+i) ,\hspace{0.5em} i \geq 0
+\end{equation}
+
+In conclusion, the algorithm 
+
+We should point out that recovering samples in decompression...
+
 \section{Implementation}
 \begin{comment}
 Això serà una breu explicació més un flowchart. La part del rectify i tal la ignoraré.
 \end{comment}
+
+\begin{figure}[h!]
+	\begin{center}
+		\scalebox{.7}{\input{images/wave_flowchart.tex}}
+	\end{center}
+	\caption{Flowchart of the Wave preprocessing stage.}
+	\label{fig:wave_flowchart}
+\end{figure}
 
 \section{Results}
 \begin{comment}
