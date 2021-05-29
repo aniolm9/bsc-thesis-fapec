@@ -25,14 +25,14 @@
 
 % Change text font
 \usepackage{fontspec}
-\usepackage{amssymb}
-%\usepackage{unicode-math}
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
 %\setmainfont{Libertinus Serif}
 %\setmathfont{Libertinus Math}
+\setmathfont[range=\mathbb]{TeX Gyre Termes Math}
 
 \newtheorem{theorem}{Theorem}
 \numberwithin{theorem}{chapter}
-\DeclareMathOperator{\EX}{\mathbb{E}}
 
 % Use biblatex to manage bibliography.
 \usepackage[
@@ -73,5 +73,5 @@
 \usepackage{comment}
 \specialcomment{comment}{\begingroup \color{blue}}{\endgroup}
 \newboolean{showcomment}
-\setboolean{showcomment}{true} % Comment to disable block comments
+%\setboolean{showcomment}{true} % Comment to disable block comments
 \ifthenelse{\boolean{showcomment}}{}{\excludecomment{comment}}

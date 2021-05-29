@@ -58,7 +58,7 @@ At the beginning of this thesis no more information metrics were planned, but we
 
 Although negentropy is a highly suitable metric for our purposes, it has an important drawback: its calculation is computationally very complex. Moreover, estimating it from data requires estimating the probability density function of the samples to later plug it into the definition of differential entropy and finally subtracting it to the Gaussian entropy for the same variance. However, negentropy can be approximated with the following expression \parencite{HYVARINEN2000411}:
 \begin{equation}
-J(X) \propto \left[\EX(G(X)) - \EX(G(V))\right]^2
+J(X) \propto \left[E[G(X)] - E[G(V)]\right]^2
 \end{equation}
 where $X$ is a random variable with $\mu = 0$ and $\sigma = 1$, $V \sim N(0,1)$ and $G(u)$ is a non-quadratic function. In our case, $X$ and $V$ will be data arrays and
 \begin{equation}
@@ -70,16 +70,16 @@ We are interested in comparing the whole compression process: from opening the o
 
 In this thesis we propose a new metric based on Euclidean distance that takes into account the (normalized) process time and the (inverse) compression ratio. Mainly, given an input file, it consists in computing a dot in $\mathbb{R}^2$ where the first coordinate is the normalized process time and the second is the inverse of the compression ratio. Then, the Euclidean distance to the origin is computed for every algorithm and the one with the smallest distance is assumed to be the best. Formally, the coordinates for each compressor are given by
 \begin{equation} \label{eq:dot_comp}
-\boldsymbol{a} = \left(t, \frac{s_c}{s_o}\right)
+\mathbf{a} = \left(t, \frac{s_c}{s_o}\right)
 \end{equation}
 
 and the metric is
 \begin{equation} \label{eq:metric_gamma}
-\gamma = \left\Vert \boldsymbol{a} \right\Vert ^2 = t^2 + \left(\frac{s_c}{s_o}\right)^2
+\gamma = \left\Vert \mathbf{a} \right\Vert ^2 = t^2 + \left(\frac{s_c}{s_o}\right)^2
 \end{equation}
 
 where $t$ is the process time normalized by 1 second, $s_c$ the compressed file size in bytes and $s_o$ the original file size also in bytes.
 
 In order to reliably calculate the compression time, each compressor is run as a child-process on a Python script. Then, time is taken before spawning the child-process and again after it exits. Subtracting the end time to the start time gives the process time which, divided by 1 second, is used in equations \ref{eq:dot_comp} and \ref{eq:metric_gamma}.
 
-Finally, we want to point out that in the following chapters the metric $\gamma$ will be given together with a plot including the dot $\boldsymbol{a}$ for several input files and compressors.
+Finally, we want to point out that in the following chapters the metric $\gamma$ will be given together with a plot including the dot $\mathbf{a}$ for several input files and compressors.
