@@ -30,7 +30,7 @@ def getRatios(file):
     data_array = np.fromfile(file, dtype=np.int16)
     data_array = np.floor_divide(data_array, wave_losses[lossy])
     samplerate = 44100
-    if extension == ".iqdata":        
+    if extension == ".iqdat":        
         # Create a Nx2 array for the IQ channels
         in_phase = data_array[::2]
         quadrature = data_array[1::2]
