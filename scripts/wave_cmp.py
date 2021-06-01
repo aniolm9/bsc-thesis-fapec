@@ -78,6 +78,10 @@ def plotCompare(df):
     ax.set_title(title, fontsize=9)
     ax.set_xlabel("Process time [s]")
     ax.set_ylabel("Compression ratio")
+    xlim = [0, ax.get_xlim()[1]]
+    ylim = [0, ax.get_ylim()[1]]
+    ax.set_xlim(xlim)
+    ax.set_ylim(ylim)
     ax.xaxis.set_major_formatter(FormatStrFormatter('%.3f'))
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.3f'))
     # Save figure to vectorial graphics pdf
