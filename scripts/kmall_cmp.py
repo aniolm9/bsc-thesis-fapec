@@ -37,7 +37,7 @@ def getRatios(file):
 
 def plotCompare(df):
     fig, ax = plt.subplots(constrained_layout=True)
-    fig.suptitle("Comparison of FAPEC, FLAC and GZIP")
+    fig.suptitle("Comparison of FAPEC and GZIP")
     markers = ["x", "o", "v", "^", "s"]
     unicode_markers = [u"✕", u"•", u"▼", u"▲", u"◼️"]
     title = ""
