@@ -133,25 +133,33 @@ Where:
 In the present work we will only use information contained in \textit{Header} such as the datagram size, in \textit{RxInfo} and in \textit{BeamData}. For further details, the interested reader may check reference \parencite{KMALL}.
 
 \section{Design}
-\begin{comment}
-Faré tres subseccions: Requirements, Data analysis, Algorithm design.
-
-A la primera posaré els requeriments que vam posar al project plan, a la segona justificaré per què només comprimim el MWC i a la 3a descriuré l'algoritme escollit.
-\end{comment}
+We have already described the KMALL format and we have also justified why this stage is needed. Now it is time to start designing an algorithm to decorrelate this kind of files. We will follow a two-step approach: first we will analyze the KMALL files in our dataset to determine which of the datagrams listed in section \ref{sec:kmall_format} are worth to be compressed. Then, we will propose an algorithm that suits the requirements stated in section \ref{sec:requirements}. There are no specific requirements for this stage.
 
 \subsection{Data analysis}
+In order to decide what to compress, we have first analyzed some .kmall and .kmwcd files to determine the percentage of occupancy by datagram type. The procedure we have followed is the following:
+\begin{enumerate}
+	\item Implement the existing C++ KMALL format in Python.
+	\item Implement a Python class which acts as top level \acrshort{api} for the KMALL files.
+	\item Write a Python script that takes a directory and an extension and returns the percentages of every datagram type.
+\end{enumerate}
+The result is that for .kmall files, MRZ datagrams are a 92\% of the total size; and for .kmwcd, \acrshort{mwc} datagrams are a 99\%. From this evaluation it is clear that these two data types are our objective; however, they are too different to be preprocessed with the same stage, therefore in this thesis we will ignore MRZ datagrams and we will just focus on MWC data.
+
+If we look close to a MWC datagram (see figure \ref{fig:mwc_datagram}) we see that, even considering all the headers, their size is insignificant compared with samples volume. Hence, we will only compress the payload, which includes amplitude and phase information.
+
+In conclusion, we will design a stage which will only give some special attention to the information contained in the \textit{BeamData} subdatagram from \acrshort{mwc} datagrams.
+
 \subsection{Algorithm design}
 
-In the previous section we introduced the KMALL data format. Namely, we saw that it is a mixture of different data types, so we have to decide which ones should be compressed and which algorithm will be applied.
-
-In order to decide what to compress, we have first analyzed some .kmall and .kmwcd to determine the percentage of occupancy by datagram type. For the former files, we found that MRZ datagrams are a 92\% of the total size; and for the later, MWC datagrams are a 99\%. It is clear that these two data types are our objective; however, in this thesis we will ignore MRZ datagrams and we will just focus on MWC data. Actually, if we look at figure \ref{fig:mwc_datagram} we see that MWC headers are insignificant compared to its samples, therefore we will only compress payload information.
+\begin{comment}
+TODO
+\end{comment}
 
 \begin{figure}[h!]
 	\begin{center}
-		\includegraphics[scale=0.3]{images/water_column_data.png}
+		\includegraphics[scale=0.32]{images/water_column_amp.png}
 	\end{center}
-	\caption{Raw image representation of water column data captured by a Kongsberg EM 2040 echosounder.}
-	\label{fig:wc_data}
+	\caption{Raw representation of \acrshort{mwc} amplitude from a EM 2040 echosounder.}
+	\label{fig:wc_amplitude}
 \end{figure}
 
 Once we have decided that we will restrict to water column data, a design criteria must be properly defined. This design has to take into account multiple aspects, namely: speed, implementation easiness and compression performance.
