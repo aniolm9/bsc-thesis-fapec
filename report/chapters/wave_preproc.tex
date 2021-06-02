@@ -1,5 +1,4 @@
 \chapter{Wave Stage}
-
 Earth Observation techniques have been experiencing a growth both in terms of quality and quantity, which means that the amount of data produced have also increased drastically. In addition, remote sensing is usually carried out by satellites with low storage capacity and limited bandwidth \parencite{SANDAU20101}, so clearly data compression is key in this situation.
 
 Some satellites collect \acrshort{rf} data, either from ground or air sources (e.g. vessels, airplanes or industrial activity in general), as well as from other satellites. Between the vast amount of remote sensing techniques we find Radio Occultation \parencite{RO-GNSS}, which uses low orbit satellites to detect the changes produced by the atmosphere in a radio signal emitted by a \acrshort{gnss} satellite. \acrshort{ro} data is mainly used as a weather forecasting tool.
@@ -55,18 +54,6 @@ Additionally, in literature we may find papers about \acrshort{iq} data compress
 To conclude, there are clear similarities between the two proposed algorithms and also between the proposed data formats. Hence, from a qualitative point of view, comparing Wave and \acrshort{flac} with a dataset of \acrshort{iq} data and stereo audio files is a logical choice.
 
 \section{Design}
-\begin{comment}
-Aquesta etapa decorreladora està enfocada a dades amb 2 canals (àudio stereo, I/Q). El desenvolupament dins de l'empresa està especialment enfocat per un client, però per motius de confidencialitat inclouré una versió genèrica que es podrà comparar amb el FLAC. L'etapa fa servir LPC i posteriorment envia els errors de predicció al codificador entròpic.
-
-L'algoritme és el "típic" per LPC i la resolució del sistema lineal resultant del predictor lineal \parencite{PSAVC} es fa amb Levinson-Durbin \parencite{LevinsonDurbin}, que aprofitant l'estructura Toeplitz redueix la complexitat de $O(n^3)$ a $O(n^2)$.
-
-Disseny del predictor i l'estructura de l'etapa. Justificació de per què s'utilitzen els LPC i no una altra cosa. La resolució de les equacions de Yule-Walker anirà aquí, però segurament en posaré la deducció en un annex.
-
-Subseccions: Requirements, Algorithm design.
-
-En aquesta crec que no cal cap justificació heavy, ja l'he donada a la secció anterior. Segurament posaré el paràgraf que ja hi ha escrit com a inici de la segona subsecció.
-\end{comment}
-
 In this section we will design the algorithm intended to decorrelate audio and \acrshort{iq} data. The structure of the section will be the following: first we will state the specific requirements for the stage. Then, according to these and to the data structure described above, an algorithm will be proposed.
 
 \subsection{Requirements and specifications}
@@ -99,21 +86,21 @@ r_x(j) = \sum_{i=1}^{Q} h_i r_x(|i-j|) ,\hspace{0.5em} 0 < j \leq Q
 \end{equation}
 where $r_x(j)$ is the lag $j$ of the autocorrelation of $x(n)$.
 
-In order to obtain the filter coefficients $h_i$ we need to solve the previous system. In this case, using Gauss-Jordan elimination is not desirable as it has a complexity of $O(n^3)$. However, there exist algorithms such as the Levinson-Durbin recursion (see appendix \ref{ch:l-d}) which, taking advantage of the Toeplitz structure of $\mathbf{R}_x$, reduce the computational complexity to $O(n^2)$.
+In order to obtain the filter coefficients $h_i$ we need to solve the previous system. In this case, using Gauss-Jordan elimination is not desirable as it has a complexity of $O(Q^3)$. However, there exist algorithms such as the Levinson-Durbin recursion \parencite{LevinsonDurbin} which, taking advantage of the Toeplitz structure of $\mathbf{R}_x$, reduce the computational complexity to $O(Q^2)$.
 
-Equations \ref{eq:normal_eqs_matrix} are obtained from a statistical approach to the problem, assuming that the sequence $x(n)$ is \acrshort{wss}. However, in our case $x(n)$ is a deterministic finite sequence from an unknown origin. For this reason, we need to split $x(n)$ in subsequences $x_N(n)$ of length $N$ where assuming stationarity is reasonable. For each of these subsequences $x_N(n)$, the filter coefficients $h_i$ are assumed to be independent (i.e. they are reset at the beginning of each subsequence). In this scenario, the autocorrelation lags for each subsequence would be calculated as follows:
+Equation \ref{eq:normal_eqs_matrix} is obtained from a statistical approach to the problem, assuming that the sequence $x(n)$ is \acrshort{wss}. However, in our case $x(n)$ is a deterministic finite sequence from an unknown origin. For this reason, we need to split $x(n)$ in subsequences $x_N(n)$ of length $N$ where assuming stationarity is reasonable. For each of these subsequences $x_N(n)$, the filter coefficients $h_i$ are assumed to be independent (i.e. they are reset at the beginning of each subsequence). In this scenario, the autocorrelation lags for each subsequence would be given by the short-term autocorrelation function:
 \begin{equation}
 r_x(i) = \sum_{m=0}^{N-1-i} x_N(m) x_N(m+i) ,\hspace{0.5em} i \geq 0
 \end{equation}
 
-If lossy is enabled, samples will be divided and then floored just before this step. It is important to notice that lossy must be applied to samples instead of prediction errors to avoid accumulating quantization errors.
+It is important to remark that given the unknown character of the input data, $N$ is a custom parameter that the user may choose when setting up the compressor.
 
 However, for computational purposes, we will not use all the $N$ samples of $x_N(n)$. Instead, we will set a training length $T \leq N$ and the autocorrelation lags will be calculated as follows:
 \begin{equation}
 	r_x(i) = \sum_{m=0}^{T-1-i} x_N(m) x_N(m+i) ,\hspace{0.5em} i \geq 0
 \end{equation}
 
-It is important to remark that given the unknown character of the input data, $N$ is a custom parameter that the user may choose when setting up the compressor.
+If lossy is enabled, samples will be divided and then floored just before this step. It is important to notice that lossy must be applied to samples instead of prediction errors to avoid accumulating quantization errors.
 
 To sum up, the proposed algorithm consists in splitting $x(n)$ in sequences of size $N$ for which the autocorrelation will be computed using $T$ samples. Then, the filter coefficients $h_i$ will be computed using the Levinson-Durbin algorithm and they will be sent to the entropy coder together with the prediction errors given by:
 \begin{equation}
