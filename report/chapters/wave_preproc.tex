@@ -82,18 +82,18 @@ Besides the general requirements and specifications for \acrshort{fapec} stages 
 In section \ref{sec:wave_motivation} we justified why \acrshort{flac} should have a good performance with \acrshort{iq} data. Taking this into account, the proposed algorithm should have a structure similar to \acrshort{flac}'s but using \acrshort{fapec} as the entropy coder. This should translate into a compressor faster than \acrshort{flac} and with a similar compression ratio.
 
 From the \acrshort{flac} format specifications we know that its preprocessing stage is based in a linear predictor \parencite{FLAC}. Therefore, our goal is to implement a predictor which, given an input sequence $x(n)$, predicts future samples following the model
-\begin{equation}
+\begin{equation} \label{eq:prediction_x}
 \hat{x}(n) = \sum_{i=1}^{Q} h_i x(n-i)
 \end{equation}
 where $\hat{x}(n)$ is the predicted sequence, $x(n-i)$ the previous observed samples, $h_i$ the filter coefficients and $Q$ the filter order.
 
 From filter theory \parencite{PSAVC} we know that the coefficients $h_i$ are given by
-\begin{equation} \label{eq_normal_eqs_matrix}
+\begin{equation} \label{eq:normal_eqs_matrix}
 \mathbf{R}_x \mathbf{h} = \mathbf{r}_x
 \end{equation}
 where $\mathbf{R}_x$ is a $Q \times Q$ Toeplitz matrix with elements $r_{ij} = r_x(|i-j|),\hspace{0.5em} 0 \leq i,j < Q$, $\mathbf{r}_x$ the correlation vector with $r_j = r_x(j),\hspace{0.5em} 0 < j \leq Q$ and $\mathbf{h}$ the filter coefficients.
 
-Equation \ref{eq_normal_eqs_matrix} can also be expressed with scalar notation as:
+Equation \ref{eq:normal_eqs_matrix} can also be expressed with scalar notation as:
 \begin{equation} \label{eq:normal_equations}
 r_x(j) = \sum_{i=1}^{Q} h_i r_x(|i-j|) ,\hspace{0.5em} 0 < j \leq Q
 \end{equation}
@@ -101,23 +101,34 @@ where $r_x(j)$ is the lag $j$ of the autocorrelation of $x(n)$.
 
 In order to obtain the filter coefficients $h_i$ we need to solve the previous system. In this case, using Gauss-Jordan elimination is not desirable as it has a complexity of $O(n^3)$. However, there exist algorithms such as the Levinson-Durbin recursion (see appendix \ref{ch:l-d}) which, taking advantage of the Toeplitz structure of $\mathbf{R}_x$, reduce the computational complexity to $O(n^2)$.
 
-Now we shall particularize for our case where $x(n)$ is a deterministic finite sequence from an unknown origin. For this reason, we will calculate autocorrelation over intervals of length $N$. Then, $r_x(i)$ is given by:
+Equations \ref{eq:normal_eqs_matrix} are obtained from a statistical approach to the problem, assuming that the sequence $x(n)$ is \acrshort{wss}. However, in our case $x(n)$ is a deterministic finite sequence from an unknown origin. For this reason, we need to split $x(n)$ in subsequences $x_N(n)$ of length $N$ where assuming stationarity is reasonable. For each of these subsequences $x_N(n)$, the filter coefficients $h_i$ are assumed to be independent (i.e. they are reset at the beginning of each subsequence). In this scenario, the autocorrelation lags for each subsequence would be calculated as follows:
 \begin{equation}
-r_x(i) = \sum_{m=0}^{N-1-i} x(m) x(m+i) ,\hspace{0.5em} i \geq 0
+r_x(i) = \sum_{m=0}^{N-1-i} x_N(m) x_N(m+i) ,\hspace{0.5em} i \geq 0
 \end{equation}
 
-In conclusion, the algorithm 
+If lossy is enabled, samples will be divided and then floored just before this step. It is important to notice that lossy must be applied to samples instead of prediction errors to avoid accumulating quantization errors.
 
-We should point out that recovering samples in decompression...
+However, for computational purposes, we will not use all the $N$ samples of $x_N(n)$. Instead, we will set a training length $T \leq N$ and the autocorrelation lags will be calculated as follows:
+\begin{equation}
+	r_x(i) = \sum_{m=0}^{T-1-i} x_N(m) x_N(m+i) ,\hspace{0.5em} i \geq 0
+\end{equation}
 
-\section{Implementation}
-\begin{comment}
-Això serà una breu explicació més un flowchart. La part del rectify i tal la ignoraré.
-\end{comment}
+It is important to remark that given the unknown character of the input data, $N$ is a custom parameter that the user may choose when setting up the compressor.
+
+To sum up, the proposed algorithm consists in splitting $x(n)$ in sequences of size $N$ for which the autocorrelation will be computed using $T$ samples. Then, the filter coefficients $h_i$ will be computed using the Levinson-Durbin algorithm and they will be sent to the entropy coder together with the prediction errors given by:
+\begin{equation}
+e(n) = x(n) - \hat{x}(n)
+\end{equation}
+
+We should point out that recovering samples in decompression is as easy as calculating $\hat{x}(n)$ with equation \ref{eq:prediction_x} and then adding it to the prediction error for that sample (remember that we coded the prediction errors and the coefficients). Taking this into account, it is obvious that decompression will be much faster than compression.
+
+In general, the previous algorithm will be applied independently in each channel, but the user may enable channel coupling and then the coefficients from the first channel will be reused in the others.
+
+During the design process it has been taken into account that the stage must be implemented in the C programming language (see \ref{sec:requirements}).
 
 \begin{figure}[h!]
 	\begin{center}
-		\scalebox{.7}{\input{images/wave_flowchart.tex}}
+		\scalebox{.71}{\input{images/wave_flowchart.tex}}
 	\end{center}
 	\caption{Flowchart of the Wave preprocessing stage.}
 	\label{fig:wave_flowchart}
