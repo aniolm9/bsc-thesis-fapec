@@ -111,7 +111,7 @@ We should point out that recovering samples in decompression is as easy as calcu
 
 In general, the previous algorithm will be applied independently in each channel, but the user may enable channel coupling and then the coefficients from the first channel will be reused in the others.
 
-During the design process it has been taken into account that the stage must be implemented in the C programming language (see \ref{sec:requirements}).
+In figure \ref{fig:wave_flowchart} we include a flowchart for the proposed algorithm, where \textit{Settings} are the number of bits per sample, a boolean to enable or disable channel coupling, the level of losses, the number of channels, the period length $N$, the training length $T$ and the filter order $Q$.
 
 \begin{figure}[h!]
 	\begin{center}
@@ -122,6 +122,93 @@ During the design process it has been taken into account that the stage must be 
 \end{figure}
 
 \section{Results}
-\begin{comment}
-He de pensar si faig subseccions o no. La idea és posar els dos tipus d'histogrames, la negentropy i el diagrama de distàncies euclidianes.
-\end{comment}
+The final step in the development of a new stage is evaluating it. To do that, we will use the metrics proposed in section \ref{sec:metrics}.
+
+The results presented in this section have been obtained with the following settings:
+\begin{itemize}
+	\item Signed 16-bit samples.
+	\item Filter order: $Q = 10$
+	\item Period length: $N = 65536$
+	\item Training length: $T = 65536$
+	\item Number of channels: 2.
+	\item No coupling.
+	\item No losses.
+\end{itemize}
+
+Here we will include negentropies, ratios, execution times and Euclidean distances for all our dataset, but we will just show the histogram and the cumulative histogram for one file. The remaining ones can be found in appendix \ref{ch:wave_hists}.
+
+We start our evaluation by showing the histogram (and cumulative histogram) of the song \textit{Formigues}, by Manel:
+
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{images/03 - Manel - Formigues.wav_hist.pdf}
+		\caption{Histogram.}
+		\label{fig:hist_formiques}
+	\end{subfigure}%
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{images/03 - Manel - Formigues.wav_hist_cum.pdf}
+		\caption{Cumulative histogram.}
+		\label{fig:cum_hists_formigues}
+	\end{subfigure}
+	\caption{Histogram and cumulative histogram of \textit{Formigues} by Manel.}
+	\label{fig:formigues}
+\end{figure}
+
+We clearly see that histograms provide us a qualitative and visual way to identify the reduction of the dynamic range, but they are easy to manipulate with a simple division of the samples. Besides, we are also interested in quantifying this improvement. For this reason, we have estimated negentropy before and after the decorrelation process. Notice that an improvement of $\alpha$ times in negentropy does not imply that the compression ratio will be $\alpha$ times better.
+
+As we can see in table \ref{tab:negentropies}, negentropy of all files improves after applying the stage we have developed.
+
+\begin{table}[h!]
+\normalsize
+\centering
+\begin{tabular}{|
+	>{\columncolor[HTML]{FFFFFF}}l |
+	>{\columncolor[HTML]{FFFFFF}}c |
+	>{\columncolor[HTML]{FFFFFF}}c |c|}
+	\hline
+	\multicolumn{1}{|c|}{\cellcolor[HTML]{9698ED}Filename} & \cellcolor[HTML]{9698ED}J(X) & \cellcolor[HTML]{9698ED}J(E) & \cellcolor[HTML]{9698ED}J(E)/J(X) \\ \hline
+	03 - Manel - Formigues.wav                             & 0.0018                       & 0.0144                       & 8.0                               \\ \hline
+	04 - Pink Floyd - Time.wav                             & 0.0004                       & 0.0238                       & 59.5                              \\ \hline
+	06 - Manel - Els entusiasmats.wav                      & 0.0012                       & 0.0098                       & 8.2                               \\ \hline
+	06 - Pink Floyd - Money.wav                            & 0.0009                       & 0.0090                       & 10                                \\ \hline
+\end{tabular}
+\caption{Negentropies of audio files before and after Wave.}
+\label{tab:negentropies}
+\end{table}
+
+Finally, we will compare compression ratio and time of \acrshort{fapec}, \acrshort{flac} and GZIP.
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.69]{images/2021-05-30T22:30:32.186296-results_wave.csv_comparison.pdf}
+	\end{center}
+	\caption{Comparison of compressors by time and ratio.}
+	\label{fig:audio_compare}
+\end{figure}
+
+As we can see in figure \ref{fig:audio_compare}, \acrshort{flac} and \acrshort{fapec} have a similar performance, with the former having a better radio and the latter being faster. Applying our Euclidean distance criteria, we determine the \acrshort{fapec} behaves slightly better than \acrshort{flac} thanks to its speed. In table \ref{tab:audio_compare} we include the numerical values of the Euclidean distances.
+
+\begin{table}[h!]
+\normalsize
+\centering
+\begin{tabular}{|
+	>{\columncolor[HTML]{FFFFFF}}l |
+	>{\columncolor[HTML]{FFFFFF}}c |
+	>{\columncolor[HTML]{FFFFFF}}c |c|}
+	\hline
+	\multicolumn{1}{|c|}{\cellcolor[HTML]{9698ED}Filename} & \cellcolor[HTML]{9698ED}FAPEC dist. & \cellcolor[HTML]{9698ED}FLAC dist. & \cellcolor[HTML]{9698ED}GZIP dist. \\ \hline
+	03 - Manel - Formigues.wav                             & 0.9040                                 & 1.0938                                & 1.9161                                \\ \hline
+	04 - Pink Floyd - Time.wav                             & 1.0630                                 & 1.2181                                & 2.4851                                \\ \hline
+	06 - Manel - Els entusiasmats.wav                      & 0.8242                                 & 0.9453                                & 1.6197                                \\ \hline
+	06 - Pink Floyd - Money.wav                            & 1.0333                                 & 1.2152                                & 2.3294                                \\ \hline
+\end{tabular}
+\caption{Wave Euclidean distances.}
+\label{tab:audio_compare}
+\end{table}
+
+Finally, we want to present a brief code evaluation. The McCabe complexity of the stage is 31, smaller than the maximum value set in the specifications. Besides, in the worst scenario, the maximum occupied memory is 18.3 MB.
+
+Our last remark is that all the requirements and specifications are fulfilled.
