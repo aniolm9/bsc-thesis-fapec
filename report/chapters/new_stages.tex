@@ -28,7 +28,7 @@ The following specifications shall be fulfilled with an Intel Core i7-10710U \ac
 	\item McCabe complexity \parencite{mccabe} shall be below 50.
 \end{enumerate}
 
-\section{Evaluation of stages}
+\section{Evaluation of stages} \label{sec:metrics}
 The aim of this section is to present the metrics used in the following chapters to evaluate the developed preprocessing stages. The proposed indexes may be classified in two groups: information metrics and performance metrics.
 
 \subsection{Information metrics}
@@ -48,10 +48,10 @@ Making use of the histograms, the \textbf{cumulative histograms} of the original
 		\centering
 		\includegraphics[width=\linewidth]{images/Rick Astley - Never Gonna Give You Up.wav_hist_cum.pdf}
 		\caption{Cumulative histogram of an audio file.}
-		\label{fig:sub2}
+		\label{fig:cum_hist_example}
 	\end{subfigure}
 	\caption{Histogram and cumulative histogram of a file compressed with Wave.}
-	\label{fig:test}
+	\label{fig:hists_example}
 \end{figure}
 
 At the beginning of this thesis no more information metrics were planned, but we realized that these two are subject to data scaling. That is, with a simple division the metric can be adulterated. In order to deal with it, we also propose to use \textbf{negentropy} (see section \ref{sec:negentropy}) to measure how compressible the prediction errors are compared with the original samples. There are two main reasons behind choosing negentropy: the first is that it is invariant to linear maps, and the second is that it is a measure of non-Gaussianity. The first property solves the problem of data scaling, and the second one offers a way of knowing if the stage has improved data distribution (i.e. negentropy is higher).
