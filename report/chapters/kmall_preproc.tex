@@ -191,8 +191,8 @@ E_{i,j} = S_{i,j} - S_{i,j-1}, \qquad 0 \leq i < \min(N_{S_{j-1}}, N_{S_j}), \qu
 \end{equation}
 
 The remaining samples are predicted with the previous samples. Mathematically,
-\begin{equation}
-E_{i,j} = S_{i,j} - S_{i-1,j}, \qquad \min(N_{S_{j-1}} \leq i < N_{S_j}, \quad 0 < j < N_B
+\begin{equation} \label{eq:samples}
+E_{i,j} = S_{i,j} - S_{i-1,j}, \qquad \min(N_{S_{j-1}}, N_{S_j}) \leq i < N_{S_j}, \quad 0 < j < N_B
 \end{equation}
 
 The prediction errors for the first beam are also calculated with equation \ref{eq:first_beam}, with the addition that
@@ -200,7 +200,7 @@ The prediction errors for the first beam are also calculated with equation \ref{
 E_{0,0} = S_{0,0} + 128
 \end{equation}
 
-Now we are interested in observing if this algorithm also work for the phase information present in MWC datagrams. Notice that the former stage for .wcd was not designed to work with phase samples. In figure \ref{fig:wc_phase} we show the phase corresponding to the amplitudes in figure \ref{fig:wc_amplitude}. As the reader can see, this information is almost white noise, therefore it is theoretically impossible to compress. Our final decision has been to apply the same equations that are used for amplitude samples.
+Now we are interested in observing if this algorithm also work for the phase information present in MWC datagrams. Notice that the former stage for .wcd was not designed to work with phase samples. In figure \ref{fig:wc_phase} we show the phase corresponding to the amplitudes in figure \ref{fig:wc_amplitude}. As the reader can see, this information is almost white noise, therefore it is theoretically impossible to compress. Our final decision has been to apply a simple differential between samples (i.e. equation \ref{eq:samples}).
 \begin{figure}[h!]
 	\begin{center}
 		\includegraphics[scale=0.334]{images/water_column_ph.png}
@@ -209,11 +209,18 @@ Now we are interested in observing if this algorithm also work for the phase inf
 	\label{fig:wc_phase}
 \end{figure}
 
-Finally, we should remark that more complex algorithms like nearest-neighbor or a generic linear predictor of order $Q$ have been tested, but they have not only been slower but also had a worse compression ratio.
+Finally, we should remark that more complex algorithms like nearest-neighbor or a generic linear predictor of order $Q$ have been tested, but they have not only been slower but also have a worse compression ratio.
 
-\begin{comment}
-Same que wave. Explicació + flowchart, sense codi.
-\end{comment}
+\pagebreak
+In figure \ref{fig:kmall_flowchart} a flowchart for the KMALL stage is included, where \textit{Settings} are two parameters: amplitude and phase losses levels.
+
+\begin{figure}[h!]
+	\begin{center}
+		\scalebox{.95}{\input{images/kmall_flowchart.tex}}
+	\end{center}
+	\caption{Flowchart of the KMALL preprocessing stage.}
+	\label{fig:kmall_flowchart}
+\end{figure}
 
 \section{Results}
 \begin{comment}
