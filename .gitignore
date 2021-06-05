@@ -5,7 +5,6 @@ __pycache__/
 *.blg
 *.log
 *.out
-*.pdf
 *.run.xml
 *.synctex.gz
 *.toc
@@ -23,3 +22,5 @@ __pycache__/
 *.nav
 *.snm
 *.csv
+thesis.pdf
+presentation.pdf
