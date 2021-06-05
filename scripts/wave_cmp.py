@@ -76,7 +76,7 @@ def plotCompare(df):
     ax.legend(["FAPEC", "FLAC", "GZIP"])
     ax.grid()
     ax.set_title(title, fontsize=9)
-    ax.set_xlabel("Process time [s]")
+    ax.set_xlabel("Process time")
     ax.set_ylabel("Compression ratio")
     xlim = [0, ax.get_xlim()[1]]
     ylim = [0, ax.get_ylim()[1]]
