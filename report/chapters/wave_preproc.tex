@@ -159,7 +159,7 @@ We start our evaluation by showing the histogram (and cumulative histogram) of t
 
 We clearly see that histograms provide us a qualitative and visual way to identify the reduction of the dynamic range, but they are easy to manipulate with a simple division of the samples. Besides, we are also interested in quantifying this improvement. For this reason, we have estimated negentropy before and after the decorrelation process. Notice that an improvement of $\alpha$ times in negentropy does not imply that the compression ratio will be $\alpha$ times better.
 
-As we can see in table \ref{tab:negentropies}, negentropy of all files improves after applying the stage we have developed.
+As we can see in table \ref{tab:negentropies_wave}, negentropy of all files improves after applying the stage we have developed.
 
 \begin{table}[h!]
 \normalsize
@@ -176,7 +176,7 @@ As we can see in table \ref{tab:negentropies}, negentropy of all files improves 
 	06 - Pink Floyd - Money.wav                            & 0.0009                       & 0.0090                       & 10                                \\ \hline
 \end{tabular}
 \caption{Negentropies of audio files before and after Wave.}
-\label{tab:negentropies}
+\label{tab:negentropies_wave}
 \end{table}
 
 Finally, we will compare compression ratio and time of \acrshort{fapec}, \acrshort{flac} and GZIP.
@@ -185,7 +185,7 @@ Finally, we will compare compression ratio and time of \acrshort{fapec}, \acrsho
 	\begin{center}
 		\includegraphics[scale=0.69]{images/2021-05-30T22:30:32.186296-results_wave.csv_comparison.pdf}
 	\end{center}
-	\caption{Comparison of compressors by time and ratio.}
+	\caption{Comparison of audio compressors by time and ratio.}
 	\label{fig:audio_compare}
 \end{figure}
 

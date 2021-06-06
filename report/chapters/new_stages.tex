@@ -65,7 +65,7 @@ where $X$ is a random variable with $\mu = 0$ and $\sigma = 1$, $V \sim N(0,1)$ 
 G(u) = \ln \cosh u
 \end{equation}
 
-\subsection{Performance metrics}
+\subsection{Performance metrics} \label{sec:euclidean}
 We are interested in comparing the whole compression process: from opening the original file to writing the encoded one. In other words, we want to evaluate the performance of the decorrelation stage plus the entropy coder compared with other compressors.
 
 In this thesis we propose a new metric based on Euclidean distance that takes into account the (normalized) process time and the (inverse) compression ratio. Mainly, given an input file, it consists in computing a dot in $\mathbb{R}^2$ where the first coordinate is the normalized process time and the second is the inverse of the compression ratio. Then, the Euclidean distance to the origin is computed for every algorithm and the one with the smallest distance is assumed to be the best. Formally, the coordinates for each compressor are given by

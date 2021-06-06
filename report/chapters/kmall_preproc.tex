@@ -223,6 +223,78 @@ In figure \ref{fig:kmall_flowchart} a flowchart for the KMALL stage is included,
 \end{figure}
 
 \section{Results}
-\begin{comment}
-Same que al wave. Histogrames, negentropy i diagrama.
-\end{comment}
+To evaluate the KMALL stage we will also use the metrics from section \ref{sec:metrics}. All the results have been obtained with lossless compression.
+
+As we did in Wave, here we include the histogram and cumulative histogram of one file (figure \ref{fig:003_kmall}), but further examples may be found in appendix \ref{ch:kmall_hists}.
+
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{images/0003_20200428_103716_ShipName.kmwcd_hist.pdf}
+		\caption{Histogram.}
+		\label{fig:hist_003_kmall}
+	\end{subfigure}%
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{images/0003_20200428_103716_ShipName.kmwcd_hist_cum.pdf}
+		\caption{Cumulative histogram.}
+		\label{fig:cum_hist_003_kmall}
+	\end{subfigure}
+	\caption{Histogram and cumulative histogram of a KMWCD file.}
+	\label{fig:003_kmall}
+\end{figure}
+
+From the histograms we see that original data were distributed among the dynamic range, which would result in a poor compression ratio. After the preprocessing stage we propose, 90\% of the samples fall between -7 and +7.
+
+If we look at the negentropies in table \ref{tab:negentropies_kmall} we see that for all the files entropy is higher after preprocessing. It is important to notice that we have estimated negentropies up to the 4th decimal, thus files with a very low negentropy are estimated with 0. We should also point out that the improvement for the last file is worse because it is the only one with phase information, which is almost incompressible (see figure \ref{fig:wc_phase}).
+
+\begin{table}[h!]
+\normalsize
+\centering
+\begin{tabular}{|l|c|c|c|}
+	\hline
+	\rowcolor[HTML]{9698ED} 
+	\multicolumn{1}{|c|}{\cellcolor[HTML]{9698ED}Filename}         & J(X)                           & J(E)                           & J(E)/J(X) \\ \hline
+	\cellcolor[HTML]{FFFFFF}0003\_20200428\_103716\_ShipName.kmwcd & \cellcolor[HTML]{FFFFFF}0.0004 & \cellcolor[HTML]{FFFFFF}0.0530 & 132.5     \\ \hline
+	\cellcolor[HTML]{FFFFFF}0004\_20200428\_093723\_ShipName.kmwcd & \cellcolor[HTML]{FFFFFF}0.0000      & \cellcolor[HTML]{FFFFFF}0.0252 & -         \\ \hline
+	\cellcolor[HTML]{FFFFFF}0039\_20200428\_115408\_ShipName.kmwcd & \cellcolor[HTML]{FFFFFF}0.0001 & \cellcolor[HTML]{FFFFFF}0.0146 & 146       \\ \hline
+	0010\_20210409\_092708.kmwcd                                   & 0.0001                         & 0.0089                         & 89        \\ \hline
+\end{tabular}
+\caption{Negentropies of KMCWD files before and after preprocessing.}
+\label{tab:negentropies_kmall}
+\end{table}
+
+We see that the KMALL stage has good results reducing the dynamic range of samples and increasing negentropy, but it would be almost useless if a general purpose compressor such as GZIP had a better compression ratio or was faster. For this reason, now we will compare the performance of \acrshort{fapec} with the KMALL stage and GZIP. We will proceed as in Wave and use the Euclidean distance metric proposed in \ref{sec:euclidean}.
+
+In figure \ref{fig:kmall_compare} we plot the compression time and ratio for different files using \acrshort{fapec} and GZIP. We see that \acrshort{fapec} behaves much better than GZIP both in speed and ratio. For the particular case of a file with phase, both algorithms perform poorly in terms of ratio but \acrshort{fapec} is much faster. Besides, \acrshort{fapec} allows applying lossy compression to phase and lossless to amplitude.
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.69]{images/2021-05-31T23:59:08.498586-results_kmall.csv_comparison.pdf}
+	\end{center}
+	\caption{Comparison of compressors by time and ratio.}
+	\label{fig:kmall_compare}
+\end{figure}
+
+In table \ref{tab:kmall_compare} we present the numerical values of the distances in figure \ref{fig:kmall_compare}.
+
+\begin{table}[h!]
+\normalsize
+\centering
+\begin{tabular}{|l|c|c|}
+	\hline
+	\rowcolor[HTML]{9698ED} 
+	\multicolumn{1}{|c|}{\cellcolor[HTML]{9698ED}Filename}         & FAPEC dist. & GZIP dist. \\ \hline
+	\cellcolor[HTML]{FFFFFF}0003\_20200428\_103716\_ShipName.kmwcd & 5.0696      & 12.2123    \\ \hline
+	\cellcolor[HTML]{FFFFFF}0004\_20200428\_093723\_ShipName.kmwcd & 2.6879      & 6.9850     \\ \hline
+	\cellcolor[HTML]{FFFFFF}0039\_20200428\_115408\_ShipName.kmwcd & 5.2258      & 16.4260    \\ \hline
+	0010\_20210409\_092708.kmwcd                                   & 13.6912     & 28.4271    \\ \hline
+\end{tabular}
+\caption{KMALL Euclidean distances.}
+\label{tab:kmall_compare}
+\end{table}
+
+Our final considerations are that the stage has a McCabe complexity of 14, much smaller than 50 (see \ref{sec:requirements}); and a memory occupation of 32 MB in the worst case.
+
+In conclusion, the proposed algorithm satisfies all requirements and specifications.
