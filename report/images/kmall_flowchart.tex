@@ -29,7 +29,7 @@
     \node[rectangle,below=of D2] (A) {Entropy coder};
     \node[decisio, right=of D2] (D3) {Payload data?};
     \node[decisio, right=of D3] (D4) {Lossy?};
-    \node[rectangle,below=of D4] (B)  {Divide};
+    \node[rectangle,below=of D4] (B)  {Divide samples};
     \node[rectangle,right= of D4] (C) {$E_{0,0} = S_{0,0}+128$};
     \node[rectangle,below=of C] (D) {$E_{i,0} = S_{i,0}-S_{i-1,0}$};
     \node[decisio,aspect=1.6,below=of D] (D5) {$i<\min(N_{S_j}, N_{S_{j-1}})$?};
