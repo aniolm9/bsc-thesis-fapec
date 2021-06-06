@@ -134,7 +134,7 @@ In the present work we will only use information contained in \textit{Header} su
 \section{Design}
 We have already described the KMALL format and we have also justified why this stage is needed. Now it is time to start designing an algorithm to decorrelate this kind of files. We will follow a two-step approach: first we will analyze the KMALL files in our dataset to determine which of the datagrams listed in section \ref{sec:kmall_format} are worth to be compressed. Then, we will propose an algorithm that suits the requirements stated in section \ref{sec:requirements}. There are no specific requirements for this stage.
 
-\subsection{Data analysis}
+\subsection{Data analysis} \label{sec:kmall_analysis}
 In order to decide what to compress, we have first analyzed some .kmall and .kmwcd files to determine the percentage of occupancy by datagram type. The procedure we have followed is the following:
 \begin{enumerate}
 	\item Implement the existing C++ KMALL format in Python.
@@ -221,7 +221,7 @@ In figure \ref{fig:kmall_flowchart} a flowchart for the KMALL stage is included,
 	\label{fig:kmall_flowchart}
 \end{figure}
 
-\section{Results}
+\section{Results} \label{sec:kmall_results}
 To evaluate the KMALL stage we will also use the metrics from section \ref{sec:metrics}. All the results have been obtained with lossless compression.
 
 As we did in Wave, here we include the histogram and cumulative histogram of one file (figure \ref{fig:0003_kmall}), but further examples may be found in appendix \ref{ch:kmall_hists}.
