@@ -148,7 +148,7 @@ If we look close to a MWC datagram (see figure \ref{fig:mwc_datagram}) we see th
 In conclusion, we will design a stage which will only give some special attention to the information contained in the \textit{BeamData} subdatagram from MWC datagrams.
 
 \subsection{Algorithm design}
-In 2019 Dapcom developed a \acrshort{fapec} stage to compress \acrshort{mwc} data contained in .wcd files \parencite{Portell2019}, the predecessor of .kmwcd. For this reason, the stage we are presenting here is not strictly new, but an adaption of an already existing one.
+In 2019 DAPCOM developed a \acrshort{fapec} stage to compress \acrshort{mwc} data contained in .wcd files \parencite{Portell2019}, the predecessor of .kmwcd. For this reason, the stage we are presenting here is not strictly new, but an adaption of an already existing one.
 
 Our first concern is \acrshort{fapec} data chunking. This feature may be dangerous because splitting a datagram into different chunks is not desirable as it complicates file reading. For this reason, assuming a degradation in performance, we will allow chunks with a true size smaller than the chunk size set by the user. We should remark that even with this constraint the chunk size will be between 1 MB and 2 MB, therefore fulfilling specification \ref{spec:chunk_size}.
 
