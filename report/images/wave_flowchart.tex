@@ -13,8 +13,8 @@
             fill=yellow!30,
         },
         entrada/.style={tape,minimum width=1.5cm,fill=violet!20},
-        rectangle/.style={minimum width=2.2cm,fill=blue!10},
-        decisio/.style={diamond,minimum height=1.4cm,aspect=1.6,fill=red!10},
+        rectangle/.style={minimum width=3.0cm,fill=blue!10},
+        decisio/.style={diamond,minimum height=1.7cm,aspect=1.6,fill=red!10},
         coordenada/.style={draw=none,minimum width=0},
         bool/.style={draw=none,minimum width=0,minimum height=0},
     ]
@@ -55,7 +55,7 @@
 	\draw[->] (levinson) -- (estimations);
 	\draw[->] (estimations) -- (coder);
 	\draw[->] (coder.west) -- ++(-0.8,0) |- (P2.center);
-	\draw[->] (D2.east) -- ++(0.8,0) |- (P1.center);
+	\draw[->] (D2.east) -- ++(0.85,0) |- (P1.center);
 
 	% Ara els True/False escampats aquí i allí
     \node[bool,anchor=south west] at (D1.east) {True};
