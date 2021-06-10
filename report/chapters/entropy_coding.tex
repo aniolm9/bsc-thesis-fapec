@@ -1,7 +1,7 @@
 \chapter{Entropy Coding} \label{ch:entropy_coding}
 Entropy coding is a lossless data compression scheme based on symbols probability. This concept was first described by Claude E. Shannon in 1948 in his paper \textit{A~Mathematical Theory of Communication} \parencite{Shannon1948}.
 
-Giving an extensive theoretical explanation of Entropy coding would require an entire thesis. Therefore, in this chapter we will define the most basic equations in Information Theory and we will also describe some well-known coding algorithms that will be relevant later. The interested reader should see reference \parencite{cover}.
+Giving an extensive theoretical explanation of entropy coding would require an entire thesis. Therefore, in this chapter we will just define the most basic equations in Information Theory and we will also describe some well-known coding algorithms that will be relevant later. The interested reader should see reference \parencite{cover}.
 
 \section{Basic concepts on Information Theory}
 \subsection{Shannon entropy}
@@ -14,7 +14,7 @@ H(X) = - \sum_{i=1}^{n} p(x_i) \cdot \log_2 p(x_i)
 This result represents the average level of information (or uncertainty) of the random variable $X$. It is expressed in \textit{bits}. Sometimes entropy is defined using the natural logarithm. In those situations the result is in \textit{nats}.
 
 \subsubsection{Shannon's source coding theorem}
-Shannon's source coding theorem establishes the theoretical limits to data compression, and a different meaning to Shannon entropy defined above. Formally:
+This theorem establishes the theoretical limits to data compression, and a different meaning to the Shannon entropy defined above. Formally:
 
 \begin{theorem}
 Let $L_n^*$ be the expected codeword length per symbol of an optimal n-th order lossless data compression code (in bits/symbol). Let $(X_1, X_2, \dots, X_n )$ be a sequence of symbols from a stochastic process $X$. Then,
@@ -47,12 +47,12 @@ This equation is specially useful in some entropy estimation techniques \parenci
 \subsection{Negentropy} \label{sec:negentropy}
 Negentropy measures the difference in entropy between a given distribution and the normal distribution with same mean and variance. Thus, negentropy is invariant by any linear invertible change of coordinates \parencite{negentropy}. 
 
-Let $G \sim N(\mu, \sigma^2)$. Let $X$ be a continuous random variable with variance $\sigma^2$. Then, negentropy is defined as:
+Let $G \sim N(\mu, \sigma^2)$. Let $X$ be a continuous random variable with mean $\mu$ and variance $\sigma^2$. Then, negentropy is defined as:
 \begin{equation}
 J(X) = h(G) - h(X) \geq 0
 \end{equation}
 
-A normal distribution is used because, among all the real-valued distributions supported on $\mathbb{R}$ with a given variance $\sigma^2$, $N(\mu, \sigma^2)$ has maximum entropy:
+A normal distribution is used because, among all the real-valued distributions supported on $\mathbb{R}$ with mean $\mu$ and variance $\sigma^2$, $\mathscr{N}(\mu, \sigma^2)$ has maximum entropy:
 \begin{equation}
 h(G) = \frac{1}{2} \ln \left(2\sigma^2\pi\right) + \frac{1}{2} = \ln\left(\sqrt{2\pi e \sigma^2}\right)
 \end{equation}
@@ -60,7 +60,7 @@ h(G) = \frac{1}{2} \ln \left(2\sigma^2\pi\right) + \frac{1}{2} = \ln\left(\sqrt{
 \section{Coding techniques}
 There exist several techniques to assign bits to symbols. In general, one would be interested in a coding scheme which gives codewords with a mean length as close as possible to the Shannon limit. However, sometimes achieving the optimality might be too demanding, so other faster but suboptimal techniques have been developed.
 
-In this section we will describe Golomb coding, a known technique used by several standards such as \acrshort{flac} \parencite{FLAC} or \acrshort{ccsds} 121.0 \parencite{ccsds121}. Besides, the \acrshort{fapec} entropy coder is highly inspired in Rice codes, a subset of the Golomb codes.
+In this section we will describe Golomb coding, a known technique used by several standards such as \acrshort{flac} \parencite{FLAC} or \acrshort{ccsds} 121.0 \parencite{ccsds121}. Besides, the \acrshort{fapec} entropy coder \parencite{PaperFAPEC} is highly inspired in Rice codes \parencite{RiceCodes}, a subset of the Golomb codes \parencite{Golomb1966}.
 
 Before continuing, it is important to observe that there exist other entropy coding techniques which are more common than Golomb, for instance Huffman coding \parencite{cover}, arithmetic coding \parencite{MacKay} or, more recently, the Asymmetric Numeral System \parencite{ans}.
 
@@ -81,7 +81,7 @@ Let $N$ be the number to encode. Then, its Golomb code is:
 	\RemainderCode{
 		\eIf{$r < 2^k -M$}
 		{binary code $r$ using $k-1$ bits.}
-		{binary code $r + 2^b - M$ using $k$ bits.}
+		{binary code $r + 2^k - M$ using $k$ bits.}
 	}
 	\textbf{Output:} Golomb code for $N$.
 \end{algorithm}
@@ -89,7 +89,7 @@ Let $N$ be the number to encode. Then, its Golomb code is:
 For the particular case $M=2^k,\hspace{0.5em} k \in \mathbb{N}$ the codes are called Rice codes.
 
 \subsubsection{Example}
-Finally, we provide an example of some Rice codes calculated following the previous algorithm. Notice that the suffix of Rice codes always has length $k$.
+In Table \ref{tab:rice_example} we provide an example of some Rice codes calculated following the previous algorithm. Notice that the suffix of Rice codes always has length $k$.
 
 \begin{table}[h!]
 \normalsize
@@ -106,4 +106,5 @@ Finally, we provide an example of some Rice codes calculated following the previ
 	5 & 000001                                           & 001 1                                            & 01 01                                            & 1 101                                            \\ \hline
 \end{tabular}
 \caption{Rice codes of integers between 0 and 5 and suffix from 0 to 3 bits.}
+\label{tab:rice_example}
 \end{table}
