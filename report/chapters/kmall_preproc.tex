@@ -1,5 +1,5 @@
 \chapter{KMALL Stage} \label{ch:kmall_preproc}
-Recent advances in sonar technology and computing power have led to an improvement in ocean monitoring. For instance, Multibeam Echosounders (MBES) are now capable of collecting data from the water column, besides some usual metrics as seafloor reflectivity. This new information allows geoscientists to identify sunken structures, schools of fish, gas seeps, etc.
+Recent advances in sonar technology and computing power have led to an improvement in ocean monitoring. For instance, Multibeam Echosounders (MBES) are now capable of collecting data from the water column, besides some usual metrics such as seafloor reflectivity. This new information allows geoscientists to identify sunken structures, schools of fish, gas seeps, etc.
 
 \begin{figure}[h!]
 	\begin{center}
@@ -13,28 +13,28 @@ Recent advances in sonar technology and computing power have led to an improveme
 	\label{fig:mbes_ship}
 \end{figure}
 
-We clearly see that water column metrics have a big interest. However, their storage requirements are quite demanding (in the order of some GB/h). Hence, although it is possible to continuously record water column data, in practice it is only used in some specific explorations such as gas-seeps zones. In this scenario, efficient compression algorithms will be essential.
+We clearly see that water column sensing has a big interest. However, their storage requirements are quite demanding (in the order of some GB/h). Hence, although it is possible to continuously record water column data, in practice it is only used in some specific explorations such as gas-seeps zones. In this scenario, efficient compression algorithms will be essential.
 
-At the present moment, one of the biggest echosounder manufacturers is Kongsberg Maritime, a company with more than 7000 employees over 25 countries. In this chapter we will focus on the development of a preprocessing stage specially designed for the KMALL files from Kongsberg. First, a general overview of the data structures will be given. Then, with this format in mind, a design criterion will be proposed and implemented. Finally, we will analyze its performance and compare it with other compression algorithms.
+At the present moment, one of the biggest echosounder manufacturers is Kongsberg Maritime, a company with more than 7000 employees over 25 countries. In this chapter we will focus on the development of a preprocessing stage specially designed for the KMALL files from Kongsberg \parencite{KMALL}. First, a general overview of the data structures will be given. Then, with this format in mind, a design criterion will be proposed and implemented. Finally, we will analyze its performance and compare it with other compression algorithms.
 
 \section{The KMALL data format} \label{sec:kmall_format}
-In this section we will describe the KMALL data structure and why there is a need to develop new compression algorithms for this format, but first some concepts related to echosounders must be defined:
+In this section we describe the KMALL data structure and why there is a need to develop new compression algorithms for this format, but first, some concepts related to echosounders must be defined:
 \begin{itemize}
 	\item \textbf{Ping:} A ping is defined as a number of pulses transmitted at approximately the same time.
 	\item \textbf{Beam:} Each ping is formed by some pulses in different angles, which we call beams.
 \end{itemize}
 
-Notice that the number of beams per ping depends on each sonar model, and the numbers of samples per beam depends on the angle and on the depth. This dependence can be seen in figure \ref{fig:wc_amplitude}.
+Notice that the number of beams per ping depends on each sonar model, and the numbers of samples per beam depends on the angle and on the depth. This dependence can be seen in Figure \ref{fig:wc_amplitude}.
 
-The .kmall format is a new format from Kongsberg which has just started being implemented in new echosounder models. It is the successor of the Kongsberg .all format. Analyzing the latter is out of the scope of this project, yet we can state some of the improvements that KMALL brings.
+The \texttt{.kmall} files use a new format from Kongsberg which is just being implemented in new echosounder models. It is the successor of the Kongsberg \texttt{.all} format. Analyzing the latter is out of the scope of this project, yet we can state some of the improvements that KMALL brings.
 
 On the first hand, KMALL is a generic format with high resolution data and with a datagram structure designed to avoid breaking existing decoders when updating the data structure.
 
-On the other hand, .all format used to have a datagram size constraint of 64 kB due to the maximum size of UDP packets, but .kmall files are designed to be stored "as is" and then fragmented if needed. Its main advantage is that pings are not splitted between datagrams.
+On the other hand, \texttt{.all} format used to have a datagram size constraint of 64 kB due to the maximum size of \acrshort{udp} packets, but \texttt{.kmall} files are designed to be stored "as is" and then fragmented if needed. Its main advantage is that pings are not splitted between datagrams.
 
-The size of a .kmall file is not fixed. Actually, the echosounder operator decides when the file being recorded at that moment should end. In our dataset, most of the files are between 100 and 400 MB. Inside these files there are several datagrams, which will be described later in this section.
+The size of a \texttt{.kmall} file is not fixed. Actually, the echosounder operator decides when the file being recorded at that moment should end. In our dataset, kindly provided by Kongsberg Maritime, most of the files are between 100 and 400 MB. Inside these files there are several datagrams, which will be described later.
 
-The mixture of data types in the same file makes it difficult for standard compressors like \textit{Zip} to identify data statistics, therefore they don't perform as good as one could expect. In order to improve the compression ratio, we are interested in knowing how are those datagrams placed inside the file and how to identify them. From Kongsberg KMALL documentation, we know that all datagrams start with a generic header that contains datagram size in bytes and a 4-character identifier. In the current version (410224 Revision H), there exist the following datagram types:
+The mixture of data types in the same file makes it difficult for standard compressors like \textit{Zip} to identify data statistics. Therefore, they do not perform as good as one could expect. In order to improve the compression ratio, we are interested in knowing how are those datagrams placed inside the file and how to identify them. From Kongsberg KMALL documentation, we know that all datagrams start with a generic header that contains the datagram size in bytes and a 4-character identifier. In the current version (410224 Revision H), there are the datagram types listed in tables \ref{tab:first_kmall_table} to \ref{tab:last_kmall_table}.
 
 \begin{table}[H]
 \normalsize
@@ -47,6 +47,7 @@ The mixture of data types in the same file makes it difficult for standard compr
 		\#CHE                                                   & EMdgmCHE\_def                                            & Compatibility (C) data for heave (HE).                   \\ \hline
 \end{tabular}
 \caption{Compatibility datagrams of the KMALL format.}
+\label{tab:first_kmall_table}
 \end{table}
 
 \begin{table}[h!]
@@ -106,9 +107,10 @@ The mixture of data types in the same file makes it difficult for standard compr
 		\#MWC                                                   & EMdgmMWC\_def                                            & \begin{tabular}[c]{@{}l@{}}Multibeam (M) water (W)\\ column (C) datagram.\end{tabular}        \\ \hline
 \end{tabular}
 \caption{Multibeam datagrams of the KMALL format.}
+\label{tab:last_kmall_table}
 \end{table}
 
-It is important to notice that .kmall files can contain all the above datagrams. However, we may usually find that water column data is logged in a separate file with extension .kmwcd. In other words, MWC datagrams will be stored in .kmwcd files instead of .kmall files, but the decoding process is the same for both extensions as the data format is exactly the same.
+It is important to notice that a given \texttt{.kmall} file can contain all the above datagrams. However, we may usually find that water column data is logged in a separate file with extension \texttt{.kmwcd}. In other words, MWC datagrams will be stored in \texttt{.kmwcd} files instead of \texttt{.kmall} files, but the decoding process is the same for both extensions as the data format is exactly the same.
 
 As we will see in the next section, our main interest in this chapter will lie in MWC datagrams. Therefore, before continuing, an appropriate description of them shall be given.
 
@@ -132,29 +134,29 @@ Where:
 In the present work we will only use information contained in \textit{Header} such as the datagram size and the datagram type, in \textit{RxInfo} and in \textit{BeamData}. For further details, the interested reader may check reference \parencite{KMALL}.
 
 \section{Design}
-We have already described the KMALL format and we have also justified why this stage is needed. Now it is time to start designing an algorithm to decorrelate this kind of files. We will follow a two-step approach: first we will analyze the KMALL files in our dataset to determine which of the datagrams listed in section \ref{sec:kmall_format} are worth to be compressed. Then, we will propose an algorithm that suits the requirements stated in section \ref{sec:requirements}. There are no specific requirements for this stage.
+We have already described the KMALL format and we have also justified why this stage is needed. Now it is time to start designing an algorithm to decorrelate the data in these files. We will follow a two-step approach: first we will analyze the KMALL files in our dataset to determine which of the datagrams listed in section \ref{sec:kmall_format} are worth to be compressed. Then, we will propose an algorithm that suits the requirements stated in section \ref{sec:requirements}. There are no specific requirements for this stage.
 
 \subsection{Data analysis} \label{sec:kmall_analysis}
-In order to decide what to compress, we have first analyzed some .kmall and .kmwcd files to determine the percentage of occupancy by datagram type. The procedure we have followed is the following:
+In order to decide what to compress, we have first analyzed some \texttt{.kmall} and \texttt{.kmwcd} files to determine the percentage of occupancy by datagram type. The procedure we have followed is the following:
 \begin{enumerate}
 	\item Implement the existing C++ KMALL format in Python.
 	\item Implement a Python class which acts as top level \acrshort{api} for the KMALL files.
 	\item Write a Python script that takes a directory and an extension and returns the percentages of every datagram type.
 \end{enumerate}
-The result is that for .kmall files, MRZ datagrams are a 92\% of the total size; and for .kmwcd, \acrshort{mwc} datagrams are a 99\%. From this evaluation it is clear that these two data types are our objective; however, they are too different to be preprocessed with the same stage, therefore in this thesis we will ignore MRZ datagrams and we will just focus on \acrshort{mwc} data.
+The result is that for \texttt{.kmall} files, MRZ datagrams are a 92\% of the total size; and for \texttt{.kmwcd}, \acrshort{mwc} datagrams are a 99\%. From this evaluation it is clear that these two data types are our objective; however, they are too different to be preprocessed with the same stage, therefore in this thesis we will ignore MRZ datagrams and we will just focus on \acrshort{mwc} data.
 
-If we look close to a MWC datagram (see figure \ref{fig:mwc_datagram}) we see that, even considering all the headers, their size is insignificant compared with samples volume. Hence, we will only compress the payload, which includes amplitude and phase information.
+If we look closer at a MWC datagram (see Figure \ref{fig:mwc_datagram}) we see that all the headers size is insignificant compared with the samples volume. Hence, we will only compress the payload, which includes amplitude and phase information.
 
 In conclusion, we will design a stage which will only give some special attention to the information contained in the \textit{BeamData} subdatagram from MWC datagrams.
 
 \subsection{Algorithm design}
-In 2019 DAPCOM developed a \acrshort{fapec} stage to compress \acrshort{mwc} data contained in .wcd files \parencite{Portell2019}, the predecessor of .kmwcd. For this reason, the stage we are presenting here is not strictly new, but an adaption of an already existing one.
+In 2019, DAPCOM developed a \acrshort{fapec} stage to compress \acrshort{mwc} data contained in \texttt{.wcd} files \parencite{Portell2019}, the predecessor of \texttt{.kmwcd}. For this reason, the stage we are presenting here is not strictly new, but an adaption of an already existing one.
 
-Our first concern is \acrshort{fapec} data chunking. This feature may be dangerous because splitting a datagram into different chunks is not desirable as it complicates file reading. For this reason, assuming a degradation in performance, we will allow chunks with a true size smaller than the chunk size set by the user. We should remark that even with this constraint the chunk size will be between 1 MB and 2 MB, therefore fulfilling specification \ref{spec:chunk_size}.
+Our first concern is \acrshort{fapec} data chunking. This feature may be dangerous because splitting a datagram into different chunks is not desirable as it complicates file reading. For this reason, assuming a degradation in performance, we will allow chunks with a true size smaller than the chunk size set by the user. We should remark that even with this constraint, the chunk size will be typically between 1 MB and 2 MB, therefore fulfilling specification \ref{spec:chunk_size}.
 
 The second step is to identify MWC datagrams. To do that, we just need to read the datagram type field in the header. If it is a MWC datagram, a custom algorithm is applied. Otherwise, samples are directly sent to the entropy encoder.
 
-Now it is time to focus on the payload data and how can we decorrelate it. If we represent the amplitude samples as a raw rectangular image (see figure \ref{fig:wc_amplitude}) we can see that correlation between beams is higher than between samples (i.e. the images is smoother from top to bottom than left to right). Although this is purely qualitative, it matches with the algorithm designed in \parencite{Portell2019}, and it can be proved to be true by applying a simple differential first by rows and then by columns and finally comparing the results. In the picture we can also see that the number of samples per beam is not constant, but it has a parabolic behavior.
+Now it is time to focus on the payload data and how can we decorrelate it. If we represent the amplitude samples as a raw rectangular image (see Figure \ref{fig:wc_amplitude}) we can see that correlation between beams is higher than between samples (i.e. the image is smoother from top to bottom than left to right). Although this is purely qualitative, it matches with the algorithm designed in \parencite{Portell2019}, and it can be proved to be true by applying a simple differential first by rows and then by columns and finally comparing the results. In the picture we can also see that the number of samples per beam is not constant, but it has a parabolic behavior.
 \begin{figure}[h!]
 	\begin{center}
 		\includegraphics[scale=0.334]{images/water_column_amp.png}
@@ -163,14 +165,14 @@ Now it is time to focus on the payload data and how can we decorrelate it. If we
 	\label{fig:wc_amplitude}
 \end{figure}
 
-In the implementation for .wcd files, given a sample $S_{i,j}$ in the position $i$ of the beam $j$, the vertex coordinates $(V_x, V_y)$ and the number of beams $N_B$, prediction errors $E_{i,j}$ in the rectangular region were calculated:
+In the implementation for \texttt{.wcd} files, given a sample $S_{i,j}$ in the position $i$ of the beam $j$, the vertex coordinates $(V_x, V_y)$ and the number of beams $N_B$, prediction errors $E_{i,j}$ in the rectangular region are calculated:
 \begin{equation}
 E_{i,j} = S_{i,j} - S_{i,j-1}, \qquad 0 \leq i < V_x, \quad 0 < j < N_B
 \end{equation}
 
-In other words, in the rectangular region samples were predicted from the sample in the same position in the previous beam.
+In other words, in the rectangular region samples are predicted from the sample in the same position in the previous beam.
 
-The remaining samples were predicted following a simple differential between them and a correction coefficient. Formally, given $N_{S_j}$ the number of samples in the beam $j$, then
+The remaining samples are predicted following a simple differential between them and a correction coefficient. Formally, given $N_{S_j}$ the number of samples in the beam $j$, then
 \begin{equation}
 E_{i,j} = S_{i,j} - S_{i-1,j} - C_{i,j}, \qquad Vx \leq i < N_{S_j}, \quad 0 < j < N_B
 \end{equation}
@@ -179,12 +181,12 @@ where $C_{i,j}$ is given by:
 C_{i,j} = \frac{1}{16}(7E_{i-1,j} + 6E_{i-2,j} + 4E_{i-3,j} + 3E_{i-4,j})
 \end{equation}
 
-As the reader may have noticed, these equations are not defined for $j=0$ (i.e. the first beam). The reason is that the system must be causal, therefore the first beam was predicted from the previous sample in the same beam:
+As the reader may have noticed, these equations are not defined for $j=0$ (i.e. the first beam). The reason is that the system must be causal, therefore the first beam is predicted from the previous sample in the same beam:
 \begin{equation} \label{eq:first_beam}
 E_{i,0} = S_{i,0} - S_{i-1,0}, \qquad 0 < i < N_{S_0}
 \end{equation}
 
-The algorithm we propose in this thesis is very similar to the one we have just described, but with some improvements. We also follow the approach of predicting samples from the previous beam, but we don't restrict to the square region. Instead, we do that for all the samples which have a sample above. Formally,
+The algorithm we propose in this thesis is very similar to the one we have just described for \texttt{.wcd} files, but with some improvements. We also follow the approach of predicting samples from the previous beam, but we do not restrict to the square region. Instead, we do that for all the samples which have a sample above. Formally,
 \begin{equation}
 E_{i,j} = S_{i,j} - S_{i,j-1}, \qquad 0 \leq i < \min(N_{S_{j-1}}, N_{S_j}), \quad 0 < j < N_B
 \end{equation}
@@ -199,7 +201,7 @@ The prediction errors for the first beam are also calculated with equation \ref{
 E_{0,0} = S_{0,0} + 128
 \end{equation}
 
-Now we are interested in observing if this algorithm also work for the phase information present in MWC datagrams. Notice that the former stage for .wcd was not designed to work with phase samples. In figure \ref{fig:wc_phase} we show the phase corresponding to the amplitudes in figure \ref{fig:wc_amplitude}. As the reader can see, this information is almost white noise, therefore it is theoretically impossible to compress. Our final decision has been to apply a simple differential between samples (i.e. equation \ref{eq:samples}).
+Now we are interested in observing if this algorithm also work for the phase information present in MWC datagrams. Notice that the former stage for \texttt{.wcd} was not designed to work with phase samples. In Figure \ref{fig:wc_phase} we show the phase corresponding to the amplitudes in Figure \ref{fig:wc_amplitude}. As the reader can see, this information is almost white noise, therefore it is theoretically impossible to compress. Our final decision has been to apply a simple differential between samples (i.e. Equation \ref{eq:samples}).
 \begin{figure}[h!]
 	\begin{center}
 		\includegraphics[scale=0.334]{images/water_column_ph.png}
@@ -208,10 +210,10 @@ Now we are interested in observing if this algorithm also work for the phase inf
 	\label{fig:wc_phase}
 \end{figure}
 
-Finally, we should remark that more complex algorithms like nearest-neighbor or a generic linear predictor of order $Q$ have been tested, but they have not only been slower but also have a worse compression ratio.
+Finally, we should remark that more complex algorithms like nearest-neighbor or a generic linear predictor of order $Q$ have been tested, but they are slower and also have a worse compression ratio.
 
 \pagebreak
-In figure \ref{fig:kmall_flowchart} a flowchart for the KMALL stage is included, where \textit{Settings} are two parameters: amplitude and phase losses levels.
+In Figure \ref{fig:kmall_flowchart} a flowchart for the KMALL stage is included, where \textit{Settings} are two parameters: amplitude and phase losses levels.
 
 \begin{figure}[h!]
 	\begin{center}
@@ -222,9 +224,9 @@ In figure \ref{fig:kmall_flowchart} a flowchart for the KMALL stage is included,
 \end{figure}
 
 \section{Results} \label{sec:kmall_results}
-To evaluate the KMALL stage we will also use the metrics from section \ref{sec:metrics}. All the results have been obtained with lossless compression.
+To evaluate the KMALL stage we also use the metrics from section \ref{sec:metrics}. All the results have been obtained with lossless compression.
 
-As we did in Wave, here we include the histogram and cumulative histogram of one file (figure \ref{fig:0003_kmall}), but further examples may be found in appendix \ref{ch:kmall_hists}.
+As we did in Wave, here we include the histogram and cumulative histogram of one file (Figure \ref{fig:0003_kmall}), but further examples may be found in appendix \ref{ch:kmall_hists}.
 
 \begin{figure}[h!]
 	\centering
@@ -244,9 +246,9 @@ As we did in Wave, here we include the histogram and cumulative histogram of one
 	\label{fig:0003_kmall}
 \end{figure}
 
-From the histograms we see that original data were distributed among the dynamic range, which would result in a poor compression ratio. After the preprocessing stage we propose, 90\% of the samples fall between -7 and +7.
+From the histograms we see that original data is distributed among the whole dynamic range, which would result in a poor compression ratio. After the preprocessing stage we propose, 90\% of the samples fall between -7 and +7.
 
-If we look at the negentropies in table \ref{tab:negentropies_kmall} we see that for all the files entropy is higher after preprocessing. It is important to notice that we have estimated negentropies up to the 4th decimal, thus files with a very low negentropy are estimated with 0. We should also point out that the improvement for the last file is worse because it is the only one with phase information, which is almost incompressible (see figure \ref{fig:wc_phase}).
+If we look at the negentropies in Table \ref{tab:negentropies_kmall}. we see that for all the files the negentropy is higher after preprocessing. It is important to notice that we have estimated negentropies up to the 4th decimal, thus files with a very low negentropy are estimated with 0. We should also point out that the improvement for the last file is worse because it is the only one with phase information, which is almost incompressible (see Figure \ref{fig:wc_phase}).
 
 \begin{table}[h!]
 \normalsize
@@ -264,9 +266,9 @@ If we look at the negentropies in table \ref{tab:negentropies_kmall} we see that
 \label{tab:negentropies_kmall}
 \end{table}
 
-We see that the KMALL stage has good results reducing the dynamic range of samples and increasing negentropy, but it would be almost useless if a general purpose compressor such as GZIP had a better compression ratio or was faster. For this reason, now we will compare the performance of \acrshort{fapec} with the KMALL stage and GZIP. We will proceed as in Wave and use the Euclidean distance metric proposed in \ref{sec:euclidean}.
+We see that the KMALL stage has good results reducing the dynamic range of samples and increasing negentropy, but it would be almost useless if a general purpose compressor such as GZIP had a better compression ratio or was faster. For this reason, now we will compare the performance of \acrshort{fapec} with the KMALL stage and GZIP. We will proceed as in Wave and use the Euclidean distance metric proposed in section \ref{sec:euclidean}.
 
-In figure \ref{fig:kmall_compare} we plot the compression time and ratio for different files using \acrshort{fapec} and GZIP. We see that \acrshort{fapec} behaves much better than GZIP both in speed and ratio. For the particular case of a file with phase, both algorithms perform poorly in terms of ratio but \acrshort{fapec} is much faster. Besides, \acrshort{fapec} allows applying lossy compression to phase and lossless to amplitude.
+In Figure \ref{fig:kmall_compare} we plot the compression time and ratio for different files using \acrshort{fapec} and GZIP. We see that \acrshort{fapec} behaves much better than GZIP both in speed and ratio. For the particular case of a file with phase, both algorithms perform poorly in terms of ratio but \acrshort{fapec} is much faster. Besides, \acrshort{fapec} allows applying lossy compression to phase and lossless to amplitude.
 
 \begin{figure}[h!]
 	\begin{center}
@@ -276,7 +278,7 @@ In figure \ref{fig:kmall_compare} we plot the compression time and ratio for dif
 	\label{fig:kmall_compare}
 \end{figure}
 
-In table \ref{tab:kmall_compare} we present the numerical values of the distances in figure \ref{fig:kmall_compare}.
+In Table \ref{tab:kmall_compare} we present the numerical values of the distances in Figure \ref{fig:kmall_compare}.
 
 \begin{table}[h!]
 \normalsize
@@ -294,6 +296,4 @@ In table \ref{tab:kmall_compare} we present the numerical values of the distance
 \label{tab:kmall_compare}
 \end{table}
 
-Our final considerations are that the stage has a McCabe complexity of 14, much smaller than 50 (see \ref{sec:requirements}); and a memory occupation of 32 MB in the worst case.
-
-In conclusion, the proposed algorithm satisfies all requirements and specifications.
+Our final considerations are that the stage has a McCabe complexity of 14, much smaller than 50 (see section \ref{sec:requirements}); and a memory occupation of 32 MB in the worst case. In conclusion, the proposed algorithm satisfies all requirements and specifications.
