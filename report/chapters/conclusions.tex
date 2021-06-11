@@ -1,15 +1,15 @@
-\chapter{Conclusions and Future Work}
-In sections \ref{sec:wave_results} and \ref{sec:kmall_results} we have already given the results and conclusions for the Wave and the KMALL stage, respectively. For this reason, in this final chapter we will give an end to the whole thesis and also describe some lines for future work.
+\chapter{Conclusions and future work}
+In sections \ref{sec:wave_results} and \ref{sec:kmall_results} we have given the results and conclusions for the Wave and the KMALL stage, respectively. In this final chapter we provide the thesis conclusions and also describe some lines for future work.
 
-The project had a very clear objective: develop two preprocessing stages for \acrfull{rf} and KMALL \acrshort{mwc} data. The process to reach this goal was not straightforward, because in order to propose an algorithm one needs to know how is the data structure. This is what we tried to do in sections \ref{sec:iq_data} and \ref{sec:kmall_format}. However, understanding the data structure is not enough, one must also understand the \acrshort{fapec} framework, and it has truly been one of the hardest parts of this project.
+The project had a very clear objective: develop two preprocessing stages for \acrfull{rf} and KMALL \acrshort{mwc} data. The process to reach this goal was not straightforward, because in order to propose an algorithm one needs to know well the data structure. This is what we did in sections \ref{sec:iq_data} and \ref{sec:kmall_format}. However, understanding the data structure is not enough, as one must also understand the \acrshort{fapec} framework, and it has truly been one of the hardest parts of this project.
 
-We also wanted to propose a universal metric to evaluate our stages. Finally, we decided to use negentropy, but arriving there required several meetings and many hours to develop the basic theoretical framework, which we decided to include in chapters \ref{ch:entropy_coding} and \ref{ch:new_stages}.
+We also wanted to propose a universal metric to evaluate our stages. We finally decided to use negentropy, but arriving there required several meetings and many hours to develop the basic theoretical framework, which we decided to include in chapters \ref{ch:entropy_coding} and \ref{ch:new_stages}.
 
-Our final words are that we are very happy with the obtained results, but without wanting to omit merit from them, they could probably be improved. During the thesis development some interesting ideas appeared, but we decided to omit them either for time or complexity. Now, we will list the most relevant ones.
+Our final words are that we are satisfied with the obtained results, although they could probably be improved. During the thesis development some interesting ideas appeared, but we decided to omit them either for time or complexity. Now, we will list the most relevant ones.
 \begin{itemize}
-	\item In the KMALL stage, analyze the entropy of the original samples per beam. This procedure is similar to the one in \parencite{MBESComp} and could help to detect where entropy is lower and apply different techniques on different zones.
+	\item In the KMALL stage, analyze the entropy of the original samples per beam. This procedure is similar to the one in \parencite{MBESComp} and could help to detect where the entropy is lower and apply different techniques on different zones.
 	\item Explore other audio encoding algorithms such as \acrshort{tak} in order to take some ideas and improve the Wave stage.
-	\item Improve the KMALL stage with a new algorithm to compress MRZ datagrams, which take around a 90\% of .kmall files and contain the most used information.
+	\item Improve the KMALL stage with a new algorithm to compress MRZ datagrams, which take around a 90\% of \texttt{.kmall} files and contain the most commonly used information.
 \end{itemize}
 
-Since the beginning this project was a way to open the door to different formats which \acrshort{fapec} did not support. After this first proposal, the proposed stages will be implemented in real situations with real data and they will be constantly improved, specially during the following months.
+Since the beginning this project was a way to open the door to different formats which \acrshort{fapec} did not support. After this first proposal, the proposed stages will be implemented and used in real situations with real data, revealing the high applicability of this work.
