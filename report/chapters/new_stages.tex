@@ -11,8 +11,8 @@ In this section we will list the general requirements that all \acrshort{fapec} 
 	\item The stage must be able to work with data chunks. \label{req:chunks}
 	\item The stage must support lossless and lossy compression.
 	\item Data must not be lost even if the input is corrupted (i.e. delta fallback).
-	\item Compression ratio shall be better than Gzip's.
-	\item Compression speed shall be better than Gzip's.
+	\item Compression ratio shall be better than that of Gzip.
+	\item Compression speed shall be better than that of Gzip.
 	\item The software shall be tested with a representative dataset.
 	\item The design and implementation must be documented.
 \end{enumerate}
@@ -21,10 +21,10 @@ In this section we will list the general requirements that all \acrshort{fapec} 
 The following specifications shall be fulfilled with an Intel Core i7-10710U \acrshort{cpu}.
 
 \begin{enumerate}
-	\item The occupied memory with one thread shall not exceed 64 MB.
+	\item The occupied memory with one thread shall not exceed 64 MB, assuming chunks of 1 MB.
 	\item \acrshort{fapec} data chunks shall have a size between 128 kB and 4 MB. \label{spec:chunk_size}
-	\item Decompression time can't be higher than a 110\% of the compression time.
-	\item At least a 10\% of the source code lines must be comments.
+	\item Decompression time cannot be higher than a 110\% of the compression time.
+	\item At least 10\% of the source code lines must be comments.
 	\item McCabe complexity \parencite{mccabe} shall be below 50.
 \end{enumerate}
 
@@ -32,9 +32,9 @@ The following specifications shall be fulfilled with an Intel Core i7-10710U \ac
 The aim of this section is to present the metrics used in the following chapters to evaluate the developed preprocessing stages. The proposed indexes may be classified in two groups: information metrics and performance metrics.
 
 \subsection{Information metrics}
-This subset of metrics is purely focused on evaluating how better data are after the decorrelation stage. Our first approach is to plot a \textbf{histogram} of the original samples together with a histogram of the prediction errors (i.e. the values that will be sent to the \acrshort{fapec} entropy coder). For a better visualization, the bin width is calculated from the number of samples and it is the same for both histograms. Besides, the prediction errors histogram is also doted with three vertical lines at percentiles 5, 50 and 95 in order to clearly show the range where 90\% of data is contained.
+This subset of metrics is purely focused on evaluating how better compressible data are after the decorrelation stage. Our first approach is to plot a \textbf{histogram} of the original samples together with a histogram of the prediction errors (i.e. the values that will be sent to the \acrshort{fapec} entropy coder). For a better visualization, the bin width is calculated from the number of samples and it is the same for both histograms. Besides, the prediction errors histogram also includes three vertical lines at percentiles 5, 50 and 95 in order to clearly show the range where 90\% of data is contained.
 
-Making use of the histograms, the \textbf{cumulative histograms} of the original samples and the prediction errors are calculated and plotted together. Although this graphics are just the integral of the histograms described above, they provide a clear way to see samples concentration in intervals.
+Making use of the histograms, the \textbf{cumulative histograms} of the original samples and the prediction errors are calculated and plotted together. Although these graphics are just the integral of the histograms described above, they provide a clear way to see samples concentration in intervals. Figure \ref{fig:hists_example} shows an example.
 
 \begin{figure}[h!]
 	\centering
@@ -56,19 +56,21 @@ Making use of the histograms, the \textbf{cumulative histograms} of the original
 
 At the beginning of this thesis no more information metrics were planned, but we realized that these two are subject to data scaling. That is, with a simple division the metric can be adulterated. In order to deal with it, we also propose to use \textbf{negentropy} (see section \ref{sec:negentropy}) to measure how compressible the prediction errors are compared with the original samples. There are two main reasons behind choosing negentropy: the first is that it is invariant to linear maps, and the second is that it is a measure of non-Gaussianity. The first property solves the problem of data scaling, and the second one offers a way of knowing if the stage has improved data distribution (i.e. negentropy is higher).
 
-Although negentropy is a highly suitable metric for our purposes, it has an important drawback: its calculation is computationally very complex. Moreover, estimating it from data requires estimating the probability density function of the samples to later plug it into the definition of differential entropy and finally subtracting it to the Gaussian entropy for the same variance. However, negentropy can be approximated with the following expression \parencite{HYVARINEN2000411}:
+Although negentropy is a highly suitable metric for our purposes, it has an important drawback: its calculation is computationally very complex. Moreover, estimating it from data requires estimating the probability density function of the samples to later plug it into the definition of differential entropy and finally subtracting it to the Gaussian entropy for the same mean and variance. However, negentropy can be approximated with the following expression \parencite{HYVARINEN2000411}:
 \begin{equation}
 J(X) \propto \left[E[G(X)] - E[G(V)]\right]^2
 \end{equation}
 where $X$ is a random variable with $\mu = 0$ and $\sigma = 1$, $V \sim N(0,1)$ and $G(u)$ is a non-quadratic function. In our case, $X$ and $V$ will be data arrays and
-\begin{equation}
+\begin{equation} \label{eq:g}
 G(u) = \ln \cosh u
 \end{equation}
 
-\subsection{Performance metrics} \label{sec:euclidean}
-We are interested in comparing the whole compression process: from opening the original file to writing the encoded one. In other words, we want to evaluate the performance of the decorrelation stage plus the entropy coder compared with other compressors.
+In order to obtain a more robust estimator, $G(u)$ must not grow too fast. Besides, Equation \ref{eq:g} has been proven to be very useful \parencite{HYVARINEN2000411}. Further details on the choice of $G(u)$ can be found in \parencite{NIPS1997_6d9c547c}. 
 
-In this thesis we propose a new metric based on Euclidean distance that takes into account the (normalized) process time and the (inverse) compression ratio. Mainly, given an input file, it consists in computing a dot in $\mathbb{R}^2$ where the first coordinate is the normalized process time and the second is the inverse of the compression ratio. Then, the Euclidean distance to the origin is computed for every algorithm and the one with the smallest distance is assumed to be the best. Formally, the coordinates for each compressor are given by
+\subsection{Performance metrics} \label{sec:euclidean}
+We are interested in evaluating the whole compression process: from opening the original file to writing the encoded one. In other words, we want to evaluate the performance of the decorrelation stage plus the entropy coder compared to other compressors.
+
+In this thesis we propose a new metric based on Euclidean distance that takes into account the (normalized) process time and the compression ratio. Specifically, given an input file, it consists in computing a dot in $\mathbb{R}^2$ where the first coordinate is the normalized process time and the second is the inverse of the compression ratio. Then, the Euclidean distance to the origin is computed for every algorithm and the one with the smallest distance is assumed to be the best one. Formally, the coordinates for each compressor are given by
 \begin{equation} \label{eq:dot_comp}
 \mathbf{a} = \left(t, \frac{s_c}{s_o}\right)
 \end{equation}
