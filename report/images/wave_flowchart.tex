@@ -50,9 +50,9 @@
 	\draw[->] (D4) -- (D5);
 	\draw[->] (D4) -- node[coordenada,midway,name=P4] {} (autocorr);
 	\draw[->] (D5) |- (P4.center);
-	\draw[->] (autocorr) -- node[coordenada,midway,name=P5] {} (levinson);
+	\draw[->] (autocorr) -- (levinson);
+	\draw[->] (levinson) -- node[coordenada,midway,name=P5] {} (estimations);
 	\draw[->] (D5.east) -- ++(0.8,0) |- (P5.center);
-	\draw[->] (levinson) -- (estimations);
 	\draw[->] (estimations) -- (coder);
 	\draw[->] (coder.west) -- ++(-0.5,0) |- (P2.center);
 	\draw[->] (D2.east) -- ++(0.85,0) |- (P1.center);

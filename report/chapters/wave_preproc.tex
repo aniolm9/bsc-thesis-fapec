@@ -1,7 +1,7 @@
 \chapter{Wave Stage} \label{ch:wave_preproc}
-Earth Observation techniques have been experiencing a growth both in terms of quality and quantity, which means that the amount of data produced have also increased drastically. In addition, remote sensing is usually carried out by satellites with low storage capacity and limited bandwidth \parencite{SANDAU20101}, so clearly data compression is key in this situation.
+Earth Observation techniques have experienced a growth both in terms of quality and quantity, which means that the amount of data produced have increased drastically. In addition, remote sensing is usually carried out by satellites with low storage capacity and limited bandwidth \parencite{SANDAU20101}, so clearly data compression is key in this situation.
 
-Some satellites collect \acrshort{rf} data, either from ground or air sources (e.g. vessels, airplanes or industrial activity in general), as well as from other satellites. Between the vast amount of remote sensing techniques we find Radio Occultation \parencite{RO-GNSS}, which uses low orbit satellites to detect the changes produced by the atmosphere in a radio signal emitted by a \acrshort{gnss} satellite. \acrshort{ro} data is mainly used as a weather forecasting tool.
+Some satellites collect \acrshort{rf} data, either from ground or air sources (e.g. vessels, airplanes or industrial activity in general), as well as from other satellites. Between the vast amount of remote sensing techniques we find Radio Occultation \parencite{RO-GNSS}, which uses low orbit satellites to detect the changes produced by the atmosphere in a radio signal emitted by a \acrshort{gnss} satellite, as illustrated in Figure \ref{fig:ro_schematic}. \acrshort{ro} data is mainly used as a weather forecasting tool.
 
 \begin{figure}[h!]
 	\begin{center}
@@ -41,10 +41,10 @@ Hence, the data to be compressed are the discrete time samples of the signals $i
 
 For further information on \acrshort{iq} signals the reader may check references \parencite{IQintro}, \parencite{carlson2010communication} and \parencite{ICOM}.
 
-\section{Motivation and applications of Wave} \label{sec:wave_motivation}
+\section{Motivation and applications of the Wave stage} \label{sec:wave_motivation}
 We shall provide a justification on why we can use both \acrshort{iq} and audio files to test Wave and why we can compare it with the \acrshort{flac} standard.
 
-On the first hand, as we will see shortly, both \acrshort{flac} and Wave implement the same preprocessing stage: a classical linear predictor. This decorrelation stage is followed by a Rice-Golomb entropy coder (see section \ref{golomb-coding}) in \acrshort{flac} and by the \acrshort{fapec} entropy coder in Wave.
+On the first hand, as we will see shortly, both \acrshort{flac} and Wave implement, basically, the same preprocessing stage: a classical linear predictor. This decorrelation stage is followed by a Rice-Golomb entropy coder (see section \ref{golomb-coding}) in \acrshort{flac} and by the \acrshort{fapec} entropy coder in Wave.
 
 On the other hand, \acrshort{iq} data and stereo audio have the same structure: time series separated in two channels (notice that samples distribution may not be the same). In fact, most \acrshort{sdr} records are stored as \acrshort{wav} files, a well known audio format.
 
@@ -56,18 +56,18 @@ To conclude, there are clear similarities between the two proposed algorithms an
 In this section we will design the algorithm intended to decorrelate audio and \acrshort{iq} data. The structure of the section will be the following: first we will state the specific requirements for the stage. Then, according to these and to the data structure described above, an algorithm will be proposed.
 
 \subsection{Requirements and specifications}
-Besides the general requirements and specifications for \acrshort{fapec} stages described in section \ref{sec:fapec_reqs}, Wave must also fulfill:
+Besides the general requirements and specifications for \acrshort{fapec} stages described in section \ref{sec:fapec_reqs}, the Wave stage must also fulfill:
 \begin{enumerate}
-	\item Compression ratio must be at least an 80\% of \acrshort{flac}'s.
-	\item Compression speed must be better than \acrshort{flac}'s.
-	\item It shall work for an arbitrary number of channels.
+	\item Compression ratio must be at least 80\% of  that from \acrshort{flac}.
+	\item Compression speed must be better than that of \acrshort{flac}.
+	\item It shall work for an arbitrary number of channels, at least up to a thousand.
 	\item It shall work for 8-bit and 16-bit samples.
 \end{enumerate}
 
 \subsection{Algorithm design}
-In section \ref{sec:wave_motivation} we justified why \acrshort{flac} should have a good performance with \acrshort{iq} data. Taking this into account, the proposed algorithm should have a structure similar to \acrshort{flac}'s but using \acrshort{fapec} as the entropy coder. This should translate into a compressor faster than \acrshort{flac} and with a similar compression ratio.
+In section \ref{sec:wave_motivation} we justified why \acrshort{flac} should have a good performance with \acrshort{iq} data. Taking this into account, the proposed algorithm should have a structure similar to that of \acrshort{flac}, but using \acrshort{fapec} as the entropy coder. This should translate into a compressor faster than \acrshort{flac} and with a similar compression ratio.
 
-From the \acrshort{flac} format specifications we know that its preprocessing stage is based in a linear predictor \parencite{FLAC}. Therefore, our goal is to implement a predictor which, given an input sequence $x(n)$, predicts future samples following the model
+From the \acrshort{flac} format specifications we know that its preprocessing stage is based on a linear predictor \parencite{FLAC}. Therefore, our goal is to implement a predictor which, given an input sequence $x(n)$, predicts future samples following the model
 \begin{equation} \label{eq:prediction_x}
 \hat{x}(n) = \sum_{i=1}^{Q} h_i x(n-i)
 \end{equation}
@@ -85,7 +85,7 @@ r_x(j) = \sum_{i=1}^{Q} h_i r_x(|i-j|) ,\hspace{0.5em} 0 < j \leq Q
 \end{equation}
 where $r_x(j)$ is the lag $j$ of the autocorrelation of $x(n)$.
 
-In order to obtain the filter coefficients $h_i$ we need to solve the previous system. In this case, using Gauss-Jordan elimination is not desirable as it has a complexity of $O(Q^3)$. However, there exist algorithms such as the Levinson-Durbin recursion \parencite{LevinsonDurbin} which, taking advantage of the Toeplitz structure of $\mathbf{R}_x$, reduce the computational complexity to $O(Q^2)$.
+In order to obtain the filter coefficients $h_i$ we need to solve the previous system. In this case, using Gauss-Jordan elimination is not desirable as it has a complexity of $O(Q^3)$. However, there are algorithms such as the Levinson-Durbin recursion \parencite{LevinsonDurbin} which, taking advantage of the Toeplitz structure of $\mathbf{R}_x$, reduce the computational complexity to $O(Q^2)$.
 
 Equation \ref{eq:normal_eqs_matrix} is obtained from a statistical approach to the problem, assuming that the sequence $x(n)$ is \acrshort{wss}. However, in our case $x(n)$ is a deterministic finite sequence from an unknown origin. For this reason, we need to split $x(n)$ in subsequences $x_N(n)$ of length $N$ where assuming stationarity is reasonable. For each of these subsequences $x_N(n)$, the filter coefficients $h_i$ are assumed to be independent (i.e. they are reset at the beginning of each subsequence). In this scenario, the autocorrelation lags for each subsequence would be given by the short-term autocorrelation function:
 \begin{equation}
@@ -94,7 +94,7 @@ r_x(i) = \sum_{m=0}^{N-1-i} x_N(m) x_N(m+i) ,\hspace{0.5em} i \geq 0
 
 It is important to remark that given the unknown character of the input data, $N$ is a custom parameter that the user may choose when setting up the compressor.
 
-However, for computational purposes, we will not use all the $N$ samples of $x_N(n)$. Instead, we will set a training length $T \leq N$ and the autocorrelation lags will be calculated as follows:
+However, for computational purposes, we will not use all the $N$ samples of $x_N(n)$. Instead, we will set a training length $T \leq N$ and, as we are assuming stationarity, coefficients should be very similar. The autocorrelation will be calculated as follows:
 \begin{equation}
 	r_x(i) = \sum_{m=0}^{T-1-i} x_N(m) x_N(m+i) ,\hspace{0.5em} i \geq 0
 \end{equation}
@@ -106,11 +106,11 @@ To sum up, the proposed algorithm consists in splitting $x(n)$ in sequences of s
 e(n) = x(n) - \hat{x}(n)
 \end{equation}
 
-We should point out that recovering samples in decompression is as easy as calculating $\hat{x}(n)$ with equation \ref{eq:prediction_x} and then adding it to the prediction error for that sample (remember that we coded the prediction errors and the coefficients). Taking this into account, it is obvious that decompression will be much faster than compression.
+We should point out that recovering samples in decompression is as easy as calculating $\hat{x}(n)$ with equation \ref{eq:prediction_x} and then adding it to the prediction error for that sample. Note that we coded the prediction errors and the coefficients. Taking this into account, it is obvious that decompression will be faster than compression.
 
 In general, the previous algorithm will be applied independently in each channel, but the user may enable channel coupling and then the coefficients from the first channel will be reused in the others.
 
-In figure \ref{fig:wave_flowchart} we include a flowchart for the proposed algorithm, where \textit{Settings} are the number of bits per sample, a boolean to enable or disable channel coupling, the level of losses, the number of channels, the period length $N$, the training length $T$ and the filter order $Q$.
+In Figure \ref{fig:wave_flowchart} we include a flowchart for the proposed algorithm, where \textit{Settings} are the number of bits per sample, a boolean to enable or disable channel coupling, the level of losses, the number of channels, the period length $N$, the training length $T$ and the filter order $Q$.
 
 \pagebreak
 \begin{figure}[h!]
@@ -135,9 +135,9 @@ The results presented in this section have been obtained with the following sett
 	\item No losses.
 \end{itemize}
 
-Here we will include negentropies, ratios, execution times and Euclidean distances for all our dataset, but we will just show the histogram and the cumulative histogram for one file. The remaining ones can be found in appendix \ref{ch:wave_hists}.
+Here we include negentropies, ratios, execution times and Euclidean distances for all our dataset, but we just show the histogram and the cumulative histogram for one file. The remaining ones can be found in appendix \ref{ch:wave_hists}.
 
-We start our evaluation by showing the histogram (and cumulative histogram) of the song \textit{Formigues}, by Manel:
+We start our evaluation by showing the histogram (and cumulative histogram) of the song \textit{Formigues}, by Manel, in Figure \ref{fig:formigues}.
 
 \begin{figure}[h!]
 	\centering
@@ -179,7 +179,7 @@ As we can see in table \ref{tab:negentropies_wave}, negentropy of all files impr
 \label{tab:negentropies_wave}
 \end{table}
 
-Finally, we will compare compression ratio and time of \acrshort{fapec}, \acrshort{flac} and GZIP.
+Finally, we compare the compression ratio and time of \acrshort{fapec}, \acrshort{flac} and GZIP.
 
 \begin{figure}[h!]
 	\begin{center}
@@ -189,7 +189,7 @@ Finally, we will compare compression ratio and time of \acrshort{fapec}, \acrsho
 	\label{fig:audio_compare}
 \end{figure}
 
-As we can see in figure \ref{fig:audio_compare}, \acrshort{flac} and \acrshort{fapec} have a similar performance, with the former having a better radio and the latter being faster. Applying our Euclidean distance criteria, we determine the \acrshort{fapec} behaves slightly better than \acrshort{flac} thanks to its speed. In table \ref{tab:audio_compare} we include the numerical values of the Euclidean distances.
+As we can see in figure \ref{fig:audio_compare}, \acrshort{flac} and \acrshort{fapec} have a similar performance, with the former having a slightly better ratio and the latter being faster. Applying our Euclidean distance criteria, we determine the \acrshort{fapec} behaves slightly better than \acrshort{flac} thanks to its speed. In table \ref{tab:audio_compare} we include the numerical values of the Euclidean distances.
 
 \begin{table}[h!]
 \normalsize
@@ -209,6 +209,4 @@ As we can see in figure \ref{fig:audio_compare}, \acrshort{flac} and \acrshort{f
 \label{tab:audio_compare}
 \end{table}
 
-Finally, we want to present a brief code evaluation. The McCabe complexity of the stage is 31, smaller than the maximum value set in the specifications. Besides, in the worst scenario, the maximum occupied memory is 18.3 MB.
-
-Our last remark is that all the requirements and specifications are fulfilled.
+Finally, we want to present a brief code evaluation. The McCabe complexity of the stage is 31, smaller than the maximum value set in the specifications. Besides, in the worst scenario, the maximum occupied memory is 18.3 MB. Thus, all the requirements and specifications are fulfilled.
