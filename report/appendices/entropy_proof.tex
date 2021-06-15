@@ -1,6 +1,6 @@
 \chapter{Proof of Equation \ref{eq:differential_entropy_q}}\label{entropy_proof}
 
-In this appendix we will prove Equation \ref{eq:differential_entropy_q} starting from Equation \ref{eq:differential_entropy} (see page \pageref{eq:differential_entropy}).
+In some papers such as \parencite{Vasicek} the authors use Equation \ref{eq:differential_entropy_q} instead of Equation \ref{eq:differential_entropy}, but no formal proof is included. In this appendix we provide a clear proof which shows that equations \ref{eq:differential_entropy} and \ref{eq:differential_entropy_q} are equivalent.
 
 Let $X$ be a continuous random variable with cumulative distribution function $F(x)$. Then, its quantile function is defined as:
 \begin{equation}
@@ -20,11 +20,11 @@ Applying the chain rule to Equation \ref{eq:quantile_cdf}:
 \end{equation}
 
 Now, take the differential entropy as defined in \ref{eq:differential_entropy} and, for simplicity, rewrite it as:
-\begin{equation}
-h(X) = - \int_{-\infty}^{+\infty} u(x) dx
+\begin{equation} \label{eq:u_entropy}
+h(X) = - \int_{-\infty}^{+\infty} f(x) \ln f(x) dx = - \int_{-\infty}^{+\infty} u(x) dx
 \end{equation}
 
-Applying the change of variables from \ref{eq:cdf_quant} we obtain the following integration limits:
+Applying the change of variables from \ref{eq:cdf_quant} to \ref{eq:u_entropy} and remembering that $F(x)$ is monotonically increasing, we obtain the following integration limits:
 \begin{align}
 a = \lim_{x \to -\infty} F(x) = 0\\
 b = \lim_{x \to +\infty} F(x) = 1
@@ -38,3 +38,4 @@ which, making use of Equation \ref{eq:cdf_identity}, can be simplified to Equati
 \begin{equation}
 h(X) = -  \int_{0}^{1} \ln\left(f(Q(p))\right) dp = - \int_{0}^{1} \ln\left(\frac{1}{Q'(p)}\right) dp = \int_{0}^{1} \ln\left(Q'(p)\right) dp
 \end{equation}
+\hspace*{\fill}$\blacksquare$
