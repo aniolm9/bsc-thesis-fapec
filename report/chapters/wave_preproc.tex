@@ -46,7 +46,7 @@ We shall provide a justification on why we can use both \acrshort{iq} and audio 
 
 On the first hand, as we will see shortly, both \acrshort{flac} and Wave implement, basically, the same preprocessing stage: a classical linear predictor. This decorrelation stage is followed by a Rice-Golomb entropy coder (see section \ref{golomb-coding}) in \acrshort{flac} and by the \acrshort{fapec} entropy coder in Wave.
 
-On the other hand, \acrshort{iq} data and stereo audio have the same structure: time series separated in two channels (notice that samples distribution may not be the same). In fact, most \acrshort{sdr} records are stored as \acrshort{wav} files, a well known audio format.
+On the other hand, \acrshort{iq} data and stereo audio have the same structure: time series separated in two channels (notice that the samples distribution may not be the same). In fact, most \acrshort{sdr} records are stored as \acrshort{wav} files, a well known audio format.
 
 Additionally, in literature we may find papers about \acrshort{iq} data compression that make use of the \acrshort{flac} algorithm, for instance \parencite{IQFlac}.
 
@@ -110,7 +110,7 @@ We should point out that recovering samples in decompression is as easy as calcu
 
 In general, the previous algorithm will be applied independently in each channel, but the user may enable channel coupling and then the coefficients from the first channel will be reused in the others.
 
-In Figure \ref{fig:wave_flowchart} we include a flowchart for the proposed algorithm, where \textit{Settings} are the number of bits per sample, a boolean to enable or disable channel coupling, the level of losses, the number of channels, the period length $N$, the training length $T$ and the filter order $Q$.
+In Figure \ref{fig:wave_flowchart} we include a flowchart for the algorithm that we have just described, where \textit{Settings} are the number of bits per sample, a boolean to enable or disable channel coupling, the level of losses, the number of channels, the period length $N$, the training length $T$ and the filter order $Q$.
 
 \pagebreak
 \begin{figure}[h!]

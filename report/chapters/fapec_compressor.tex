@@ -1,7 +1,7 @@
 \chapter{The FAPEC data compressor} \label{ch:fapec}
 \acrfull{fapec} is a versatile and efficient data compressor originally designed for space missions \parencite{PaperFAPEC}. The main advantages of \acrshort{fapec} are its high computing performance and its resilience in front of noise or data outliers.
 
-In this chapter we will explore the structure of \acrshort{fapec} and also its integration with several decorrelation stages such as the two presented in this work. In order to do that, we will first see the origin of \acrshort{fapec} and its need in space industry.
+In this chapter we will explore the structure of \acrshort{fapec} and also its integration with several decorrelation stages such as the two presented in this work. In order to do so, we will first see the origin of \acrshort{fapec} and its need in space industry.
 
 \section{Background}
 Space missions are continuously evolving, hence the amount of data generated is growing. However, onboard computing power and downlink bandwidth are not evolving so fast and they are still quite narrowed. The usual technique to deal with the second limitation is data compression, but it has to be implemented efficiently as we are still limited by the first constraint. Moreover, the chosen algorithm must be reliable, as losing data in remote sensing could have severe consequences.
@@ -11,12 +11,12 @@ The \acrfull{ccsds} already provides some standards for space data compression. 
 In order to work out the previous limitations, \acrshort{fapec} was proposed, featuring:
 \begin{itemize}
 	\item High computing performance.
-	\item Good coding efficiency for all entropy levels regardless the statistical outliers.
+	\item Good coding efficiency for all entropy levels regardless of the statistical outliers.
 	\item Several preprocessing stages to suit different types of data.
 \end{itemize}
 
 \section{General overview}
-The \acrshort{fapec} data compressor is based on two stages: a preprocessing stage followed by the entropy coder. In fact, \acrshort{fapec}'s name comes from this architecture as usually the first stage is some type of predictor which tries to estimate the true samples and generates a prediction error. Then, the error is sent to the entropy coder instead of the original samples (hereof the Prediction Error Coder naming).
+The \acrshort{fapec} data compressor is based on two stages: a preprocessing stage followed by the entropy coder. In fact, \acrshort{fapec}'s name comes from this architecture as usually the first stage is some type of predictor which tries to estimate the true samples and generates a prediction error. Then, the error is sent to the entropy coder instead of the original samples (thereof the Prediction Error Coder naming).
 
 Formally, given an input sample $x_i$ and an estimator $\hat{x}_i$, the value sent to the entropy coder is:
 \begin{equation}
@@ -40,7 +40,7 @@ Notice that in a few stages some flags are also sent to the entropy coder.
 
 Figure \ref{fig:fapec_structure} illustrates the general approach, where $T()$ is a generic transformation.
 
-The main purpose of decorrelation stages in data compressors is to reduce the entropy at the coder input to allow a better performance of the latter. In other words, the preprocessing stage performance is critical in the overall compressor efficiency.
+From Theorem \ref{theo:shannon} we know that the entropy is the average number of bits required to encode a block. Therefore, the main purpose of decorrelation stages in data compressors is to reduce the entropy at the coder input. In other words, the preprocessing stage performance is critical in the overall compressor efficiency.
 
 \acrshort{fapec} features several preprocessing algorithms such as a basic differential, multi-band prediction or even wavelet transform. In this work we introduce two new stages that follow this approach.
 
