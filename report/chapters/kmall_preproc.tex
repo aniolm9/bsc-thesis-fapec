@@ -149,7 +149,7 @@ If we look closer at a MWC datagram (see Figure \ref{fig:mwc_datagram}) we see t
 
 In conclusion, we will design a stage which will only give some special attention to the information contained in the \textit{BeamData} subdatagram from MWC datagrams.
 
-\subsection{Algorithm design}
+\subsection{Algorithm design} \label{sec:kmall_design}
 In 2019, DAPCOM developed a \acrshort{fapec} stage to compress \acrshort{mwc} data contained in \texttt{.wcd} files \parencite{Portell2019}, the predecessor of \texttt{.kmwcd}. For this reason, the stage we are presenting here is not strictly new, but an adaption of an already existing one.
 
 Our first concern is \acrshort{fapec} data chunking. This feature may be dangerous because splitting a datagram into different chunks is not desirable as it complicates file reading. For this reason, assuming a degradation in performance, we will allow chunks with a true size smaller than the chunk size set by the user. We should remark that even with this constraint, the chunk size will be typically between 1 MB and 2 MB, therefore fulfilling specification \ref{spec:chunk_size}.
@@ -248,7 +248,7 @@ As we did in Wave, here we include the histogram and cumulative histogram of one
 
 From the histograms we see that original data is distributed among the whole dynamic range, which would result in a poor compression ratio. After the preprocessing stage we propose, 90\% of the samples fall between -7 and +7.
 
-If we look at the negentropies in Table \ref{tab:negentropies_kmall}. we see that for all the files the negentropy is higher after preprocessing. It is important to notice that we have estimated negentropies up to the 4th decimal, thus files with a very low negentropy are estimated with 0. We should also point out that the improvement for the last file is worse because it is the only one with phase information, which is almost incompressible (see Figure \ref{fig:wc_phase}).
+If we look at the negentropies in Table \ref{tab:negentropies_kmall}. we see that for all the files the negentropy is higher after preprocessing, thus improving the posterior compression ratio. It is important to notice that we have estimated negentropies up to the 4th decimal, thus files with a very low negentropy are estimated with 0. We should also point out that the improvement for the last file is worse because it is the only one with phase information, which is almost incompressible (see Figure \ref{fig:wc_phase}).
 
 \begin{table}[h!]
 \normalsize
