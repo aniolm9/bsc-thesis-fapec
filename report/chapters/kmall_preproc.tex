@@ -131,7 +131,7 @@ Where:
 	\item $phaseFlag \equiv$ Flag that indicates if there is phase information after amplitude samples. It may be 0 (no phase information), 1 (8-bit resolution) or 2 (16-bit resolution). It is stored as an 8-bit integer in \textit{RxInfo}.
 \end{description}
 
-In the present work we will only use information contained in \textit{Header} such as the datagram size and the datagram type, in \textit{RxInfo} and in \textit{BeamData}. For further details, the interested reader may check reference \parencite{KMALL}.
+In the present work we will only use information contained in \textit{Header} such as the datagram size and the datagram type, in \textit{RxInfo} and in \textit{BeamData}. For further details, the interested reader is referred to \parencite{KMALL}.
 
 \section{Design}
 We have already described the KMALL format and we have also justified why this stage is needed. Now it is time to start designing an algorithm to decorrelate the data in these files. We will follow a two-step approach: first we will analyze the KMALL files in our dataset to determine which of the datagrams listed in section \ref{sec:kmall_format} are worth to be compressed. Then, we will propose an algorithm that suits the requirements stated in section \ref{sec:requirements}. There are no specific requirements for this stage.
@@ -167,10 +167,10 @@ Now it is time to focus on the payload data and how can we decorrelate it. If we
 
 In the implementation for \texttt{.wcd} files, given a sample $S_{i,j}$ in the position $i$ of the beam $j$, the vertex coordinates $(V_x, V_y)$ and the number of beams $N_B$, prediction errors $E_{i,j}$ in the rectangular region are calculated:
 \begin{equation}
-E_{i,j} = S_{i,j} - S_{i,j-1}, \qquad 0 \leq i < V_x, \quad 1 \leq j < N_B
+E_{i,j} = S_{i,j} - S_{i,j-1}, \qquad 0 \leq i < V_x, \quad 1 \leq j < N_B.
 \end{equation}
 
-In other words, in the rectangular region samples are predicted from the sample in the same position in the previous beam.
+In other words, the samples from the rectangular region are predicted from the samples in the same position as those from the previous beam.
 
 The remaining samples are predicted following a simple differential between them and a correction coefficient. Formally, given $N_{S_j}$ the number of samples in the beam $j$, then
 \begin{equation}
@@ -178,27 +178,27 @@ E_{i,j} = S_{i,j} - S_{i-1,j} - C_{i,j}, \qquad Vx \leq i < N_{S_j}, \quad 1 \le
 \end{equation}
 where $C_{i,j}$ is given by:
 \begin{equation}
-C_{i,j} = \frac{1}{16}(7E_{i-1,j} + 6E_{i-2,j} + 4E_{i-3,j} + 3E_{i-4,j})
+C_{i,j} = \frac{1}{16}(7E_{i-1,j} + 6E_{i-2,j} + 4E_{i-3,j} + 3E_{i-4,j}).
 \end{equation}
 
 As the reader may have noticed, these equations are not defined for $j=0$ (i.e. the first beam). The reason is that the system must be causal, therefore the first beam is predicted from the previous sample in the same beam:
 \begin{equation} \label{eq:first_beam}
-E_{i,0} = S_{i,0} - S_{i-1,0}, \qquad 1 \leq i < N_{S_0}
+E_{i,0} = S_{i,0} - S_{i-1,0}, \qquad 1 \leq i < N_{S_0}.
 \end{equation}
 
 The algorithm we propose in this thesis is very similar to the one we have just described for \texttt{.wcd} files, but with some improvements. We also follow the approach of predicting samples from the previous beam, but we do not restrict to the square region. Instead, we do that for all the samples which have a sample above. Formally,
 \begin{equation}
-E_{i,j} = S_{i,j} - S_{i,j-1}, \qquad 0 \leq i < \min(N_{S_{j-1}}, N_{S_j}), \quad 1 \leq j < N_B
+E_{i,j} = S_{i,j} - S_{i,j-1}, \qquad 0 \leq i < \min(N_{S_{j-1}}, N_{S_j}), \quad 1 \leq j < N_B.
 \end{equation}
 
 The remaining samples are predicted with the previous samples. Mathematically,
 \begin{equation} \label{eq:samples}
-E_{i,j} = S_{i,j} - S_{i-1,j}, \qquad \min(N_{S_{j-1}}, N_{S_j}) \leq i < N_{S_j}, \quad 1 \leq j < N_B
+E_{i,j} = S_{i,j} - S_{i-1,j}, \qquad \min(N_{S_{j-1}}, N_{S_j}) \leq i < N_{S_j}, \quad 1 \leq j < N_B.
 \end{equation}
 
 The prediction errors for the first beam are also calculated with Equation \ref{eq:first_beam}, with the addition that
 \begin{equation}
-E_{0,0} = S_{0,0} + 128
+E_{0,0} = S_{0,0} + 128.
 \end{equation}
 
 Now we are interested in observing if this algorithm also work for the phase information present in MWC datagrams. Notice that the former stage for \texttt{.wcd} was not designed to work with phase samples. In Figure \ref{fig:wc_phase} we show the phase corresponding to the amplitudes in Figure \ref{fig:wc_amplitude}. As the reader can see, this information is almost white noise, therefore it is theoretically impossible to compress. Our final decision has been to apply a simple differential between samples (i.e. Equation \ref{eq:samples}).
@@ -242,7 +242,7 @@ As we did in Wave, here we include the histogram and cumulative histogram of one
 		\caption{Cumulative histogram.}
 		\label{fig:cum_hist_003_kmall}
 	\end{subfigure}
-	\caption{Histograms of EM 304 retrieved \acrshort{mwc} data.}
+	\caption{Histograms showing the range reduction of MWC data from a EM 304.}
 	\label{fig:0003_kmall}
 \end{figure}
 
@@ -262,7 +262,7 @@ If we look at the negentropies in Table \ref{tab:negentropies_kmall}. we see tha
 	\cellcolor[HTML]{FFFFFF}0039\_20200428\_115408\_ShipName.kmwcd & \cellcolor[HTML]{FFFFFF}0.0001 & \cellcolor[HTML]{FFFFFF}0.0146 & 146       \\ \hline
 	0010\_20210409\_092708.kmwcd                                   & 0.0001                         & 0.0089                         & 89        \\ \hline
 \end{tabular}
-\caption{Negentropies of KMCWD files before and after preprocessing.}
+\caption{Negentropies of KMWCD files before and after preprocessing.}
 \label{tab:negentropies_kmall}
 \end{table}
 
@@ -274,7 +274,7 @@ In Figure \ref{fig:kmall_compare} we plot the compression time and ratio for dif
 	\begin{center}
 		\includegraphics[scale=0.69]{images/2021-05-31T23:59:08.498586-results_kmall.csv_comparison.pdf}
 	\end{center}
-	\caption{Comparison of compressors by time and ratio.}
+	\caption{Comparison of compressors showing that \acrshort{fapec} performs better both in time and ratio than GZIP.}
 	\label{fig:kmall_compare}
 \end{figure}
 
@@ -292,7 +292,7 @@ In Table \ref{tab:kmall_compare} we present the numerical values of the distance
 	\cellcolor[HTML]{FFFFFF}0039\_20200428\_115408\_ShipName.kmwcd & 5.2258      & 16.4260    \\ \hline
 	0010\_20210409\_092708.kmwcd                                   & 13.6912     & 28.4271    \\ \hline
 \end{tabular}
-\caption{KMALL Euclidean distances.}
+\caption{Euclidean distances for Figure \ref{fig:kmall_compare}.}
 \label{tab:kmall_compare}
 \end{table}
 

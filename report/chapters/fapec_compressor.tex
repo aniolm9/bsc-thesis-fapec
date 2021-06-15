@@ -15,20 +15,20 @@ In order to work out the previous limitations, \acrshort{fapec} was proposed, fe
 	\item Several preprocessing stages to suit different types of data.
 \end{itemize}
 
-\section{General overview}
+\section{General overview} \label{sec:fapec_overview}
 The \acrshort{fapec} data compressor is based on two stages: a preprocessing stage followed by the entropy coder. In fact, \acrshort{fapec}'s name comes from this architecture as usually the first stage is some type of predictor which tries to estimate the true samples and generates a prediction error. Then, the error is sent to the entropy coder instead of the original samples (thereof the Prediction Error Coder naming).
 
 Formally, given an input sample $x_i$ and an estimator $\hat{x}_i$, the value sent to the entropy coder is:
 \begin{equation}
-e_i = x_i - \hat{x}_i
+e_i = x_i - \hat{x}_i.
 \end{equation}
 
 Restoring the original value in decompression is straightforward:
 \begin{equation}
-x_i = \hat{x}_i + e_i
+x_i = \hat{x}_i + e_i.
 \end{equation}
 
-Notice that in a few stages some flags are also sent to the entropy coder.
+Note that in a few stages some flags are also sent to the entropy coder.
 
 \begin{figure}[h!]
 	\begin{center}

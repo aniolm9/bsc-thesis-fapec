@@ -8,7 +8,7 @@ Giving an extensive explanation of entropy coding would be too lengthy and outsi
 Given a discrete random variable $X$ with probability function $p(x)$, its Shannon entropy is defined as:
 
 \begin{equation}
-H(X) = - \sum_{i=1}^{n} p(x_i) \cdot \log_2 p(x_i) 
+H(X) = - \sum_{i=1}^{n} p(x_i) \cdot \log_2 p(x_i).
 \end{equation}
 
 This result represents the average level of information (or uncertainty) of the random variable $X$, expressed in \textit{bits}. Sometimes entropy is defined using the natural logarithm, therefore expressed in \textit{nats}.
@@ -20,12 +20,12 @@ This theorem establishes the theoretical limits to lossless data compression, an
 Let $L_n^*$ be the expected codeword length per symbol of an optimal n-th order lossless data compression code (in bits/symbol). Let $(X_1, X_2, \dots, X_n )$ be a sequence of symbols from a stochastic process $X$. Then,
 
 \begin{equation}
-	\frac{H(X_1, X_2, \dots, X_n )}{n} \leq L_n^* < \frac{H(X_1, X_2, \dots, X_n )}{n} + \frac{1}{n}
+	\frac{H(X_1, X_2, \dots, X_n )}{n} \leq L_n^* < \frac{H(X_1, X_2, \dots, X_n )}{n} + \frac{1}{n}.
 \end{equation}
 
 If $X$ is a stationary stochastic process,
 \begin{equation}
-	\lim_{n \to \infty} L_n^* = H(X)
+	\lim_{n \to \infty} L_n^* = H(X).
 \end{equation}
 \end{theorem}
 
@@ -34,12 +34,12 @@ The previous theorem reveals a new interpretation of Shannon entropy: it is the 
 \subsection{Differential entropy}
 Given a continuous random variable $X$ with a density $f(x)$ supported in $S$ and a cumulative distribution $F(x)$, its differential entropy (in \textit{nats}) is defined as:
 \begin{equation} \label{eq:differential_entropy}
-h(X) = - \int_{S}^{} f(x) \ln f(x) dx
+h(X) = - \int_{S}^{} f(x) \ln f(x) dx.
 \end{equation}
 
 In some cases computing an explicit probability density function is too hard or even impossible. In these cases, an equivalent definition in terms of the quantile function $Q(p) = F^{-1}(p)$ can be used (see appendix \ref{entropy_proof}):
 \begin{equation} \label{eq:differential_entropy_q}
-h(X) = \int_{0}^{1} \ln Q'(p) dp
+h(X) = \int_{0}^{1} \ln Q'(p) dp.
 \end{equation}
 
 This equation is specially useful in some entropy estimation techniques \parencite{Vasicek}.
@@ -49,12 +49,12 @@ Negentropy measures the difference in entropy between a given distribution and t
 
 Let $G \sim \mathscr{N}(\mu, \sigma^2)$. Let $X$ be a continuous random variable with variance $\sigma^2$. Then, negentropy is defined as:
 \begin{equation}
-J(X) = h(G) - h(X) \geq 0
+J(X) = h(G) - h(X) \geq 0.
 \end{equation}
 
 A normal distribution is used because, among all the real-valued distributions supported on $\mathbb{R}$ with variance $\sigma^2$, $\mathscr{N}(\mu, \sigma^2)$ has maximum entropy:
 \begin{equation}
-h(G) = \frac{1}{2} \ln \left(2\sigma^2\pi\right) + \frac{1}{2} = \ln\left(\sqrt{2\pi e \sigma^2}\right)
+h(G) = \frac{1}{2} \ln \left(2\sigma^2\pi\right) + \frac{1}{2} = \ln\left(\sqrt{2\pi e \sigma^2}\right).
 \end{equation}
 
 \section{Coding techniques}

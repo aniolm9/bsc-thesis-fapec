@@ -31,7 +31,7 @@ The following specifications shall be fulfilled with an Intel Core i7-10710U \ac
 \section{Evaluation of stages} \label{sec:metrics}
 The aim of this section is to present the metrics used in the following chapters to evaluate the developed preprocessing stages. The proposed indexes may be classified in two groups: information metrics and performance metrics.
 
-\subsection{Information metrics}
+\subsection{Information metrics} \label{sec:information_metrics}
 This subset of metrics is purely focused on evaluating how better compressible data are after the decorrelation stage. Our first approach is to plot a \textbf{histogram} of the original samples together with a histogram of the prediction errors (i.e. the values that will be sent to the \acrshort{fapec} entropy coder). For a better visualization, the bin width is calculated from the number of samples and it is the same for both histograms. Besides, the prediction errors histogram also includes three vertical lines at percentiles 5, 50 and 95 in order to clearly show the range where 90\% of data is contained.
 
 Making use of the histograms, the \textbf{cumulative histograms} of the original samples and the prediction errors are calculated and plotted together. Although these graphics are just the integral of the histograms described above, they provide a clear way to see samples concentration in intervals. Figure \ref{fig:hists_example} shows an example.
@@ -62,7 +62,7 @@ J(X) \propto \left[E[G(X)] - E[G(V)]\right]^2
 \end{equation}
 where $X$ is a random variable with $\mu = 0$ and $\sigma = 1$, $V \sim \mathscr{N}(0,1)$ and $G(u)$ is a non-quadratic function. In our case, $X$ and $V$ will be data arrays and
 \begin{equation} \label{eq:g}
-G(u) = \ln \cosh u
+G(u) = \ln \cosh u.
 \end{equation}
 
 In order to obtain a more robust estimator, $G(u)$ must not grow too fast. Besides, Equation \ref{eq:g} has been proven to be very useful \parencite{HYVARINEN2000411}. Further details on the choice of $G(u)$ can be found in \parencite{NIPS1997_6d9c547c}. 
