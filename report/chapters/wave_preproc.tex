@@ -20,7 +20,7 @@ This chapter is part of a DAPCOM Data Services strategic project focused on deve
 \section{Introduction to IQ data} \label{sec:iq_data}
 In the introduction of this chapter we stated that the present stage will be focused on \acrshort{iq} data, that is, the discrete time samples of a \acrshort{rf} \acrshort{iq} signal.
 
-From Communication Theory we know that any pass-band signal $s(t)$ can be expressed as:
+From communication theory we know that any pass-band signal $s(t)$ can be expressed as:
 \begin{equation}
 s(t) = i_s(t) \cdot \cos(2\pi f_0 t) - q_s(t) \cdot \sin(2\pi f_0 t)
 \end{equation}
@@ -73,7 +73,7 @@ From the \acrshort{flac} format specifications we know that its preprocessing st
 \end{equation}
 where $\hat{x}(n)$ is the predicted sequence, $x(n-i)$ the previous observed samples, $h_i$ the filter coefficients and $Q$ the filter order.
 
-From filter theory \parencite{PSAVC} we know that the coefficients $h_i$ are given by
+From filter theory \parencite{Haykin} \parencite{PSAVC} we know that the coefficients $h_i$ are given by
 \begin{equation} \label{eq:normal_eqs_matrix}
 \mathbf{R}_x \mathbf{h} = \mathbf{r}_x
 \end{equation}
