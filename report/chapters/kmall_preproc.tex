@@ -167,14 +167,14 @@ Now it is time to focus on the payload data and how can we decorrelate it. If we
 
 In the implementation for \texttt{.wcd} files, given a sample $S_{i,j}$ in the position $i$ of the beam $j$, the vertex coordinates $(V_x, V_y)$ and the number of beams $N_B$, prediction errors $E_{i,j}$ in the rectangular region are calculated:
 \begin{equation}
-E_{i,j} = S_{i,j} - S_{i,j-1}, \qquad 0 \leq i < V_x, \quad 0 < j < N_B
+E_{i,j} = S_{i,j} - S_{i,j-1}, \qquad 0 \leq i < V_x, \quad 1 \leq j < N_B
 \end{equation}
 
 In other words, in the rectangular region samples are predicted from the sample in the same position in the previous beam.
 
 The remaining samples are predicted following a simple differential between them and a correction coefficient. Formally, given $N_{S_j}$ the number of samples in the beam $j$, then
 \begin{equation}
-E_{i,j} = S_{i,j} - S_{i-1,j} - C_{i,j}, \qquad Vx \leq i < N_{S_j}, \quad 0 < j < N_B
+E_{i,j} = S_{i,j} - S_{i-1,j} - C_{i,j}, \qquad Vx \leq i < N_{S_j}, \quad 1 \leq j < N_B
 \end{equation}
 where $C_{i,j}$ is given by:
 \begin{equation}
@@ -183,17 +183,17 @@ C_{i,j} = \frac{1}{16}(7E_{i-1,j} + 6E_{i-2,j} + 4E_{i-3,j} + 3E_{i-4,j})
 
 As the reader may have noticed, these equations are not defined for $j=0$ (i.e. the first beam). The reason is that the system must be causal, therefore the first beam is predicted from the previous sample in the same beam:
 \begin{equation} \label{eq:first_beam}
-E_{i,0} = S_{i,0} - S_{i-1,0}, \qquad 0 < i < N_{S_0}
+E_{i,0} = S_{i,0} - S_{i-1,0}, \qquad 1 \leq i < N_{S_0}
 \end{equation}
 
 The algorithm we propose in this thesis is very similar to the one we have just described for \texttt{.wcd} files, but with some improvements. We also follow the approach of predicting samples from the previous beam, but we do not restrict to the square region. Instead, we do that for all the samples which have a sample above. Formally,
 \begin{equation}
-E_{i,j} = S_{i,j} - S_{i,j-1}, \qquad 0 \leq i < \min(N_{S_{j-1}}, N_{S_j}), \quad 0 < j < N_B
+E_{i,j} = S_{i,j} - S_{i,j-1}, \qquad 0 \leq i < \min(N_{S_{j-1}}, N_{S_j}), \quad 1 \leq j < N_B
 \end{equation}
 
 The remaining samples are predicted with the previous samples. Mathematically,
 \begin{equation} \label{eq:samples}
-E_{i,j} = S_{i,j} - S_{i-1,j}, \qquad \min(N_{S_{j-1}}, N_{S_j}) \leq i < N_{S_j}, \quad 0 < j < N_B
+E_{i,j} = S_{i,j} - S_{i-1,j}, \qquad \min(N_{S_{j-1}}, N_{S_j}) \leq i < N_{S_j}, \quad 1 \leq j < N_B
 \end{equation}
 
 The prediction errors for the first beam are also calculated with Equation \ref{eq:first_beam}, with the addition that

@@ -77,11 +77,11 @@ From filter theory \parencite{PSAVC} we know that the coefficients $h_i$ are giv
 \begin{equation} \label{eq:normal_eqs_matrix}
 \mathbf{R}_x \mathbf{h} = \mathbf{r}_x
 \end{equation}
-where $\mathbf{R}_x$ is a $Q \times Q$ Toeplitz matrix with elements $r_{ij} = r_x(|i-j|),\hspace{0.5em} 0 \leq i,j < Q$, $\mathbf{r}_x$ the correlation vector with $r_j = r_x(j),\hspace{0.5em} 0 < j \leq Q$ and $\mathbf{h}$ the filter coefficients.
+where $\mathbf{R}_x$ is a $Q \times Q$ Toeplitz matrix with elements $r_{ij} = r_x(|i-j|),\hspace{0.5em} 0 \leq i,j < Q$, $\mathbf{r}_x$ the correlation vector with $r_j = r_x(j),\hspace{0.5em} 1 \leq j \leq Q$ and $\mathbf{h}$ the filter coefficients.
 
 Equation \ref{eq:normal_eqs_matrix} can also be expressed with scalar notation as:
 \begin{equation} \label{eq:normal_equations}
-r_x(j) = \sum_{i=1}^{Q} h_i r_x(|i-j|) ,\hspace{0.5em} 0 < j \leq Q
+r_x(j) = \sum_{i=1}^{Q} h_i r_x(|i-j|) ,\hspace{0.5em} 1 \leq j \leq Q
 \end{equation}
 where $r_x(j)$ is the lag $j$ of the autocorrelation of $x(n)$.
 
