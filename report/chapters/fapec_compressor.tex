@@ -66,7 +66,7 @@ The last released version of \acrshort{fapec} is 19.0, which is currently runnin
 \acrshort{fapec} compresses data in chunks. Chunks are usually between 64 kB and 4 MB, yet the user may set a different value. After every chunk, all algorithms are reset, ensuring that every chunk can be decompressed independently of the others. This feature is compulsory in harsh environments where transmission errors may often occur. Note that data chunks are not the data blocks mentioned earlier (see \ref{sec:entropy_coder}), as the former are treated completely independently both in the preprocessing and the coder, and the latter are the length of the adaptive block in the coder.
 
 \subsubsection{Encryption}
-\acrshort{aes} with 256-bit keys encryption may be enabled. With this option, every chunk will be encrypted after decompression. This feature is only available if the target C compiler and system have the OpenSSL libraries.
+\acrshort{aes} with 256-bit keys encryption may be enabled. With this option, every chunk will be encrypted after compression. This feature is only available if the target C compiler and system have the OpenSSL libraries.
 
 \subsubsection{Preprocessing stages}
 \acrshort{fapec} 19.0 provides several preprocessing stages, specifically: basic delta, prediction-based multi-band images, text, \acrshort{lzw}, tabular text or data, genomics, Kongsberg water column and \acrshort{dwt} for images.

@@ -9,7 +9,7 @@ In this section we will list the general requirements that all \acrshort{fapec} 
 	\item The stage must be implemented in C. \label{req:c}
 	\item The software shall be provided as a library and as a stand-alone binary. \label{req:lib_bin}
 	\item The stage must be able to work with data chunks. \label{req:chunks}
-	\item The stage must support lossless and lossy compression.
+	\item The stage must support lossless and, if applicable, lossy compression.
 	\item Data must not be lost even if the input is corrupted (i.e. delta fallback).
 	\item Compression ratio shall be better than that of Gzip.
 	\item Compression speed shall be better than that of Gzip.
@@ -54,7 +54,7 @@ Making use of the histograms, the \textbf{cumulative histograms} of the original
 	\label{fig:hists_example}
 \end{figure}
 
-At the beginning of this thesis no more information metrics were planned, but we realized that these two are subject to data scaling. That is, with a simple division the metric can be adulterated. In order to deal with it, we also propose to use \textbf{negentropy} (see section \ref{sec:negentropy}) to measure how compressible the prediction errors are compared with the original samples. There are two main reasons behind choosing negentropy: the first is that it is invariant to linear maps, and the second is that it is a measure of non-Gaussianity. The first property solves the problem of data scaling, and the second one offers a way of knowing if the stage has improved the data compression potential (i.e. negentropy is higher).
+At the beginning of this thesis no more information metrics were planned, but we realized that these two are subject to data scaling. That is, with a simple division the metric can be adulterated. In order to deal with it, we also propose to use \textbf{negentropy} (see section \ref{sec:negentropy}) to measure how compressible the prediction errors are compared with the original samples. There are two main reasons behind choosing negentropy: the first is that it is invariant to linear maps, and the second is that it is a measure of non-gaussianity. The first property solves the problem of data scaling, and the second one offers a way of knowing if the stage has improved the data compression potential (i.e. negentropy is higher).
 
 Although negentropy is a highly suitable metric for our purposes, it has an important drawback: its calculation is computationally very complex. Moreover, estimating it from data requires estimating the probability density function of the samples to later plug it into the definition of differential entropy. However, negentropy can be approximated with the following expression \parencite{HYVARINEN2000411}:
 \begin{equation} \label{eq:negentropy_approx}
