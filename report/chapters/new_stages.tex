@@ -82,6 +82,6 @@ and the metric is
 
 where $t$ is the process time, $s_c$ the compressed file size in bytes and $s_o$ the original file size also in bytes. Note that both metrics are in a range which allows us to compare them, hence time is assumed to be dimensionless.
 
-In order to reliably calculate the compression time, each compressor is run as a child-process on a Python script. Then, time is taken before spawning the child-process and again after it exits. Subtracting the end time to the start time gives the process time which is used in equations \ref{eq:dot_comp} and \ref{eq:metric_gamma}.
+In order to reliably calculate the compression time, each compressor is run as a child-process on a Python script. Then, time is taken before spawning the child-process and again after it exits. Subtracting the start time from the end time gives the process time which is used in equations \ref{eq:dot_comp} and \ref{eq:metric_gamma}.
 
 Finally, we want to point out that in the following chapters the metric $\gamma$ will be given together with a plot including the dot $\mathbf{a}$ for several input files and compressors.

@@ -34,7 +34,7 @@ On the other hand, \texttt{.all} format used to have a datagram size constraint 
 
 The size of a \texttt{.kmall} file is not fixed. Actually, the echosounder operator decides when the file being recorded at that moment should end. In our dataset, kindly provided by Kongsberg Maritime, most of the files are between 100 and 400 MB. Inside these files there are several datagrams, which will be described later.
 
-The mixture of data types in the same file makes it difficult for standard compressors like \textit{Zip} to identify data statistics. Therefore, they do not perform as good as one could expect. In order to improve the compression ratio, we are interested in knowing how are those datagrams placed inside the file and how to identify them. From Kongsberg KMALL documentation, we know that all datagrams start with a generic header that contains the datagram size in bytes and a 4-character identifier. In the current version (410224 Revision H), there are the datagram types listed in tables \ref{tab:first_kmall_table} to \ref{tab:last_kmall_table}.
+The mixture of data types in the same file makes it difficult for standard compressors like GZIP to identify data statistics. Therefore, they do not perform as good as one could expect. In order to improve the compression ratio, we are interested in knowing how are those datagrams placed inside the file and how to identify them. From Kongsberg KMALL documentation \parencite{KMALL}, we know that all datagrams start with a generic header that contains the datagram size in bytes and a 4-character identifier. In the current version (410224 Revision H), there are the datagram types listed in tables \ref{tab:first_kmall_table} to \ref{tab:last_kmall_table}.
 
 \begin{table}[H]
 \normalsize
@@ -191,7 +191,7 @@ The algorithm we propose in this thesis is very similar to the one we have just 
 E_{i,j} = S_{i,j} - S_{i,j-1}, \qquad 0 \leq i < \min(N_{S_{j-1}}, N_{S_j}), \quad 1 \leq j < N_B.
 \end{equation}
 
-The remaining samples are predicted with the previous samples. Mathematically,
+The remaining samples are predicted with the previous samples. That is,
 \begin{equation} \label{eq:samples}
 E_{i,j} = S_{i,j} - S_{i-1,j}, \qquad \min(N_{S_{j-1}}, N_{S_j}) \leq i < N_{S_j}, \quad 1 \leq j < N_B.
 \end{equation}
@@ -201,7 +201,7 @@ The prediction errors for the first beam are also calculated with Equation \ref{
 E_{0,0} = S_{0,0} + 128.
 \end{equation}
 
-Now we are interested in observing if this algorithm also work for the phase information present in MWC datagrams. Notice that the former stage for \texttt{.wcd} was not designed to work with phase samples. In Figure \ref{fig:wc_phase} we show the phase corresponding to the amplitudes in Figure \ref{fig:wc_amplitude}. As the reader can see, this information is almost white noise, therefore it is theoretically impossible to compress. Our final decision has been to apply a simple differential between samples (i.e. Equation \ref{eq:samples}).
+Now we are interested in observing if this algorithm also works for the phase information present in MWC datagrams. Notice that the former stage for \texttt{.wcd} was not designed to work with phase samples. In Figure \ref{fig:wc_phase} we show the phase corresponding to the amplitudes in Figure \ref{fig:wc_amplitude}. As the reader can see, this information is almost white noise, therefore it is theoretically impossible to compress. Our final decision has been to apply a simple differential between samples (i.e. Equation \ref{eq:samples}).
 \begin{figure}[h!]
 	\begin{center}
 		\includegraphics[scale=0.334]{images/water_column_ph.png}

@@ -27,9 +27,9 @@ s(t) = i_s(t) \cdot \cos(2\pi f_0 t) - q_s(t) \cdot \sin(2\pi f_0 t)
 
 where:
 \begin{description}
-	\item $i_s(t) \equiv$ In-phase component of the RF signal.
-	\item $q_s(t) \equiv$ Quadrature component of the RF signal.
-	\item $f_0 \equiv$ Carrier frequency of the RF signal.
+	\item $i_s(t) \equiv$ In-phase component of the \acrshort{rf} signal.
+	\item $q_s(t) \equiv$ Quadrature component of the \acrshort{rf} signal.
+	\item $f_0 \equiv$ Carrier frequency of the \acrshort{rf} signal.
 \end{description}
 
 For simplicity, we may work with the equivalent base-band signal $b_s(t)$:
@@ -50,13 +50,13 @@ On the other hand, \acrshort{iq} data and stereo audio have the same structure: 
 
 Additionally, in literature we may find papers about \acrshort{iq} data compression that make use of the \acrshort{flac} algorithm, for instance \parencite{IQFlac}.
 
-To conclude, there are clear similarities between the two proposed algorithms and also between the proposed data formats. Hence, from a qualitative point of view, comparing Wave and \acrshort{flac} with a dataset of \acrshort{iq} data and stereo audio files is a logical choice.
+To conclude, there are clear similarities between the two proposed algorithms and also between the proposed data formats. Hence, from a qualitative point of view, comparing Wave and \acrshort{flac} with a dataset of stereo audio files is a logical choice.
 
 \section{Design}
 In this section we will design the algorithm intended to decorrelate audio and \acrshort{iq} data. The structure of the section will be the following: first we will state the specific requirements for the stage. Then, according to these and to the data structure described above, an algorithm will be proposed.
 
 \subsection{Requirements and specifications}
-Besides the requirements and specifications from section \ref{sec:fapec_reqs}, \textit{Wave} must also fulfill:
+Besides the requirements and specifications from section \ref{sec:fapec_reqs}, Wave must also fulfill:
 \begin{enumerate}
 	\item Compression ratio must be at least 80\% of  that from \acrshort{flac}.
 	\item Compression speed must be better than that of \acrshort{flac}.
