@@ -1,5 +1,7 @@
 % !TeX program = lualatex
 \documentclass[usenames,dvipsnames]{beamer}
+\usepackage{array}
+\usepackage{colortbl}
 \usetheme{upctelecos}
 
 %%% Some useful commands
@@ -9,10 +11,9 @@
 \newcommand{\framefill}{\vskip0pt plus 1filll}
 
 \title[FAPEC]{Implementation of FAPEC decorrelation stages for IQ and water column data}
-\date[June 2021]{Barcelona, June 2021}
-\author[Aniol Marti]{
-  Author: Aniol Martí
-  \newline
+\date[July 2021]{Barcelona, July 2021}
+\author[Aniol Martí]{
+  Author: Aniol Martí\\
   Supervised by: Ferran de Cabrera, Jordi Portell, Jaume Riba
 }
 \institute{Universitat Politècnica de Catalunya}
@@ -26,17 +27,270 @@
 \tableofcontents
 \end{frame}
 
-\section{Before you start}
-\begin{frame}{Overleaf users}
-	
-	\begin{alertblock}{Warning}
-		You can ignore this slide if you're \textbf{not} working with Overleaf.
-	\end{alertblock}
-\texttt{ls -lah /}
+\AtBeginSection[]
+{
+\begin{frame}{Outline}
+\tableofcontents[currentsection]
+\end{frame}
+}
 
-$\sum_{n=1}^{\infty} 2i$
+\section{Introduction}
+\begin{frame}{Background}
+\begin{itemize}
+	\item<1-> Two strategic projects of DAPCOM Data Services, a spin-off of UPC and UB.
+	\item<2-> FAPEC is the data compressor from DAPCOM.
+	\item<3-> FAPEC works in a classical 2-stage structure.
+\end{itemize}
+\vspace{1.5em}
+\centering
+\onslide<3>\scalebox{.515}{\input{graphics/fapec_structure.tex}}
+\end{frame}
+
+\begin{frame}{Motivation}
+Data compression is fundamental in environments where:
+\begin{itemize}
+	\item<2-> Bandwidth is limited.
+	\item<3-> Computing power is limited.
+\end{itemize}
+\vspace{1em}
+
+\onslide<4->{Examples:}
+\begin{itemize}
+	\item<5-> Deep space.
+	\item<6-> Offshore.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Objectives}
+\begin{itemize}
+	\item<1-> Develop a FAPEC stage for IQ and audio data.
+	\item<2-> Develop a FAPEC stage for the KMALL format from Kongsberg Maritime.
+	\item<3-> Propose a scale invariant metric to evaluate the former stages. 
+\end{itemize}
+\end{frame}
+
+\section{The FAPEC data compressor}
+\begin{frame}{Background \& features}
+\begin{itemize}
+	\item<1-> Designed to solve some limitations of the CCSDS compression standards.
+	\item<2-> High computing performance.
+	\item<3-> Data chunking $\Rightarrow$ efficient in front of outliers.
+	\item<4-> Several preprocessing stages for different data types.
+	\item<5-> Multithreading support.
+	\item<6-> Data encryption using AES.
+\end{itemize}
+\vspace{2.5em}
+\hfill\includegraphics[scale=0.5]{graphics/dapcom-logo-header-small.png}
+\end{frame}
+
+\section{Negentropy: a scale invariant metric}
+\begin{frame}{Differential entropy}
+For a continuous random variable $X$ with a density $f(x)$, its differential entropy is:
 \[
-\sum_{n=1}^{\infty} 2i
+h(X) = - \int_{-\infty}^{+\infty} f(x) \ln f(x) dx
 \]
+
+The Normal distribution has maximum entropy. Thus, if $G$ is a gaussian random variable with variance $\sigma^2$:
+\[
+h(G) = \ln \left(\sqrt{2 \pi e \sigma^2}\right)
+\]
+\end{frame}
+
+\begin{frame}{Negentropy}
+	
+Negentropy is defined as:
+\[
+J(X) = h(G) - h(X) \geq 0
+\]
+
+where $G \sim \mathscr{N}(\mu, \sigma^2)$ and $X$ is a random variable with variance $\sigma^2$.
+\vspace{1em}
+
+Important properties:
+\begin{itemize}
+	\item It provides an indicator of normality.
+	\item It is invariant to any linear map.
+\end{itemize}
+\end{frame}
+
+\section{Wave stage}
+\begin{frame}{Data format}
+Pass-band signal:
+\[
+s(t) = i_s(t) \cdot \cos(2\pi f_0 t) - q_s(t) \cdot \sin(2\pi f_0 t)
+\]
+
+\onslide<2>IQ samples: the discrete time samples of $i_s(t)$ and $q_s(t)$ $\equiv$ time series in two channels $\equiv$ stereo audio $\Rightarrow$ FLAC $\Rightarrow$ linear predictor.
+\end{frame}
+
+\begin{frame}{Requirements}
+\begin{itemize}
+	\item<1-> Compression ratio shall be better than that of Gzip.
+	\item<1-> Compression speed shall be better than that of Gzip.
+	\item<2-> Compression ratio must be at least 80\% of that from FLAC.
+	\item<2-> Compression speed must be better than that of FLAC.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Algorithm}
+Linear predictor model:
+\[
+\hat{x}(n) = \sum_{i=1}^{Q} h_i x(n-i)
+\]
+
+\onslide<2->Finding $h_i$. The normal equations:
+\[
+r_x(j) = \sum_{i=1}^{Q} h_i r_x(|i-j|) ,\hspace{0.5em} 1 \leq j \leq Q
+\]
+
+\onslide<3>The linear system is solved with the Levinson-Durbin algorithm with a complexity $O(Q^2)$.
+
+\end{frame}
+
+\begin{frame}{Algorithm}
+Short-term autocorrelation:
+\[
+r_x(i) = \sum_{m=0}^{T-1-i} x_N(m) x_N(m+i) ,\hspace{0.5em} i \geq 0
+\]
+
+$x_N(m)$ is assumed to be WSS and $T \leq N$.
+\vspace{1em}
+
+\onslide<2>Prediction errors $e(n) = x(n) - \hat{x}(n)$ and coefficients $h_i$ are sent to the entropy coder.
+\end{frame}
+
+\begin{frame}{Algorithm}
+Additional features:
+\begin{itemize}
+	\item<1-> Arbitrary number of channels.
+	\item<1-> Channel coupling.
+	\item<2-> Tunable period length $N$.
+	\item<2-> Tunable training length $T$.
+	\item<3-> Lossless or lossy compression.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Results}
+Input settings:
+\begin{itemize}
+	\item Filter order: $Q=10$.
+	\item Period length: $N=65536$.
+	\item Training length: $T=65536$.
+	\item Number of channels: 2.
+	\item No coupling.
+	\item No losses.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Results}
+\centering
+\includegraphics[scale=0.62]{graphics/03 - Manel - Formigues.wav_hist.pdf}
+\end{frame}
+
+\begin{frame}{Results}
+	\centering
+	\includegraphics[scale=0.62]{graphics/03 - Manel - Formigues.wav_hist_cum.pdf}
+\end{frame}
+
+\begin{frame}{Results}
+\textbf{Negentropies}
+\vspace{1em}
+
+\small
+\begin{tabular}{|
+		>{}l |
+		>{}c |
+		>{}c |c|}
+	\hline
+	\multicolumn{1}{|c|}{\cellcolor[HTML]{d6cefc}Filename} & \cellcolor[HTML]{d6cefc}$J(X)$ & \cellcolor[HTML]{d6cefc}$J(E)$ & \cellcolor[HTML]{d6cefc}$J(E)/J(X)$ \\ \hline
+	03 - Manel - Formigues.wav                             & 0.0018                       & 0.0144                       & 8.0                               \\ \hline
+	04 - Pink Floyd - Time.wav                             & 0.0004                       & 0.0238                       & 59.5                              \\ \hline
+	06 - Manel - Els entusiasmats.wav                      & 0.0012                       & 0.0098                       & 8.2                               \\ \hline
+	06 - Pink Floyd - Money.wav                            & 0.0009                       & 0.0090                       & 10                                \\ \hline
+\end{tabular}
+\normalsize
+\vspace{1.5em}
+
+\onslide<2>Negentropy is not proportional with the compression ratio.
+\end{frame}
+
+\begin{frame}{Results}
+\centering
+\includegraphics[scale=0.62]{graphics/2021-05-30T22:30:32.186296-results_wave.csv_comparison.pdf}
+\end{frame}
+
+\begin{frame}{Results}
+\textbf{Euclidean distances for FAPEC, FLAC and Gzip}
+\vspace{1em}
+
+\footnotesize
+\begin{tabular}{|
+		>{}l |
+		>{}c |
+		>{}c |c|}
+	\hline
+	\multicolumn{1}{|c|}{\cellcolor[HTML]{d6cefc}Filename} & \cellcolor[HTML]{d6cefc}FAPEC dist. & \cellcolor[HTML]{d6cefc}FLAC dist. & \cellcolor[HTML]{d6cefc}GZIP dist. \\ \hline
+	03 - Manel - Formigues.wav                             & 0.9040                                 & 1.0938                                & 1.9161                                \\ \hline
+	04 - Pink Floyd - Time.wav                             & 1.0630                                 & 1.2181                                & 2.4851                                \\ \hline
+	06 - Manel - Els entusiasmats.wav                      & 0.8242                                 & 0.9453                                & 1.6197                                \\ \hline
+	06 - Pink Floyd - Money.wav                            & 1.0333                                 & 1.2152                                & 2.3294                                \\ \hline
+\end{tabular}
+\normalsize
+\vspace{1.5em}
+
+\onslide<2>FAPEC is the fastest.
+\end{frame}
+
+\section{KMALL stage}
+\begin{frame}{Data format}
+Important definitions:
+\begin{itemize}
+	\item<2-> \textbf{Ping:} A ping is defined as a number of pulses transmitted at approximately the same time.
+	\item<3-> \textbf{Beam:} Each ping is formed by some pulses in different angles, which we call beams.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Data format}
+\begin{itemize}
+	\item<1-> The KMALL format is the successor of the ALL format.
+	\item<2-> It is structured in datagrams.
+	\item<3-> Each \texttt{.kmall} file contains several datagrams.
+	\item<4-> The most important are MRZ and MWC (multibeam).
+\end{itemize}
+\vspace{1em}
+
+\onslide<5>\textbf{Structure of a MWC datagram}
+\vspace{1em}
+
+\onslide<5>\centering
+\onslide<5>\scalebox{.42}{\input{graphics/mwc_datagram.tex}}
+\end{frame}
+
+\begin{frame}{Requirements}
+\begin{itemize}
+	\item<1-> Compression ratio shall be better than that of Gzip.
+	\item<1-> Compression speed shall be better than that of Gzip.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Data analysis}
+\begin{itemize}
+	\item<1-> Usually files do not contain MRZ an MWC datagrams at the same time.
+	\item<2-> MRZ datagrams are a 92\% of the total size.
+	\item<3-> MWC datagrams are a 99\% of the total size.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Algorithm}
+The proposed algorithm is strongly based in the algorithm for \texttt{.all} files previously developed by DAPCOM Data Services.
+
+\end{frame}
+\begin{frame}{Results}
+	content...
+\end{frame}
+
+\section{Conclusions}
+\begin{frame}{Conclusions}
+	content...
 \end{frame}
 \end{document}
