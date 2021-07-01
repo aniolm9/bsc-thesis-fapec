@@ -37,35 +37,35 @@
 \section{Introduction}
 \begin{frame}{Background}
 \begin{itemize}
-	\item<1-> Two strategic projects of DAPCOM Data Services, a spin-off of UPC and UB.
-	\item<2-> FAPEC is the data compressor from DAPCOM.
-	\item<3-> FAPEC works in a classical 2-stage structure.
+	\item Two strategic projects of DAPCOM Data Services, a spin-off of UPC and UB.
+	\item FAPEC is the data compressor from DAPCOM.
+	\item<2> FAPEC works in a classical 2-stage structure.
 \end{itemize}
 \vspace{1.5em}
 \centering
-\onslide<3>\scalebox{.515}{\input{graphics/fapec_structure.tex}}
+\onslide<2>\scalebox{.515}{\input{graphics/fapec_structure.tex}}
 \end{frame}
 
 \begin{frame}{Motivation}
 Data compression is fundamental in environments where:
 \begin{itemize}
-	\item<2-> Bandwidth is limited.
-	\item<3-> Computing power is limited.
+	\item<1-> Bandwidth is limited.
+	\item<1-> Computing power is limited.
 \end{itemize}
 \vspace{1em}
 
-\onslide<4->{Examples:}
+\onslide<2->{Examples:}
 \begin{itemize}
-	\item<5-> Deep space.
-	\item<6-> Offshore.
+	\item<2-> Deep space.
+	\item<2-> Offshore.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Objectives}
 \begin{itemize}
-	\item<1-> Develop a FAPEC stage for IQ and audio data.
-	\item<2-> Develop a FAPEC stage for the KMALL format from Kongsberg Maritime.
-	\item<3-> Propose a scale invariant metric to evaluate the former stages. 
+	\item Develop a FAPEC stage for IQ and audio data.
+	\item Develop a FAPEC stage for the KMALL format from Kongsberg Maritime.
+	\item Propose a scale invariant metric to evaluate the former stages. 
 \end{itemize}
 \end{frame}
 
@@ -73,14 +73,14 @@ Data compression is fundamental in environments where:
 \begin{frame}{Background \& features}
 \begin{itemize}
 	\item<1-> Designed to solve some limitations of the CCSDS compression standards.
-	\item<2-> High computing performance.
-	\item<3-> Data chunking $\Rightarrow$ efficient in front of outliers.
-	\item<4-> Several preprocessing stages for different data types.
-	\item<5-> Multithreading support.
-	\item<6-> Data encryption using AES.
+	\item<1-> High computing performance.
+	\item<2-> Data chunking $\Rightarrow$ better robustness to data corruption.
+	\item<2-> Several preprocessing stages for different data types.
+	\item<3-> Multithreading support.
+	\item<3-> Data encryption using AES.
 \end{itemize}
 \vspace{2.5em}
-\hfill\includegraphics[scale=0.5]{graphics/dapcom-logo-header-small.png}
+\hfill\includegraphics[scale=0.08]{graphics/FAPEC.png}
 \end{frame}
 
 \section{Negentropy: a scale invariant metric}
@@ -188,8 +188,8 @@ Input settings:
 \end{frame}
 
 \begin{frame}{Results}
-	\centering
-	\includegraphics[scale=0.62]{graphics/03 - Manel - Formigues.wav_hist_cum.pdf}
+\centering
+\includegraphics[scale=0.62]{graphics/03 - Manel - Formigues.wav_hist_cum.pdf}
 \end{frame}
 
 \begin{frame}{Results}
@@ -211,7 +211,7 @@ Input settings:
 \normalsize
 \vspace{1.5em}
 
-\onslide<2>Negentropy is not proportional with the compression ratio.
+Negentropy is not proportional to the compression ratio.
 \end{frame}
 
 \begin{frame}{Results}
@@ -238,32 +238,34 @@ Input settings:
 \normalsize
 \vspace{1.5em}
 
-\onslide<2>FAPEC is the fastest.
+FAPEC is the fastest option.
 \end{frame}
 
 \section{KMALL stage}
 \begin{frame}{Data format}
 Important definitions:
 \begin{itemize}
-	\item<2-> \textbf{Ping:} A ping is defined as a number of pulses transmitted at approximately the same time.
-	\item<3-> \textbf{Beam:} Each ping is formed by some pulses in different angles, which we call beams.
+	\item \textbf{Ping:} A ping is defined as a number of pulses transmitted at approximately the same time.
+	\item \textbf{Beam:} Each ping is formed by some pulses in different angles, which we call beams.
 \end{itemize}
+\vspace{1em}
+
+\includegraphics[scale=0.25]{graphics/water_column_amp.png}
 \end{frame}
 
 \begin{frame}{Data format}
 \begin{itemize}
 	\item<1-> The KMALL format is the successor of the ALL format.
-	\item<2-> It is structured in datagrams.
-	\item<3-> Each \texttt{.kmall} file contains several datagrams.
-	\item<4-> The most important are MRZ and MWC (multibeam).
+	\item<1-> It is structured in datagrams.
+	\item<1-> Each \texttt{.kmall} file contains several datagrams.
+	\item<1-> The most important are MRZ and MWC (multibeam).
 \end{itemize}
 \vspace{1em}
 
-\onslide<5>\textbf{Structure of a MWC datagram}
+\onslide<2>\textbf{Structure of a MWC datagram}
 \vspace{1em}
 
-\onslide<5>\centering
-\onslide<5>\scalebox{.42}{\input{graphics/mwc_datagram.tex}}
+\onslide<2>\scalebox{.42}{\input{graphics/mwc_datagram.tex}}
 \end{frame}
 
 \begin{frame}{Requirements}
@@ -277,20 +279,123 @@ Important definitions:
 \begin{itemize}
 	\item<1-> Usually files do not contain MRZ an MWC datagrams at the same time.
 	\item<2-> MRZ datagrams are a 92\% of the total size.
-	\item<3-> MWC datagrams are a 99\% of the total size.
+	\item<2-> MWC datagrams are a 99\% of the total size.
+	\item<3-> High correlation between beams.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Algorithm}
-The proposed algorithm is strongly based in the algorithm for \texttt{.all} files previously developed by DAPCOM Data Services.
+Samples are predicted from the samples in the same position as those from the previous beam, when possible:
+\[
+E_{i,j} = S_{i,j} - S_{i,j-1}, \qquad 0 \leq i < \min(N_{S_{j-1}}, N_{S_j}), \quad 1 \leq j < N_B
+\]
 
+Otherwise, the previous sample is used:
+\[
+E_{i,j} = S_{i,j} - S_{i-1,j}, \qquad \min(N_{S_{j-1}}, N_{S_j}) \leq i < N_{S_j}, \quad 1 \leq j < N_B
+\]
+
+The first beam is treated differently:
+\[
+E_{i,0} = S_{i,0} - S_{i-1,0}, \qquad 1 \leq i < N_{S_0}
+\]
+
+And the first sample in the ping:
+\[
+E_{0,0} = S_{0,0} + 128
+\]
 \end{frame}
+
+\begin{frame}{Algorithm}
+Phase is not compressible. A simple differential is used:
+\[
+E_{i,j} = S_{i,j} - S_{i-1,j}, \qquad 1 \leq i < N_{S_j}, \quad 1 \leq j < N_B
+\]
+
+\includegraphics[scale=0.25]{graphics/water_column_ph.png}
+\end{frame}
+
 \begin{frame}{Results}
-	content...
+\centering
+\includegraphics[scale=0.62]{graphics/0003_20200428_103716_ShipName.kmwcd_hist.pdf}
+\end{frame}
+
+\begin{frame}{Results}
+\centering
+\includegraphics[scale=0.62]{graphics/0003_20200428_103716_ShipName.kmwcd_hist_cum.pdf}
+\end{frame}
+
+\begin{frame}{Results}
+\textbf{Negentropies}
+\vspace{1em}
+
+\footnotesize
+\begin{tabular}{|l|c|c|c|}
+	\hline
+	\rowcolor[HTML]{d6cefc} 
+	\multicolumn{1}{|c|}{\cellcolor[HTML]{d6cefc}Filename}         & $J(X)$                           & $J(E)$                           & $J(E)/J(X)$ \\ \hline
+	0003\_20200428\_103716\_ShipName.kmwcd & 0.0004 & 0.0530 & 132.5     \\ \hline
+	0004\_20200428\_093723\_ShipName.kmwcd & 0.0000      & 0.0252 & -         \\ \hline
+	0039\_20200428\_115408\_ShipName.kmwcd & 0.0001 & 0.0146 & 146       \\ \hline
+	0010\_20210409\_092708.kmwcd                                   & 0.0001                         & 0.0089                         & 89        \\ \hline
+\end{tabular}
+\normalsize
+\vspace{1.5em}
+
+Remember that negentropies cannot be compared between different files.
+\end{frame}
+
+\begin{frame}{Results}
+\centering
+\includegraphics[scale=0.62]{graphics/2021-05-31T23:59:08.498586-results_kmall.csv_comparison.pdf}
+\end{frame}
+
+\begin{frame}{Results}
+\textbf{Euclidean distances for FAPEC and Gzip}
+\vspace{1em}
+
+\footnotesize
+\begin{tabular}{|l|c|c|}
+	\hline
+	\rowcolor[HTML]{d6cefc} 
+	\multicolumn{1}{|c|}{\cellcolor[HTML]{d6cefc}Filename}         & FAPEC dist. & GZIP dist. \\ \hline
+	0003\_20200428\_103716\_ShipName.kmwcd & 5.0696      & 12.2123    \\ \hline
+	0004\_20200428\_093723\_ShipName.kmwcd & 2.6879      & 6.9850     \\ \hline
+	0039\_20200428\_115408\_ShipName.kmwcd & 5.2258      & 16.4260    \\ \hline
+	0010\_20210409\_092708.kmwcd                                   & 13.6912     & 28.4271    \\ \hline
+\end{tabular}
+\normalsize
+\vspace{1.5em}
+
+FAPEC is the best option.
 \end{frame}
 
 \section{Conclusions}
 \begin{frame}{Conclusions}
-	content...
+\begin{itemize}
+	\item Wave stage:
+	\begin{itemize}
+		\item Linear predictor.
+		\item A bit worse ratios than those of FLAC.
+		\item Faster than FLAC.
+	\end{itemize}
+	
+	\item KMALL stage:
+	\begin{itemize}
+		\item Tailored algorithm which takes advantage of the correlation between beams.
+		\item Better ratios than those of Gzip.
+		\item Faster than Gzip.
+	\end{itemize}
+	\item Negentropy increases for all the dataset.
+	\item All the goals are fulfilled.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Future work}
+\begin{itemize}
+	\item Analyze the entropy of each beam to detect zones with low entropy.
+	\item Explore audio encoding algorithms such as TAK to improve the Wave stage.
+	\item Add a new algorithm to the KMALL stage to also compress MRZ datagrams.
+\end{itemize}
 \end{frame}
 \end{document}
