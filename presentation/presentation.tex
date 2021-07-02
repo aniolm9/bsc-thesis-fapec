@@ -56,7 +56,7 @@ Data compression is fundamental in environments where:
 
 \onslide<2->{Examples:}
 \begin{itemize}
-	\item<2-> Deep space.
+	\item<2-> Space.
 	\item<2-> Offshore.
 \end{itemize}
 \end{frame}
@@ -138,7 +138,7 @@ Linear predictor model:
 \hat{x}(n) = \sum_{i=1}^{Q} h_i x(n-i)
 \]
 
-\onslide<2->Finding $h_i$. The normal equations:
+\onslide<2->Finding $h_i$. The Yule-Walker equations:
 \[
 r_x(j) = \sum_{i=1}^{Q} h_i r_x(|i-j|) ,\hspace{0.5em} 1 \leq j \leq Q
 \]
@@ -396,6 +396,45 @@ FAPEC is the best option.
 	\item Analyze the entropy of each beam to detect zones with low entropy.
 	\item Explore audio encoding algorithms such as TAK to improve the Wave stage.
 	\item Add a new algorithm to the KMALL stage to also compress MRZ datagrams.
+	\item Find a relation between negentropy and FAPEC ratio.
 \end{itemize}
+\end{frame}
+
+\begin{frame}{}
+\centering
+\vspace{-5em}
+\includegraphics[scale=0.18]{graphics/logo.png}
+\vspace{3em}
+
+\huge
+Thank you
+\normalsize
+\end{frame}
+
+\begin{frame}[noframenumbering]{Linear invariance of negentropy}
+Negentropy is a particular case of the Kullback–Leibler divergence:
+\[
+J(X) = \int f(x) \ln \frac{f(x)}{\phi(x)} dx
+\]
+
+As Kullback–Leibler divergence is invariant to any invertible change of coordinates, such is negentropy.
+\end{frame}
+
+\begin{frame}[noframenumbering]{What about IQ data?}
+\begin{itemize}
+	\item The Wave stage is being deployed in two cubesats constellations from DAPCOM clients.
+	\item Clients have reported that FLAC can be unstable.
+	\item Custom losses for proprietary IQ formats.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Beyond Gzip: RAR \& Zstd}
+\centering
+\includegraphics[scale=0.62]{graphics/files.csv_comparison.pdf}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Thirty-four shades of KMWCD}
+\centering
+\includegraphics[scale=0.35]{graphics/KMWCD lossless compression.pdf}
 \end{frame}
 \end{document}
